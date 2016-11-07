@@ -10,13 +10,13 @@ import es.upv.dsic.gti_ia.core.AgentsConnection;
  * @version 1.0
  */
 public class GugelCar {
-  private final String SERVERPATH = "localhost";
-  private final int PORT = 5672;
+  private static final String SERVERPATH = "isg2.ugr.es";
+  private static final int PORT = 6000;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     AgentCar Car = null;
 
-    AgentsConnection.connect(SERVERPATH, PORT, );
+    AgentsConnection.connect(SERVERPATH,PORT, "Haldus", "Esquivel", "Pegaso", false);
     try {
       Car = new AgentCar(new AgentID("GugelCar"));
     } catch (Exception e) {
