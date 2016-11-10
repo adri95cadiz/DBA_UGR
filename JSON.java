@@ -20,13 +20,13 @@ public class JSON {
      * un mapa concreto y los sensores que elegimos.
      * @author Luis Gallego
      * @author German Valdearenas
-     * @return 
+     * @return Devuelve un String con la cadena Json
      */
     public static String realizarLogin() {
         /* La idea sería que el main nos solicitara
         el mapa a ejecutar.
         */
-        String mapa = "map2";
+        String mapa = "map1";
         JsonObject objeto = new JsonObject();
         
         objeto.add("command", "login");
@@ -43,7 +43,7 @@ public class JSON {
      * @param respuesta Cadena que devuelve el servidor en Json
      * @author Luis Gallego
      * @author German Valdearenas
-     * @return 
+     * @return true si conecta, false en caso contrario
      */
     public static boolean resultadoLogin(String respuesta) {
         boolean resultado;
@@ -61,6 +61,36 @@ public class JSON {
             }
         }
         return resultado;        
+    }
+    
+    /**
+     * Ejecutamos las diferentes acciones posibles
+     * @param accion Paso a realizar
+     * @author Luis Gallego
+     * @return Devuelve un String con la cadena Json
+     */
+    public static String realizarAccion(String accion) {
+        /* La accion la pasamos desde el AgentCar
+        para indicar el movimiento a realizar o el logout...
+        */
+        JsonObject objeto = new JsonObject();
+        
+        objeto.add("command", accion);
+        objeto.add("key", key);
+        
+        return objeto.toString();
+    }
+    
+    /**
+     * Comprobamos el resultado de la accion
+     * @param respuesta Cadena que devuelve el servidor en Json
+     * @author Luis Gallego
+     * @return true si llega correctamente, false en caso contrario
+     */
+    public static boolean resultadoAccion(String respuesta) {
+        boolean resultado = respuesta.contains("OK");
+        
+        return resultado;
     }
     
 }

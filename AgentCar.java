@@ -11,7 +11,15 @@ import es.upv.dsic.gti_ia.core.SingleAgent;
  * @version 1.0
  */
 public class AgentCar extends SingleAgent {
-    private ACLMessage mensaje;
+    // Diferentes estados del bot
+    private final int LOGIN = 0;
+    private final int RECIBIR_DATOS = 1;
+    private final int ACCION = 2;
+    private final int LOGOUT = 3;
+    
+    private ACLMessage msjSalida, msjEntrada;
+    private boolean login, fin;
+    private int estadoActual, cont;
     
   public AgentCar(AgentID aid) throws Exception {
     super(aid);
@@ -23,6 +31,11 @@ public class AgentCar extends SingleAgent {
   @Override
   public void init() {
       System.out.println("Iniciando GugelCar.");
+      estadoActual = LOGIN;
+      msjSalida = null;
+      msjEntrada = null;
+      fin = false;
+      //cont = 0;
   }
 
   /**
@@ -30,8 +43,24 @@ public class AgentCar extends SingleAgent {
    */
   @Override
   public void execute() {
-      iniciarLogin();
-      resultadoLogin();
+     System.out.println("Agente activo.");     
+     while(!fin) {
+         if(estadoActual == 0){
+             realizarLogin();
+         } else if(estadoActual == 1) {
+             resultadoAccion();
+             estadoActual = LOGOUT;
+         } else if(estadoActual == 2) {
+             //cont++;
+             realizarAccion(JSON.realizarAccion("moveS"));
+             
+         } else if(estadoActual == 3) {
+             realizarAccion(JSON.realizarAccion("logout"));
+             resultadoAccion();
+             fin = true;
+         }
+     }
+     
   }
 
   /**
@@ -43,29 +72,44 @@ public class AgentCar extends SingleAgent {
     super.finalize();
   }
   
-  private void iniciarLogin() {
-      System.out.println("Solicitando login.");
+  private void realizarLogin() {
       System.out.println("Enviando login.");
-      mensaje = new ACLMessage();
-      mensaje.setSender(this.getAid());
-      mensaje.setReceiver(new AgentID("Haldus"));
-      mensaje.setContent(JSON.realizarLogin());
-      this.send(mensaje);
-      System.out.println("Login enviado");
+      realizarAccion(JSON.realizarLogin());
+      login = true;
+      estadoActual = RECIBIR_DATOS;
   }
   
-  private void resultadoLogin() {
-      boolean correcto;
-      try {
-        mensaje = receiveACLMessage();
-        correcto = JSON.resultadoLogin(mensaje.getContent());
-          if(correcto) {
-          System.out.println("Login OK");
-          } else {
-          System.out.println("Error en el login");
+  private void realizarAccion(String accion) {
+      System.out.println("Enviando accion " + accion + " al servidor");
+      msjSalida = new ACLMessage();
+      msjSalida.setSender(this.getAid());
+      msjSalida.setReceiver(new AgentID("Haldus"));
+      msjSalida.setContent(accion);
+      this.send(msjSalida);
+      System.out.println("Accion enviada.");
+      estadoActual = RECIBIR_DATOS;
+  }
+  
+  private void resultadoAccion() {
+      System.out.println("Recibiendo respuesta.");
+      boolean resultado = true;
+      for(int i=0; i<4 && resultado; i++) {
+          try {
+              msjEntrada = receiveACLMessage();
+              //System.out.println("Respuesta recibida." + msjEntrada.getContent());     
+              if(login) {
+                  System.out.println("ResultadoLogin: ");
+                  resultado = JSON.resultadoLogin(msjEntrada.getContent());
+                  login = false;
+                  //estadoActual = ACCION;
+              } else {
+                  resultado = JSON.resultadoAccion(msjEntrada.getContent());
+              }                 
+              
+          } catch (InterruptedException ex) {
+              System.err.println("Error de comunicación");
+          }
       }
-      } catch (InterruptedException ex) {
-		System.err.println("Error de comunicación");
-        }       
+   
   }
 }
