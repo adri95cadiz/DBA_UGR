@@ -8,11 +8,12 @@ import com.eclipsesource.json.*;
 
 /**
  *
- * @author luis
+ * @author Luis Gallego
+ * @author German Valdearenas
  */
 public class JSON {
     
-    // Caracteres para la comunicacion    
+    // Carácteres para la comunicación    
     private static String key; 
     
     /**
@@ -35,6 +36,7 @@ public class JSON {
         objeto.add("scanner", "GugelCar");
         objeto.add("gps", "GugelCar");
         
+        //System.out.println("Peticion de login realizada");
         return objeto.toString();        
     }
     
@@ -47,7 +49,7 @@ public class JSON {
      */
     public static boolean resultadoLogin(String respuesta) {
         boolean resultado;
-        
+        System.out.println("Entramos en resultado login.");
         if(respuesta.contains("BAD_")){
             resultado = false;
         } else {
@@ -88,9 +90,75 @@ public class JSON {
      * @return true si llega correctamente, false en caso contrario
      */
     public static boolean resultadoAccion(String respuesta) {
-        boolean resultado = respuesta.contains("OK");
-        
+        boolean resultado = respuesta.contains("OK");        
         return resultado;
+    }
+    
+    /**
+     * La información del Scanner en Json la pasamos a una matriz
+     * @param respuesta Cadena Json
+     * @author Luis Gallego
+     * @return Matriz de float con el contenido del Json
+     */
+    public static float[][] leerScanner(String respuesta) {
+        float[][] scanner = new float[5][5];
+        if(!respuesta.contains("CRASHED")) {
+            JsonObject objeto = Json.parse(respuesta).asObject();
+            JsonArray vector = objeto.get("scanner").asArray();
+            int i=0, j=0;
+            for(JsonValue valor : vector) {
+                scanner[i][j] = valor.asFloat();
+                j++;
+                if(j==5) {
+                    j=0;
+                    i++;
+                }
+            }
+        }
+        return scanner;
+    }
+    
+    /**
+     * La información del Radar en Json la pasamos a una matriz
+     * @param respuesta Cadena Json
+     * @author Luis Gallego
+     * @return Matriz de int con el contenido del Json
+     */
+    public static int[][] leerRadar(String respuesta) {
+        int radar[][] = new int[5][5];
+        if(!respuesta.contains("CRASHED")) {
+            JsonObject objeto = Json.parse(respuesta).asObject();
+            JsonArray vector = objeto.get("radar").asArray();
+            int i=0, j=0;
+            for(JsonValue valor : vector) {
+                radar[i][j] = valor.asInt();
+                j++;
+                if(j==5) {
+                    j=0;
+                    i++;
+                }
+            }
+        }
+        return radar;
+    }
+    
+    /**
+     * La información del GPS en Json la pasamos a un vector
+     * donde la posicion 0 es la x y la posicion 1 es la y
+     * @param respuesta Cadena Json
+     * @author Luis Gallego
+     * @return Vector de int con el contenido del Json
+     */
+    public static int[] leerGPS(String respuesta) {
+        int[] gps = new int[2];
+        if(!respuesta.contains("CRASHED")) {
+            JsonObject objeto = Json.parse(respuesta).asObject();
+            JsonObject gpsObjeto = objeto.get("gps").asObject();
+            
+            gps[0] = gpsObjeto.getInt("x", -1);
+            gps[1] = gpsObjeto.getInt("y", -1);
+        }
+        return gps;
     }
     
 }

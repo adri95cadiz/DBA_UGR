@@ -8,25 +8,36 @@ import es.upv.dsic.gti_ia.core.SingleAgent;
  * Esta clase contiene el agente que realizará toda la funcionalidad
  *
  * @author Samuel Peregrina
+ * @author Luis Gallego
  * @version 1.0
  */
+
 public class AgentCar extends SingleAgent {
     // Diferentes estados del bot
     private final int LOGIN = 0;
     private final int RECIBIR_DATOS = 1;
-    private final int ACCION = 2;
-    private final int LOGOUT = 3;
+    private final int ACCION = 2; //Mover
+    private final int REPOSTAR = 3;
+    private final int FINAL = 4; //Logout
     
     private ACLMessage msjSalida, msjEntrada;
-    private boolean login, fin;
-    private int estadoActual, cont;
+    private boolean login;
+    private boolean fin;
+    private int estadoActual;
+    private int nivelBateria=0;
+    private int[] datosGPS = new int[2];
+    private int[][] datosRadar = new int[5][5];
+    private float[][] datosScanner = new float[5][5];
+    
+    //private int cont;
     
   public AgentCar(AgentID aid) throws Exception {
     super(aid);
   }
 
   /**
-   *  Método que ejecuta el agente al iniciar su ciclo de vida
+   * Inicializamos variables
+   * @author Luis Gallego
    */
   @Override
   public void init() {
@@ -39,32 +50,37 @@ public class AgentCar extends SingleAgent {
   }
 
   /**
-   * Método que ejecuta el agente tras el init()
+   * Método que ejecuta el agente donde controlamos los estados
+   * @author Luis Gallego
    */
   @Override
   public void execute() {
      System.out.println("Agente activo.");     
      while(!fin) {
-         if(estadoActual == 0){
-             realizarLogin();
-         } else if(estadoActual == 1) {
-             resultadoAccion();
-             estadoActual = LOGOUT;
-         } else if(estadoActual == 2) {
-             //cont++;
-             realizarAccion(JSON.realizarAccion("moveS"));
-             
-         } else if(estadoActual == 3) {
-             realizarAccion(JSON.realizarAccion("logout"));
-             resultadoAccion();
-             fin = true;
+         switch (estadoActual) {
+             case LOGIN:
+                 realizarLogin();
+                 break;
+             case RECIBIR_DATOS:
+                 resultadoAccion();
+                 break;
+             case ACCION:
+                 mover();
+                 break;
+             case REPOSTAR:
+                 repostar();
+                 break;
+             case FINAL:
+                 objetivoEncontrado();                 
+                 fin = true;
+                 break;
          }
      }
      
   }
 
   /**
-   * Método que ejecuta el agente antes de finalizar su ciclo de vida
+   * Método con el que se cierra sesión.
    */
   @Override
   public void finalize() {
@@ -76,6 +92,7 @@ public class AgentCar extends SingleAgent {
       System.out.println("Enviando login.");
       realizarAccion(JSON.realizarLogin());
       login = true;
+      System.out.println("Pasamos a recibir datos login");
       estadoActual = RECIBIR_DATOS;
   }
   
@@ -87,7 +104,7 @@ public class AgentCar extends SingleAgent {
       msjSalida.setContent(accion);
       this.send(msjSalida);
       System.out.println("Accion enviada.");
-      estadoActual = RECIBIR_DATOS;
+      //estadoActual = RECIBIR_DATOS;
   }
   
   private void resultadoAccion() {
@@ -95,13 +112,19 @@ public class AgentCar extends SingleAgent {
       boolean resultado = true;
       for(int i=0; i<4 && resultado; i++) {
           try {
+              //System.out.println("Recibiendo respuesta2.");
               msjEntrada = receiveACLMessage();
-              //System.out.println("Respuesta recibida." + msjEntrada.getContent());     
-              if(login) {
+              System.out.println("Respuesta recibida. " + msjEntrada.getContent());     
+             if(msjEntrada.getContent().contains("scanner")) {
+                  datosScanner = JSON.leerScanner(msjEntrada.getContent());
+              } else if(msjEntrada.getContent().contains("radar")) {
+                  datosRadar = JSON.leerRadar(msjEntrada.getContent());
+              } else if(msjEntrada.getContent().contains("gps")) {
+                  datosGPS = JSON.leerGPS(msjEntrada.getContent());
+              } else if(login) {
                   System.out.println("ResultadoLogin: ");
                   resultado = JSON.resultadoLogin(msjEntrada.getContent());
                   login = false;
-                  //estadoActual = ACCION;
               } else {
                   resultado = JSON.resultadoAccion(msjEntrada.getContent());
               }                 
@@ -109,7 +132,50 @@ public class AgentCar extends SingleAgent {
           } catch (InterruptedException ex) {
               System.err.println("Error de comunicación");
           }
+      }   
+      
+      if(!resultado) {
+          System.out.println("La conexión ha fallado.");
+          estadoActual = FINAL;
+      } else if(datosRadar[2][2]==2) {
+          estadoActual = FINAL;
+      } else if(nivelBateria < 5) {
+          estadoActual = REPOSTAR;
+      } else {
+          estadoActual = ACCION;
       }
-   
   }
+  
+  private void mover() {
+      //realizarAccion(JSON.realizarAccion("logout"));
+      /*if(cont==5){
+          estadoActual = FINAL;
+      } else {
+          cont++;
+          nivelBateria--;
+          estadoActual = RECIBIR_DATOS;
+      }*/
+  }
+  
+  /**
+   * Estado repostar.
+   * @author Luis Gallego
+   */
+  private void repostar() {
+      System.out.println("Respostando.");
+      realizarAccion(JSON.realizarAccion("refuel"));
+      nivelBateria = 100;
+      estadoActual = RECIBIR_DATOS;
+  }
+  
+  /**
+   * Estado final.
+   * @author Luis Gallego
+   */
+  private void objetivoEncontrado() {
+      System.out.println("Objetivo encontrado.");
+      realizarAccion(JSON.realizarAccion("logout"));
+      fin = true;      
+  }
+  
 }
