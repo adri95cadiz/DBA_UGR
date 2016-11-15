@@ -147,7 +147,7 @@ public class AgentCar extends SingleAgent {
   }
   
   private void mover() {
-      if(cont==3){
+      if(cont==100){
           estadoActual = FINAL;
       } else {
           cont++;
