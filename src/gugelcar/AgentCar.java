@@ -29,7 +29,7 @@ public class AgentCar extends SingleAgent {
     private int[][] datosRadar = new int[5][5];
     private float[][] datosScanner = new float[5][5];
     
-    //private int cont;
+    private int cont;
     
   public AgentCar(AgentID aid) throws Exception {
     super(aid);
@@ -46,7 +46,7 @@ public class AgentCar extends SingleAgent {
       msjSalida = null;
       msjEntrada = null;
       fin = false;
-      //cont = 0;
+      cont = 0;
   }
 
   /**
@@ -147,14 +147,14 @@ public class AgentCar extends SingleAgent {
   }
   
   private void mover() {
-      //realizarAccion(JSON.realizarAccion("logout"));
-      /*if(cont==5){
+      if(cont==3){
           estadoActual = FINAL;
       } else {
           cont++;
           nivelBateria--;
+          realizarAccion(JSON.realizarAccion("moveSW"));
           estadoActual = RECIBIR_DATOS;
-      }*/
+      }
   }
   
   /**
@@ -175,6 +175,7 @@ public class AgentCar extends SingleAgent {
   private void objetivoEncontrado() {
       System.out.println("Objetivo encontrado.");
       realizarAccion(JSON.realizarAccion("logout"));
+      resultadoAccion();
       fin = true;      
   }
   
