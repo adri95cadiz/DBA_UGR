@@ -5,7 +5,7 @@ import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
 
 /**
- * Esta clase contiene el agente que realizará toda la funcionalidad
+ * Esta clase contiene el agente que realizara toda la funcionalidad
  *
  * @author Samuel Peregrina
  * @author Luis Gallego
@@ -28,7 +28,7 @@ public class AgentCar extends SingleAgent {
     private int[] datosGPS = new int[2];
     private int[][] datosRadar = new int[5][5];
     private float[][] datosScanner = new float[5][5];
-    
+    private int[][] posiblesObjetivos = new int[5][5];
     private int cont;
     
   public AgentCar(AgentID aid) throws Exception {
@@ -50,7 +50,7 @@ public class AgentCar extends SingleAgent {
   }
 
   /**
-   * Método que ejecuta el agente donde controlamos los estados
+   * Metodo que ejecuta el agente donde controlamos los estados
    * @author Luis Gallego
    */
   @Override
@@ -80,7 +80,7 @@ public class AgentCar extends SingleAgent {
   }
 
   /**
-   * Método con el que se cierra sesión.
+   * Metodo con el que se cierra sesion.
    */
   @Override
   public void finalize() {
@@ -139,22 +139,76 @@ public class AgentCar extends SingleAgent {
           estadoActual = FINAL;
       } else if(datosRadar[2][2]==2) {
           estadoActual = FINAL;
-      } else if(nivelBateria < 5) {
+      } else if(nivelBateria == 1) {
           estadoActual = REPOSTAR;
       } else {
           estadoActual = ACCION;
       }
   }
   
+  /**
+   * Heuristica de movimiento.
+   * @author Adrian Portillo Sanchez
+   */
   private void mover() {
-      if(cont==100){
+      /*if(cont==100){
           estadoActual = FINAL;
       } else {
           cont++;
           nivelBateria--;
           realizarAccion(JSON.realizarAccion("moveSW"));
           estadoActual = RECIBIR_DATOS;
-      }
+      }*/
+	  posiblesObjetivos = new int[5][5];
+	  eliminarObjetivosInaccesibles();
+	  int[] objetivo = elegirObjetivo();
+	  String movimiento = caminoActual(objetivo);
+	  cont++;
+	  nivelBateria--;
+      realizarAccion(JSON.realizarAccion(movimiento));
+      estadoActual = RECIBIR_DATOS;
+  }
+  
+  /**
+   * Pone los objetivos inaccesibles del 5x5 que rodea al gugelcar a -1 y los accesibles a 0.
+   * @author Adrian Portillo Sanchez
+   */
+  private void eliminarObjetivosInaccesibles(){
+	  for(int i = 0; i < 5; i++){
+		  for(int j = 0; j < 5; j++){
+			  if(esAccesible(i, j)){
+				  posiblesObjetivos[i][j] = 0;
+			  } else{
+				  posiblesObjetivos[i][j] = -1;
+			  }			  
+		  }
+	  }
+  }
+  /**
+   * Determina si la posici�n i, j del 5x5 que rodea al gugelcar es accesible o no.
+   * @author Adrian Portillo Sanchez
+   */
+  private boolean esAccesible(int i, int j){
+	  boolean accesible = true;	  
+	  if(datosRadar[i][j]==-1) accesible = false;	  
+	  if(i==2 && j==2) accesible = false;
+	  return accesible;
+  }
+  /**
+   * Determina el objetivo local dentro del 5x5 que rodea al gugelcar.
+   * @author Adrian Portillo Sanchez
+   */
+  private int[] elegirObjetivo(){
+	  int[] objetivo = new int[2];
+	  return objetivo;
+  }
+  
+  /**
+   * Decide el mejor camino hacia un objetivo dado dentro del 5x5 que rodea al gugelcar y devuelve el primer movimiento de ese camino.
+   * @author Adrian Portillo Sanchez
+   */
+  private String caminoActual(int[] objetivo){
+	  return("moveSW");
   }
   
   /**
@@ -176,6 +230,7 @@ public class AgentCar extends SingleAgent {
       System.out.println("Objetivo encontrado.");
       realizarAccion(JSON.realizarAccion("logout"));
       resultadoAccion();
+      System.out.println("Pasos: " + cont);
       fin = true;      
   }
   

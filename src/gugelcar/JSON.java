@@ -13,7 +13,7 @@ import com.eclipsesource.json.*;
  */
 public class JSON {
     
-    // Carácteres para la comunicación    
+    // Caracteres para la comunicacion    
     private static String key; 
     
     /**
@@ -24,7 +24,7 @@ public class JSON {
      * @return Devuelve un String con la cadena Json
      */
     public static String realizarLogin() {
-        /* La idea sería que el main nos solicitara
+        /* La idea sera que el main nos solicitara
         el mapa a ejecutar.
         */
         String mapa = "map1";
@@ -93,9 +93,8 @@ public class JSON {
         boolean resultado = respuesta.contains("OK");        
         return resultado;
     }
-    
     /**
-     * La información del Scanner en Json la pasamos a una matriz
+     * La informacion del Scanner en Json la pasamos a una matriz
      * @param respuesta Cadena Json
      * @author Luis Gallego
      * @return Matriz de float con el contenido del Json
@@ -119,7 +118,7 @@ public class JSON {
     }
     
     /**
-     * La información del Radar en Json la pasamos a una matriz
+     * La informacion del Radar en Json la pasamos a una matriz
      * @param respuesta Cadena Json
      * @author Luis Gallego
      * @return Matriz de int con el contenido del Json
@@ -143,7 +142,7 @@ public class JSON {
     }
     
     /**
-     * La información del GPS en Json la pasamos a un vector
+     * La informacion del GPS en Json la pasamos a un vector
      * donde la posicion 0 es la x y la posicion 1 es la y
      * @param respuesta Cadena Json
      * @author Luis Gallego
