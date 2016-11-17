@@ -162,7 +162,7 @@ public class AgentCar extends SingleAgent {
       }*/
 	  posiblesObjetivos = new int[5][5];
 	  eliminarObjetivosInaccesibles();
-	  System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
+	  //System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos)); //Codigo de prueba: muestra matriz de posibles objetivos.
 	  int[] objetivo = elegirObjetivo();
 	  String movimiento = caminoActual(objetivo);
 	  cont++;
