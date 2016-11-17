@@ -17,11 +17,12 @@ import java.util.Arrays;
  * @version 1.0
  */
 public class Knowledge {
-    private Knowledge instance = null;
+    private static Knowledge instance = null;
     private int map_id;
     private int[][] mapMatrix;
     private final int TAM_VISION = 5;
     private final int MIN_SIDE = 20;
+    private int actual_max_size = MIN_SIDE;
         
     public final int STATE_FREE = 0;
     public final int STATE_WALL = -1;
@@ -34,22 +35,26 @@ public class Knowledge {
      * @param map_id El identificador del número de mapa que vamos a usar
      * @return
      */
-    public Knowledge getDB(int map_id){        
+    public static Knowledge getDB(int map_id){        
         if(instance == null){
-            instance = new Knowledge();
-        }
-        this.map_id = map_id;
+            instance = new Knowledge(map_id);
+        }else{ instance.setMapID(map_id); };
         return instance;
     }
+    
+    private void setMapID(int id){
+        this.map_id = id;
+    }
 
-    private Knowledge() {     
+    private Knowledge(int map_id) {     
         Connection connection = null;
+        this.setMapID(map_id);
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:mapas.db");
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
             
-            String creteTableSQL = "CREATE TABLE IF NOT EXIST Mapa_" + this.map_id + "("+
+            String creteTableSQL = "CREATE TABLE IF NOT EXISTS Mapa_" + this.map_id + " ("+
                 "pos_x INTEGER NOT NULL,"+
                 "pos_y INTEGER NOT NULL,"+
                 "radar INTEGER DEFAULT 0,"+
@@ -57,9 +62,10 @@ public class Knowledge {
                 "CONSTRAINT pk_posicion PRIMARY KEY (pos_x, pos_y)"+
             ")";
 
-            statement.executeUpdate(creteTableSQL);
+            int state = statement.executeUpdate(creteTableSQL);
             this.createMatrix();
         } catch (SQLException e) {
+            System.err.println("Error en la creación de la DB");
             System.err.println(e);
         } finally {
             try {
@@ -85,14 +91,13 @@ public class Knowledge {
         try{
             int position_x, position_y;
             // Guardamos la posición actual del agente
-            position_x = gps.get("x").asInt();
-            position_y = gps.get("y").asInt();
+            JsonObject gpsObject = gps.get("gps").asObject();
+            position_x = gpsObject.get("x").asInt();
+            position_y = gpsObject.get("y").asInt();
             
             //Transformamos el array JSON del radar a un array de int
             JsonArray radarJson = radar.get("radar").asArray();
-            //int[] radarMatrix = new int[radarJson.size()];
             ArrayList<Integer> radarMatrix = new ArrayList<>();
-            //ArrayList<List<Integer>> radarMatrix2 = new ArrayList<>();
             
             for (int i = 0; i < radarJson.size(); i++) {                
                 radarMatrix.add(radarJson.get(i).asInt());
@@ -104,10 +109,12 @@ public class Knowledge {
             int lim_sup_row = 0;
             int lim_inf_row = 0;
             ArrayList<Integer> lista_filas = new ArrayList<>();
+            System.out.println("Radar: ");
             for(int i = 0; i < this.TAM_VISION; i++){
                 for(int j = 0; j < this.TAM_VISION; j++){
                    int valor_pos = radarMatrix.get(i*this.TAM_VISION + j);
-                   if( valor_pos == STATE_WALL){
+                   System.out.print(valor_pos +",");
+                   if( valor_pos == 1){
                        // Limites por filas
                        if(i < 3) lim_sup_row = Math.max(lim_sup_row, i);
                        else if(i > 3) lim_inf_row = Math.min(lim_sup_row, i);
@@ -116,7 +123,15 @@ public class Knowledge {
                        else if(j > 3) lim_inf_col = Math.min(lim_sup_col, j);
                    }
                 }
+                System.out.println(" | ");
             }
+            System.out.println("---------------------------------------");
+            System.out.println("Límite superior filas: " + lim_sup_row);
+            System.out.println("Límite inferior filas: " + lim_inf_row);
+            System.out.println("Límite superior cols:  " + lim_sup_col);
+            System.out.println("Límite inferior cols:  " + lim_inf_col);
+            
+            this.actual_max_size = Math.max(this.actual_max_size, Math.max(position_x + (this.TAM_VISION/2), position_y + (this.TAM_VISION/2)));
 
             // Nos conectamos a la DB
             connection = DriverManager.getConnection("jdbc:sqlite:mapas.db");
@@ -128,10 +143,11 @@ public class Knowledge {
                 for (int j = 0; j < this.TAM_VISION; j++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
-                    int radarValue = (i < lim_sup_row && i > lim_inf_row && j < lim_sup_col && j > lim_inf_col ) ? (radarMatrix.get(i*this.TAM_VISION + j)): 0;
-                    int state = radarValue == STATE_FREE ? turn : radarValue*(-1);
+                    //int radarValue = (i <= lim_sup_row && i >= lim_inf_row && j <= lim_sup_col && j >= lim_inf_col ) ? (radarMatrix.get(i*this.TAM_VISION + j)): 0;
+                    int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
+                    int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    String querySQL = "INSERT OR UPDATE INTO Map_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
+                    String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
                             + pos_x + ", " 
                             + pos_y + ", "
                             + radarValue + ", "
@@ -145,6 +161,7 @@ public class Knowledge {
                 }
             }
         } catch(SQLException e){
+            System.err.println("Error en la actualización");
             System.err.println(e);
         } finally {
             try {
@@ -168,13 +185,17 @@ public class Knowledge {
      */
     private void updateMatrix(int posx, int posy, int value){
         // Comprobamos el tamaño de la matriz
-        int max = Math.max(this.mapMatrix.length, Math.max(posx,posy)) + 1;
+        int max = Math.max(this.mapMatrix.length, this.actual_max_size+1);
         
         // Si nuestra matriz es más pequeña, le aumentamos el tamaño
         if(max > this.mapMatrix.length){
             int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[max][max];
-            System.arraycopy(tmp, 0, this.mapMatrix, 0, tmp.length);
+            for(int i = 0; i < tmp.length; i++){
+                for(int j = 0; j < tmp[i].length; j++){
+                    this.mapMatrix[i][j] = tmp[i][j];
+                }
+            }
         }
         
         this.mapMatrix[posx][posy] = value;
@@ -194,20 +215,22 @@ public class Knowledge {
             statement.setQueryTimeout(30);
 
             // Calculamos el tamaño del mapa que conocemos
-            String sqlCount = "SELECT COUNT(*) AS count FROM Map_" + this.map_id + ";";
+            String sqlCount = "SELECT MAX(pos_x, pos_y) AS count FROM Mapa_" + this.map_id + ";";
+            System.out.println("Executing: " + sqlCount);
             ResultSet rs = statement.executeQuery(sqlCount);
             while(rs.next()){
-                matrix_size = rs.getInt("count");
+                matrix_size = rs.getInt("count") + 1;
             }
+            System.out.println("El máximo de la matriz es: " + matrix_size);
             
             if(matrix_size > 0) {
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
 
                 // Obtenemos la información almacenada y la volcamos en la matriz
-                rs = statement.executeQuery("SELECT * FROM Map_"+this.map_id +";");
+                rs = statement.executeQuery("SELECT * FROM Mapa_"+this.map_id +";");
                 while(rs.next()){
-                    this.mapMatrix[rs.getInt("pos_x")][rs.getInt("pos_y")] = rs.getInt("value");
+                    this.mapMatrix[rs.getInt("pos_x")][rs.getInt("pos_y")] = rs.getInt("state");
                 }
             }else{
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
