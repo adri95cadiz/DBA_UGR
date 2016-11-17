@@ -3,6 +3,7 @@ package gugelcar;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.util.ArrayList;
 
 /**
  * Esta clase contiene el agente que realizará toda la funcionalidad
@@ -28,6 +29,7 @@ public class AgentCar extends SingleAgent {
     private int[] datosGPS = new int[2];
     private int[][] datosRadar = new int[5][5];
     private float[][] datosScanner = new float[5][5];
+    private ArrayList<Integer> datosTraza = new ArrayList<>();
     
     private int cont;
     
@@ -114,8 +116,8 @@ public class AgentCar extends SingleAgent {
           try {
               //System.out.println("Recibiendo respuesta2.");
               msjEntrada = receiveACLMessage();
-              System.out.println("Respuesta recibida. " + msjEntrada.getContent());     
-             if(msjEntrada.getContent().contains("scanner")) {
+              System.out.println("Respuesta recibida. " + msjEntrada.getContent());
+              if(msjEntrada.getContent().contains("scanner")) {
                   datosScanner = JSON.leerScanner(msjEntrada.getContent());
               } else if(msjEntrada.getContent().contains("radar")) {
                   datosRadar = JSON.leerRadar(msjEntrada.getContent());
@@ -146,8 +148,21 @@ public class AgentCar extends SingleAgent {
       }
   }
   
+   private void resultadoTraza() {
+      System.out.println("Recibiendo respuesta traza.");
+      try {
+          msjEntrada = receiveACLMessage();
+          if(msjEntrada.getContent().contains("trace")) {
+            datosTraza = JSON.leerTraza(msjEntrada.getContent());
+            System.out.println("Traza: " + msjEntrada.getContent());
+          }          
+      } catch (InterruptedException ex) {
+        System.err.println("Error de comunicación");
+      }
+  }
+  
   private void mover() {
-      if(cont==100){
+      if(cont==3){
           estadoActual = FINAL;
       } else {
           cont++;
@@ -176,6 +191,7 @@ public class AgentCar extends SingleAgent {
       System.out.println("Objetivo encontrado.");
       realizarAccion(JSON.realizarAccion("logout"));
       resultadoAccion();
+      resultadoTraza();
       fin = true;      
   }
   
