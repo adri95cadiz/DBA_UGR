@@ -25,7 +25,7 @@ public class Knowledge {
     public final int STATE_FREE = 0;
     public final int STATE_WALL = -1;
     public final int STATE_GOAL = -2;
-    public final int STATE_UNKNOW = -5;
+    public final int STATE_UNKNOW = 0;
     
     /**
      * Método que devuelve la instancia de Knowledge del agente
@@ -151,9 +151,6 @@ public class Knowledge {
         if(max > this.mapMatrix.length){
             int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[max][max];
-            for (int i = tmp.length; i < max; i++) {
-                Arrays.fill(this.mapMatrix[i], STATE_UNKNOW);
-            }
             System.arraycopy(tmp, 0, this.mapMatrix, 0, tmp.length);
         }
         
@@ -191,9 +188,6 @@ public class Knowledge {
                 }
             }else{
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
-                for(int[] row : this.mapMatrix){
-                    Arrays.fill(row, STATE_UNKNOW);
-                }
             }
         } catch(SQLException e){
             System.err.println(e);
