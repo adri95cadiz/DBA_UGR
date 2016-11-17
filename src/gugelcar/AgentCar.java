@@ -1,5 +1,6 @@
 package gugelcar;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
@@ -161,6 +162,7 @@ public class AgentCar extends SingleAgent {
       }*/
 	  posiblesObjetivos = new int[5][5];
 	  eliminarObjetivosInaccesibles();
+	  System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
 	  int[] objetivo = elegirObjetivo();
 	  String movimiento = caminoActual(objetivo);
 	  cont++;
@@ -173,32 +175,45 @@ public class AgentCar extends SingleAgent {
    * Pone los objetivos inaccesibles del 5x5 que rodea al gugelcar a -1 y los accesibles a 0.
    * @author Adrian Portillo Sanchez
    */
-  private void eliminarObjetivosInaccesibles(){
-	  for(int i = 0; i < 5; i++){
-		  for(int j = 0; j < 5; j++){
-			  if(esAccesible(i, j)){
-				  posiblesObjetivos[i][j] = 0;
-			  } else{
-				  posiblesObjetivos[i][j] = -1;
-			  }			  
+  private void eliminarObjetivosInaccesibles( ) {
+	  eliminarObjetivosInaccesiblesRec(2,2);
+	  posiblesObjetivos[2][2] = -1;		//Pone la posicion actual a -1, no se deberia deliberar sobre ella.
+	  for(int i = 0; i < 5; i++) {		//Pone los objetivos no alcanzados a -1, tampoco son accesibles.
+		  for(int j = 0; j < 5; j++) {
+			  if(posiblesObjetivos[i][j] == 0) posiblesObjetivos[i][j] = -1;
+		  }
+	  }
+	  for(int i = 0; i < 5; i++) {		//Pone los 1's a 0's dejando finalmente los accesibles a 0 y los inaccesibles a -1.
+		  for(int j = 0; j < 5; j++) {
+			  if(posiblesObjetivos[i][j] == 1) posiblesObjetivos[i][j] = 0;
 		  }
 	  }
   }
   /**
-   * Determina si la posición i, j del 5x5 que rodea al gugelcar es accesible o no.
+   * Funcion recursiva .
    * @author Adrian Portillo Sanchez
    */
-  private boolean esAccesible(int i, int j){
-	  boolean accesible = true;	  
-	  if(datosRadar[i][j]==-1) accesible = false;	  
-	  if(i==2 && j==2) accesible = false;
-	  return accesible;
+  private void eliminarObjetivosInaccesiblesRec(int row, int col) {
+	  if (row < 0 || row > 4 || col < 0 || col > 4) return;
+	  else if(posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) return;
+	  else if(datosRadar[row][col] == 1) posiblesObjetivos[row][col] = -1;
+	  else{
+		  posiblesObjetivos[row][col] = 1;
+		  eliminarObjetivosInaccesiblesRec(row-1,col-1);	//Superior izquierdo.
+		  eliminarObjetivosInaccesiblesRec(row-1,col);		//Superior centro.
+		  eliminarObjetivosInaccesiblesRec(row-1,col+1);	//Superior derecho.
+		  eliminarObjetivosInaccesiblesRec(row,col-1);		//Centro izquierdo.
+		  eliminarObjetivosInaccesiblesRec(row,col+1);		//Centro derecho.
+		  eliminarObjetivosInaccesiblesRec(row+1,col-1);	//Inferior izquierdo.
+		  eliminarObjetivosInaccesiblesRec(row+1,col);		//Inferior centro.
+		  eliminarObjetivosInaccesiblesRec(row+1,col+1);	//Inferior derecho.	
+	  }
   }
   /**
    * Determina el objetivo local dentro del 5x5 que rodea al gugelcar.
    * @author Adrian Portillo Sanchez
    */
-  private int[] elegirObjetivo(){
+  private int[] elegirObjetivo() {
 	  int[] objetivo = new int[2];
 	  return objetivo;
   }
@@ -207,7 +222,7 @@ public class AgentCar extends SingleAgent {
    * Decide el mejor camino hacia un objetivo dado dentro del 5x5 que rodea al gugelcar y devuelve el primer movimiento de ese camino.
    * @author Adrian Portillo Sanchez
    */
-  private String caminoActual(int[] objetivo){
+  private String caminoActual(int[] objetivo) {
 	  return("moveSW");
   }
   
