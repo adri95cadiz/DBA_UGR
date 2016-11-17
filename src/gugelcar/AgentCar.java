@@ -189,6 +189,7 @@ public class AgentCar extends SingleAgent {
 		  }
 	  }
   }
+  
   /**
    * Funcion recursiva .
    * @author Adrian Portillo Sanchez
@@ -209,6 +210,7 @@ public class AgentCar extends SingleAgent {
 		  eliminarObjetivosInaccesiblesRec(row+1,col+1);	//Inferior derecho.	
 	  }
   }
+  
   /**
    * Determina el objetivo local dentro del 5x5 que rodea al gugelcar.
    * @author Adrian Portillo Sanchez
