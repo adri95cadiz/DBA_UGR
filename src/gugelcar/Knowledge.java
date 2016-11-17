@@ -105,31 +105,31 @@ public class Knowledge {
             
             // Creamos un algoritmo para calcular que filas debemos de rellenar
             int lim_sup_col = 0;
-            int lim_inf_col = 0;
+            int lim_inf_col = this.TAM_VISION;
             int lim_sup_row = 0;
-            int lim_inf_row = 0;
+            int lim_inf_row = this.TAM_VISION;
+            
             ArrayList<Integer> lista_filas = new ArrayList<>();
-            System.out.println("Radar: ");
             for(int i = 0; i < this.TAM_VISION; i++){
                 for(int j = 0; j < this.TAM_VISION; j++){
                    int valor_pos = radarMatrix.get(i*this.TAM_VISION + j);
-                   System.out.print(valor_pos +",");
+                   //System.out.print(valor_pos +",");
                    if( valor_pos == 1){
                        // Limites por filas
-                       if(i < 3) lim_sup_row = Math.max(lim_sup_row, i);
-                       else if(i > 3) lim_inf_row = Math.min(lim_sup_row, i);
+                       if(i < this.TAM_VISION/2){
+                           lim_sup_row = Math.max(lim_sup_row, i);
+                       } else if(i > this.TAM_VISION/2) {
+                           lim_inf_row = Math.min(lim_inf_row, i);
+                       }
                        // Limites por columnas
-                       if(j < 3) lim_sup_col = Math.max(lim_sup_col, j);
-                       else if(j > 3) lim_inf_col = Math.min(lim_sup_col, j);
+                       if(j < this.TAM_VISION/2){
+                           lim_sup_col = Math.max(lim_sup_col, j);
+                       } else if(j > this.TAM_VISION/2) {
+                           lim_inf_col = Math.min(lim_inf_col, j);
+                       }
                    }
                 }
-                System.out.println(" | ");
             }
-            System.out.println("---------------------------------------");
-            System.out.println("Límite superior filas: " + lim_sup_row);
-            System.out.println("Límite inferior filas: " + lim_inf_row);
-            System.out.println("Límite superior cols:  " + lim_sup_col);
-            System.out.println("Límite inferior cols:  " + lim_inf_col);
             
             this.actual_max_size = Math.max(this.actual_max_size, Math.max(position_x + (this.TAM_VISION/2), position_y + (this.TAM_VISION/2)));
 
@@ -143,21 +143,22 @@ public class Knowledge {
                 for (int j = 0; j < this.TAM_VISION; j++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
-                    //int radarValue = (i <= lim_sup_row && i >= lim_inf_row && j <= lim_sup_col && j >= lim_inf_col ) ? (radarMatrix.get(i*this.TAM_VISION + j)): 0;
                     int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
                     int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
-                            + pos_x + ", " 
-                            + pos_y + ", "
-                            + radarValue + ", "
-                            + state
-                        +");";
-                    //Ejecutamos la consulta
-                    statement.executeUpdate(querySQL);
-                    
-                    //Actualizamos la fila y de la matriz
-                    updateMatrix(pos_x, pos_y, state);
+                    if(radarValue == 1 || (i >= lim_sup_row && i <= lim_inf_row && j >= lim_sup_col && j <= lim_inf_col)){
+                        String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
+                                + pos_x + ", " 
+                                + pos_y + ", "
+                                + radarValue + ", "
+                                + state
+                            +");";
+                        //Ejecutamos la consulta
+                        statement.executeUpdate(querySQL);
+
+                        //Actualizamos la fila y de la matriz
+                        updateMatrix(pos_x, pos_y, state);
+                    }
                 }
             }
         } catch(SQLException e){

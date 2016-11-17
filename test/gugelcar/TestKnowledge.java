@@ -22,7 +22,7 @@ public class TestKnowledge {
         // Setting GPS
         JsonObject gps = new JsonObject();
         JsonObject coord = new JsonObject();
-        coord.add("x", 30);
+        coord.add("x", 25);
         coord.add("y", 20);
         gps.add("gps", coord);
         
