@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -89,12 +90,34 @@ public class Knowledge {
             
             //Transformamos el array JSON del radar a un array de int
             JsonArray radarJson = radar.get("radar").asArray();
-            int[] radarMatrix = new int[radarJson.size()];   
+            //int[] radarMatrix = new int[radarJson.size()];
+            ArrayList<Integer> radarMatrix = new ArrayList<>();
+            //ArrayList<List<Integer>> radarMatrix2 = new ArrayList<>();
             
-            for (int i = 0; i < radarJson.size(); i++) {
-                radarMatrix[i] = radarJson.get(i).asInt();
+            for (int i = 0; i < radarJson.size(); i++) {                
+                radarMatrix.add(radarJson.get(i).asInt());
             }
             
+            // Creamos un algoritmo para calcular que filas debemos de rellenar
+            int lim_sup_col = 0;
+            int lim_inf_col = 0;
+            int lim_sup_row = 0;
+            int lim_inf_row = 0;
+            ArrayList<Integer> lista_filas = new ArrayList<>();
+            for(int i = 0; i < this.TAM_VISION; i++){
+                for(int j = 0; j < this.TAM_VISION; j++){
+                   int valor_pos = radarMatrix.get(i*this.TAM_VISION + j);
+                   if( valor_pos == STATE_WALL){
+                       // Limites por filas
+                       if(i < 3) lim_sup_row = Math.max(lim_sup_row, i);
+                       else if(i > 3) lim_inf_row = Math.min(lim_sup_row, i);
+                       // Limites por columnas
+                       if(j < 3) lim_sup_col = Math.max(lim_sup_col, j);
+                       else if(j > 3) lim_inf_col = Math.min(lim_sup_col, j);
+                   }
+                }
+            }
+
             // Nos conectamos a la DB
             connection = DriverManager.getConnection("jdbc:sqlite:mapas.db");
             Statement statement = connection.createStatement();
@@ -105,7 +128,7 @@ public class Knowledge {
                 for (int j = 0; j < this.TAM_VISION; j++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
-                    int radarValue = radarMatrix[i*this.TAM_VISION + j];
+                    int radarValue = (i < lim_sup_row && i > lim_inf_row && j < lim_sup_col && j > lim_inf_col ) ? (radarMatrix.get(i*this.TAM_VISION + j)): 0;
                     int state = radarValue == STATE_FREE ? turn : radarValue*(-1);
                     
                     String querySQL = "INSERT OR UPDATE INTO Map_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
