@@ -5,6 +5,7 @@
  */
 package gugelcar;
 import com.eclipsesource.json.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -23,7 +24,7 @@ public class JSON {
      * @author German Valdearenas
      * @return Devuelve un String con la cadena Json
      */
-    public static String realizarLogin() {
+   public static String realizarLogin() {
         /* La idea sera que el main nos solicitara
         el mapa a ejecutar.
         */
@@ -154,10 +155,23 @@ public class JSON {
             JsonObject objeto = Json.parse(respuesta).asObject();
             JsonObject gpsObjeto = objeto.get("gps").asObject();
             
-            gps[0] = gpsObjeto.getInt("x", -1);
-            gps[1] = gpsObjeto.getInt("y", -1);
+            System.out.println("el gps contiene ñalksjdflñjasdlkfjslñjfslñjkflñsjflñjksadlñfj : " + gpsObjeto);
+            
+            gps[0] = (gpsObjeto.get("y")).asInt();
+            gps[1] = (gpsObjeto.get("x")).asInt();
         }
         return gps;
     }
     
+    public static ArrayList<Integer> leerTraza(String respuesta) {
+        ArrayList<Integer> traza = new ArrayList<>();
+        if(!respuesta.contains("CRASHED")) {
+            JsonObject objeto = Json.parse(respuesta).asObject();
+            JsonArray vector = objeto.get("trace").asArray();
+            for(JsonValue valor : vector) {
+                traza.add(valor.asInt());
+            }
+        }
+        return traza;
+    }
 }

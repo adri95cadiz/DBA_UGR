@@ -1,9 +1,18 @@
 package gugelcar;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Esta clase contiene el agente que realizara toda la funcionalidad
@@ -25,12 +34,13 @@ public class AgentCar extends SingleAgent {
     private boolean login;
     private boolean fin;
     private int estadoActual;
-    private int nivelBateria=0;
+    private int nivelBateria=100;
     private int[] datosGPS = new int[2];
     private int[][] datosRadar = new int[5][5];
     private float[][] datosScanner = new float[5][5];
     private int[][] posiblesObjetivos = new int[5][5];
     private int cont;
+    private ArrayList<Integer> datosTraza = new ArrayList<>();
     
   public AgentCar(AgentID aid) throws Exception {
     super(aid);
@@ -115,7 +125,7 @@ public class AgentCar extends SingleAgent {
           try {
               //System.out.println("Recibiendo respuesta2.");
               msjEntrada = receiveACLMessage();
-              System.out.println("Respuesta recibida. " + msjEntrada.getContent());     
+              System.out.println("Respuesta recibida. " + msjEntrada.getContent() + "\n\n");     
              if(msjEntrada.getContent().contains("scanner")) {
                   datosScanner = JSON.leerScanner(msjEntrada.getContent());
               } else if(msjEntrada.getContent().contains("radar")) {
@@ -140,11 +150,31 @@ public class AgentCar extends SingleAgent {
           estadoActual = FINAL;
       } else if(datosRadar[2][2]==2) {
           estadoActual = FINAL;
-      } else if(nivelBateria == 1) {
+      } else if(nivelBateria < 50) {
           estadoActual = REPOSTAR;
       } else {
           estadoActual = ACCION;
       }
+  }
+  
+  
+  private void resultadoTraza() {
+      System.out.println("Recibiendo respuesta traza.");
+      try {
+          msjEntrada = receiveACLMessage();
+          JsonObject injson = Json.parse(msjEntrada.getContent()).asObject();
+          JsonArray ja = injson.get("trace").asArray();
+          byte data[] = new byte [ja.size()];
+          for ( int i = 0; i < data.length; i ++){
+              data[i] = (byte) ja.get(i).asInt();
+          }
+          FileOutputStream fos = new FileOutputStream("mitraza.png");
+          fos.write(data);
+          fos.close();
+          System.out.println("Traza Guardada");
+      } catch (InterruptedException | IOException ex) {
+        System.err.println("Error de comunicación");
+      } 
   }
   
   /**
@@ -160,15 +190,22 @@ public class AgentCar extends SingleAgent {
           realizarAccion(JSON.realizarAccion("moveSW"));
           estadoActual = RECIBIR_DATOS;
       }*/
+      if(cont == 100){
+          estadoActual = FINAL;
+      }
+      else{
 	  posiblesObjetivos = new int[5][5];
 	  eliminarObjetivosInaccesibles();
-	  //System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos)); //Codigo de prueba: muestra matriz de posibles objetivos.
-	  int[] objetivo = elegirObjetivo();
+	  System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos)); //Codigo de prueba: muestra matriz de posibles objetivos.
+	  //datosRadar = [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5];
+          int[] objetivo = elegirObjetivo();
 	  String movimiento = caminoActual(objetivo);
 	  cont++;
 	  nivelBateria--;
       realizarAccion(JSON.realizarAccion(movimiento));
       estadoActual = RECIBIR_DATOS;
+      System.out.println("Datos del GPS bien puestos: " + datosGPS[0]+datosGPS[1]);
+      }
   }
   
   /**
@@ -195,9 +232,12 @@ public class AgentCar extends SingleAgent {
    * @author Adrian Portillo Sanchez
    */
   private void eliminarObjetivosInaccesiblesRec(int row, int col) {
-	  if (row < 0 || row > 4 || col < 0 || col > 4) return;
-	  else if(posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) return;
-	  else if(datosRadar[row][col] == 1) posiblesObjetivos[row][col] = -1;
+	  if (row < 0 || row > 4 || col < 0 || col > 4) 
+              return;
+	  else if(posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) 
+              return;
+	  else if(datosRadar[row][col] == 1) 
+              posiblesObjetivos[row][col] = -1;
 	  else{
 		  posiblesObjetivos[row][col] = 1;
 		  eliminarObjetivosInaccesiblesRec(row-1,col-1);	//Superior izquierdo.
@@ -217,6 +257,21 @@ public class AgentCar extends SingleAgent {
    */
   private int[] elegirObjetivo() {
 	  int[] objetivo = new int[2];
+          float dist_menor = (float) Math.pow(10,10);
+          
+          for(int i = 1; i <= 3; i++){
+              for(int j = 1; j<=3; j++){
+                  System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
+                  System.out.println("Distancia menor: " + dist_menor + "  datosScanner: " + datosScanner[i][j]);
+                  if( posiblesObjetivos[i][j] == 0 && datosScanner[i][j] < dist_menor){
+                      dist_menor = datosScanner[i][j];
+                      objetivo[0] = i;
+                      objetivo[1] = j;
+                      System.out.println("Encontrado nuevo objetivo mejor para moverse");
+                  }
+              }
+          }
+          System.out.println("Objetivo final para moverse: " + objetivo[0] + objetivo[1]);
 	  return objetivo;
   }
   
@@ -225,7 +280,25 @@ public class AgentCar extends SingleAgent {
    * @author Adrian Portillo Sanchez
    */
   private String caminoActual(int[] objetivo) {
-	  return("moveSW");
+      String mov;
+      //System.out.println("Objetivo candidato a moverse: " + objetivo[0]+ objetivo[1]);
+      if(objetivo[0] == 1 && objetivo[1] == 2)
+        mov = "moveN";
+      else if(objetivo[0] == 1 && objetivo[1] == 3)
+        mov = "moveNE";
+      else if(objetivo[0] == 2 && objetivo[1] == 3)
+        mov = "moveE";
+      else if(objetivo[0] == 3 && objetivo[1] == 3)
+        mov = "moveSE";
+      else if(objetivo[0] == 3 && objetivo[1] == 2)
+        mov = "moveS";
+      else if(objetivo[0] == 3 && objetivo[1] == 1)
+        mov = "moveSW";
+      else if(objetivo[0] == 2 && objetivo[1] == 1)
+        mov = "moveW";
+      else
+        mov = "moveNW";
+	  return mov;
   }
   
   /**
@@ -247,6 +320,7 @@ public class AgentCar extends SingleAgent {
       System.out.println("Objetivo encontrado.");
       realizarAccion(JSON.realizarAccion("logout"));
       resultadoAccion();
+      resultadoTraza();
       System.out.println("Pasos: " + cont);
       fin = true;      
   }
