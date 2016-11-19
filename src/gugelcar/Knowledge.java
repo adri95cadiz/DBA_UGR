@@ -109,19 +109,17 @@ public class Knowledge {
             int lim_sup_row = 0;
             int lim_inf_row = this.TAM_VISION;
             
+            // Limites de las columnas
             if(radarMatrix.get(2*this.TAM_VISION + 0) == 1) lim_sup_col = 1;
             if(radarMatrix.get(2*this.TAM_VISION + 1) == 1) lim_sup_col = 2;
             if(radarMatrix.get(2*this.TAM_VISION + 4) == 1) lim_inf_col = 3;
             if(radarMatrix.get(2*this.TAM_VISION + 3) == 1) lim_inf_col = 2;
-            System.out.println(lim_sup_col);
-            System.out.println(lim_inf_col);
-
+            
+            // Limites de las filas
             if(radarMatrix.get(0*this.TAM_VISION + 2) == 1) lim_sup_row = 1;
             if(radarMatrix.get(1*this.TAM_VISION + 2) == 1) lim_sup_row = 2;
             if(radarMatrix.get(4*this.TAM_VISION + 2) == 1) lim_inf_row = 3;
             if(radarMatrix.get(3*this.TAM_VISION + 2) == 1) lim_inf_row = 2;
-            System.out.println(lim_sup_row);
-            System.out.println(lim_inf_row);
             
             /*ArrayList<Integer> lista_filas = new ArrayList<>();
             for(int i = 0; i < this.TAM_VISION; i++){
@@ -152,14 +150,14 @@ public class Knowledge {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
 
-            for (int i = lim_inf_row; i < lim_sup_row; i++) {                
+            for (int i = 0; i < this.TAM_VISION; i++) {                
                 for (int j = 0; j < this.TAM_VISION; j++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
                     int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
                     int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    if(radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col)){
+                    if(radarValue == 1 || (/*j >= lim_sup_col && j <= lim_inf_col &&*/ i >= lim_sup_row && i <= lim_inf_row)){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
                                 + pos_x + ", " 
                                 + pos_y + ", "
@@ -174,14 +172,14 @@ public class Knowledge {
                     }
                 }
             }
-            for (int j = lim_inf_col; j < lim_sup_col; j++) {                
+            for (int j = 0; j < this.TAM_VISION; j++) {                
                 for (int i = 0; i < this.TAM_VISION; i++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
                     int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
                     int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    if(radarValue == 1 || (i >= lim_sup_row && i <= lim_inf_row)){
+                    if(radarValue == 1 || (j >= lim_sup_col && i <= lim_inf_col)){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
                                 + pos_x + ", " 
                                 + pos_y + ", "
