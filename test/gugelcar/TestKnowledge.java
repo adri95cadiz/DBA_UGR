@@ -60,5 +60,44 @@ public class TestKnowledge {
             }
             System.out.print("\n");
         }
+        
+        System.out.print("\n");
+        
+        
+        // Setting GPS
+        gps = new JsonObject();
+        coord = new JsonObject();
+        coord.add("x", 24);
+        coord.add("y", 20);
+        gps.add("gps", coord);
+        
+        
+        // Setting radar
+        radar = new JsonObject();
+        radarValue = new JsonArray();
+        matrixValue = new int[]{
+            0,1,1,1,1,
+            0,0,0,0,0,
+            0,1,0,0,0,
+            0,1,0,0,0,
+            0,1,1,0,0
+        };
+        for(int cell : matrixValue){
+            radarValue.add(cell);
+        }
+        radar.add("radar", radarValue);
+        
+        System.out.println(radar);
+        System.out.println(gps);
+        System.out.println(turn);
+        
+        mapa = bd.updateStatus(radar, gps, 6);
+       for(int i = 0; i < mapa.length; i++){
+            //System.out.println("Fila["+ i + "/"+mapa.length+"]: "+mapa[i].length+" celdas.");
+            for (int j = 0; j < mapa[i].length; j++) {
+                System.out.print(mapa[i][j] + ",");
+            }
+            System.out.print("\n");
+        }
     }
 }
