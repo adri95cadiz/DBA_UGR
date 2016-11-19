@@ -42,6 +42,11 @@ public class AgentCar extends SingleAgent {
     private int cont;
     private ArrayList<Integer> datosTraza = new ArrayList<>();
     
+    // base de datos
+    Knowledge bd = Knowledge.getDB(1);
+    int[][] mapa;
+    JsonObject radar,gps; // toman valor en resultadoAccion() para usarlos en mapa.update
+    
   public AgentCar(AgentID aid) throws Exception {
     super(aid);
   }
@@ -57,7 +62,7 @@ public class AgentCar extends SingleAgent {
       msjSalida = null;
       msjEntrada = null;
       fin = false;
-      cont = 0;
+      cont = 1;
   }
 
   /**
@@ -129,8 +134,10 @@ public class AgentCar extends SingleAgent {
              if(msjEntrada.getContent().contains("scanner")) {
                   datosScanner = JSON.leerScanner(msjEntrada.getContent());
               } else if(msjEntrada.getContent().contains("radar")) {
+                this.radar = Json.parse(msjEntrada.getContent()).asObject();
                   datosRadar = JSON.leerRadar(msjEntrada.getContent());
               } else if(msjEntrada.getContent().contains("gps")) {
+                this.gps = Json.parse(msjEntrada.getContent()).asObject();
                   datosGPS = JSON.leerGPS(msjEntrada.getContent());
               } else if(login) {
                   System.out.println("ResultadoLogin: ");
@@ -194,6 +201,9 @@ public class AgentCar extends SingleAgent {
           estadoActual = FINAL;
       }
       else{
+          
+          //mapa = bd.updateStatus(radar, gps, cont);
+          
 	  posiblesObjetivos = new int[5][5];
 	  eliminarObjetivosInaccesibles();
 	  System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos)); //Codigo de prueba: muestra matriz de posibles objetivos.
