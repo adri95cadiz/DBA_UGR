@@ -22,13 +22,14 @@ public class JSON {
      * un mapa concreto y los sensores que elegimos.
      * @author Luis Gallego
      * @author German Valdearenas
+     * @param mapa_id El número del mapa que vamos a resolver
      * @return Devuelve un String con la cadena Json
      */
-   public static String realizarLogin() {
+   public static String realizarLogin(int mapa_id) {
         /* La idea sera que el main nos solicitara
         el mapa a ejecutar.
         */
-        String mapa = "map1";
+        String mapa = "map"+mapa_id;
         JsonObject objeto = new JsonObject();
         
         objeto.add("command", "login");

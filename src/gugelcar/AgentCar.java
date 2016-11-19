@@ -108,7 +108,7 @@ public class AgentCar extends SingleAgent {
   
   private void realizarLogin() {
       System.out.println("Enviando login.");
-      realizarAccion(JSON.realizarLogin());
+      realizarAccion(JSON.realizarLogin(this.MAPA));
       login = true;
       System.out.println("Pasamos a recibir datos login");
       estadoActual = RECIBIR_DATOS;
@@ -132,21 +132,24 @@ public class AgentCar extends SingleAgent {
           try {
               //System.out.println("Recibiendo respuesta2.");
               msjEntrada = receiveACLMessage();
-              System.out.println("Respuesta recibida. " + msjEntrada.getContent() + "\n\n");     
-             if(msjEntrada.getContent().contains("scanner")) {
-                  datosScanner = JSON.leerScanner(msjEntrada.getContent());
-              } else if(msjEntrada.getContent().contains("radar")) {
-                this.radar = Json.parse(msjEntrada.getContent()).asObject();
-                  datosRadar = JSON.leerRadar(msjEntrada.getContent());
-              } else if(msjEntrada.getContent().contains("gps")) {
-                this.gps = Json.parse(msjEntrada.getContent()).asObject();
-                  datosGPS = JSON.leerGPS(msjEntrada.getContent());
+              String recibido = msjEntrada.getContent();
+              System.out.println("Respuesta recibida. " + recibido + "\n\n");     
+              if(recibido.contains("scanner")) {
+                    datosScanner = JSON.leerScanner(recibido);
+              } else if(recibido.contains("radar")) {
+                    this.radar = Json.parse(recibido).asObject();
+                    datosRadar = JSON.leerRadar(recibido);
+              } else if(recibido.contains("gps")) {
+                    this.gps = Json.parse(recibido).asObject();
+                    datosGPS = JSON.leerGPS(recibido);
+              } else if(recibido.contains("trace")) {
+                  this.resultadoTraza();
               } else if(login) {
-                  System.out.println("ResultadoLogin: ");
-                  resultado = JSON.resultadoLogin(msjEntrada.getContent());
-                  login = false;
+                    System.out.println("ResultadoLogin: ");
+                    resultado = JSON.resultadoLogin(recibido);
+                    login = false;
               } else {
-                  resultado = JSON.resultadoAccion(msjEntrada.getContent());
+                    resultado = JSON.resultadoAccion(recibido);
               }                 
               
           } catch (InterruptedException ex) {
