@@ -76,6 +76,12 @@ public class Knowledge {
             }
         }
     }
+    /**
+     *  Este metodo devuelve la matriz de mapa
+     */
+    public int[][] getMapMatrix (){
+        return this.mapMatrix;    	
+    }
     
     /**
      *  Este método es el encargado de recibir los datos obtenidos por el agente y 
