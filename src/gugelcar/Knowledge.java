@@ -109,7 +109,17 @@ public class Knowledge {
             int lim_sup_row = 0;
             int lim_inf_row = this.TAM_VISION;
             
-            ArrayList<Integer> lista_filas = new ArrayList<>();
+            if(radarMatrix.get(2*this.TAM_VISION + 0) == 1) lim_sup_col = 1;
+            if(radarMatrix.get(2*this.TAM_VISION + 1) == 1) lim_sup_col = 2;
+            if(radarMatrix.get(2*this.TAM_VISION + 4) == 1) lim_inf_col = 3;
+            if(radarMatrix.get(2*this.TAM_VISION + 3) == 1) lim_inf_col = 2;
+
+            if(radarMatrix.get(0*this.TAM_VISION + 2) == 1) lim_sup_row = 1;
+            if(radarMatrix.get(1*this.TAM_VISION + 2) == 1) lim_sup_row = 2;
+            if(radarMatrix.get(4*this.TAM_VISION + 2) == 1) lim_inf_row = 3;
+            if(radarMatrix.get(3*this.TAM_VISION + 2) == 1) lim_inf_row = 2;
+            
+            /*ArrayList<Integer> lista_filas = new ArrayList<>();
             for(int i = 0; i < this.TAM_VISION; i++){
                 for(int j = 0; j < this.TAM_VISION; j++){
                    int valor_pos = radarMatrix.get(i*this.TAM_VISION + j);
@@ -129,7 +139,7 @@ public class Knowledge {
                        }
                    }
                 }
-            }
+            }*/
             
             this.actual_max_size = Math.max(this.actual_max_size, Math.max(position_x + (this.TAM_VISION/2), position_y + (this.TAM_VISION/2)));
 
