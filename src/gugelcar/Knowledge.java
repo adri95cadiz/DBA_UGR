@@ -148,15 +148,14 @@ public class Knowledge {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
 
-            for (int i = 0; i < this.TAM_VISION; i++) {
-                
+            for (int i = lim_inf_row; i < lim_sup_row; i++) {                
                 for (int j = 0; j < this.TAM_VISION; j++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
                     int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
                     int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    if(radarValue == 1 || (i >= lim_sup_row && i <= lim_inf_row && j >= lim_sup_col && j <= lim_inf_col)){
+                    if(radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col)){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
                                 + pos_x + ", " 
                                 + pos_y + ", "
@@ -171,6 +170,28 @@ public class Knowledge {
                     }
                 }
             }
+            /*for (int j = lim_inf_col; j < lim_sup_col; j++) {                
+                for (int i = 0; i < this.TAM_VISION; i++) {
+                    int pos_x = (position_x -(this.TAM_VISION/2) + i);
+                    int pos_y = (position_y -(this.TAM_VISION/2) + j);
+                    int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
+                    int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
+                    
+                    if(radarValue == 1 || (i >= lim_sup_row && i <= lim_inf_row)){
+                        String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
+                                + pos_x + ", " 
+                                + pos_y + ", "
+                                + radarValue + ", "
+                                + state
+                            +");";
+                        //Ejecutamos la consulta
+                        statement.executeUpdate(querySQL);
+
+                        //Actualizamos la fila y de la matriz
+                        updateMatrix(pos_x, pos_y, state);
+                    }
+                }
+            }*/
         } catch(SQLException e){
             System.err.println("Error en la actualización");
             System.err.println(e);
