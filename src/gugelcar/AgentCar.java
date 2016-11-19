@@ -177,7 +177,7 @@ public class AgentCar extends SingleAgent {
           for ( int i = 0; i < data.length; i ++){
               data[i] = (byte) ja.get(i).asInt();
           }
-          FileOutputStream fos = new FileOutputStream("mitraza.png");
+          FileOutputStream fos = new FileOutputStream("traza_"+this.MAPA+".png");
           fos.write(data);
           fos.close();
           System.out.println("Traza Guardada");
