@@ -113,11 +113,15 @@ public class Knowledge {
             if(radarMatrix.get(2*this.TAM_VISION + 1) == 1) lim_sup_col = 2;
             if(radarMatrix.get(2*this.TAM_VISION + 4) == 1) lim_inf_col = 3;
             if(radarMatrix.get(2*this.TAM_VISION + 3) == 1) lim_inf_col = 2;
+            System.out.println(lim_sup_col);
+            System.out.println(lim_inf_col);
 
             if(radarMatrix.get(0*this.TAM_VISION + 2) == 1) lim_sup_row = 1;
             if(radarMatrix.get(1*this.TAM_VISION + 2) == 1) lim_sup_row = 2;
             if(radarMatrix.get(4*this.TAM_VISION + 2) == 1) lim_inf_row = 3;
             if(radarMatrix.get(3*this.TAM_VISION + 2) == 1) lim_inf_row = 2;
+            System.out.println(lim_sup_row);
+            System.out.println(lim_inf_row);
             
             /*ArrayList<Integer> lista_filas = new ArrayList<>();
             for(int i = 0; i < this.TAM_VISION; i++){
