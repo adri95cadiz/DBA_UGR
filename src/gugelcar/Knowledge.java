@@ -170,7 +170,7 @@ public class Knowledge {
                     }
                 }
             }
-            /*for (int j = lim_inf_col; j < lim_sup_col; j++) {                
+            for (int j = lim_inf_col; j < lim_sup_col; j++) {                
                 for (int i = 0; i < this.TAM_VISION; i++) {
                     int pos_x = (position_x -(this.TAM_VISION/2) + i);
                     int pos_y = (position_y -(this.TAM_VISION/2) + j);
@@ -191,7 +191,7 @@ public class Knowledge {
                         updateMatrix(pos_x, pos_y, state);
                     }
                 }
-            }*/
+            }
         } catch(SQLException e){
             System.err.println("Error en la actualización");
             System.err.println(e);
