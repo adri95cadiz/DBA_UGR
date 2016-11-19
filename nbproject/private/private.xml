@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
@@ -9,3 +10,18 @@
         </group>
     </open-files>
 </project-private>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/gaedr/Proyectos/dbap2/src/gugelcar/JSON.java</file>
+            <file>file:/home/gaedr/Proyectos/dbap2/src/gugelcar/GugelCar.java</file>
+            <file>file:/home/gaedr/Proyectos/dbap2/src/gugelcar/AgentCar.java</file>
+            <file>file:/home/gaedr/Proyectos/dbap2/test/gugelcar/TestKnowledge.java</file>
+            <file>file:/home/gaedr/Proyectos/dbap2/src/gugelcar/Knowledge.java</file>
+        </group>
+    </open-files>
+</project-private>
+>>>>>>> sqlite_integration
