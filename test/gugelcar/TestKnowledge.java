@@ -15,8 +15,9 @@ import com.eclipsesource.json.JsonValue;
  */
 public class TestKnowledge {
     public static void main(String[] args) throws Exception {
-        Knowledge bd = Knowledge.getDB(1);
-        int turn = 5;
+        Knowledge bd = Knowledge.getDB(2);
+        bd.drawMap();
+        /*int turn = 5;
         int[][] mapa;
         
         // Setting GPS
@@ -51,17 +52,7 @@ public class TestKnowledge {
         mapa = bd.updateStatus(radar, gps, turn);
         
         // Printing
-        
-        
-        for(int i = 0; i < mapa.length; i++){
-            //System.out.println("Fila["+ i + "/"+mapa.length+"]: "+mapa[i].length+" celdas.");
-            for (int j = 0; j < mapa[i].length; j++) {
-                System.out.print(mapa[i][j] + ",");
-            }
-            System.out.print("\n");
-        }
-        
-        System.out.print("\n");
+        bd.drawMap();
         
         
         // Setting GPS
@@ -92,12 +83,6 @@ public class TestKnowledge {
         System.out.println(turn);
         
         mapa = bd.updateStatus(radar, gps, 6);
-       for(int i = 0; i < mapa.length; i++){
-            //System.out.println("Fila["+ i + "/"+mapa.length+"]: "+mapa[i].length+" celdas.");
-            for (int j = 0; j < mapa[i].length; j++) {
-                System.out.print(mapa[i][j] + ",");
-            }
-            System.out.print("\n");
-        }
+       bd.drawMap();*/
     }
 }

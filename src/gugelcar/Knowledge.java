@@ -163,7 +163,7 @@ public class Knowledge {
                     int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
                     int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    if(radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)){
+                    if((radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)) && pos_x > 0 && pos_y > 0){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
                                 + pos_x + ", " 
                                 + pos_y + ", "
@@ -313,5 +313,32 @@ public class Knowledge {
                 System.err.println(e);
             }
         }
+    }
+    
+    public void drawMap(){
+        System.out.println("| Mapa actual - Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length);
+        for(int i = 0; i < this.mapMatrix.length; i++){
+            for (int j = 0; j < this.mapMatrix[i].length; j++) {
+                int value = this.mapMatrix[i][j];
+                switch (value) {
+                    case 0:
+                        System.out.print(" ⎕ ");
+                        break;
+                    case -1:
+                        System.out.print(" ▉ ");
+                        break;
+                    case -2:
+                        System.out.print(" ╳ ");
+                        break;
+                    default:
+                        if(value < 10) System.out.print(" " + value+ " ");
+                        else if(value < 100) System.out.print(" " + value);
+                        else System.out.print(value);
+                        break;
+                }
+            }
+            System.out.print("\n");
+        }
+        System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
     }
 }

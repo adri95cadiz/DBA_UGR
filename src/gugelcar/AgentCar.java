@@ -39,11 +39,13 @@ public class AgentCar extends SingleAgent {
     private int[][] datosRadar = new int[5][5];
     private float[][] datosScanner = new float[5][5];
     private int[][] posiblesObjetivos = new int[5][5];
-    private int cont;
+    private int contadorPasos;
     private ArrayList<Integer> datosTraza = new ArrayList<>();
     
+    private final int MAPA = 2;
+    
     // base de datos
-    Knowledge bd = Knowledge.getDB(1);
+    Knowledge bd = Knowledge.getDB(this.MAPA);
     int[][] mapa;
     JsonObject radar,gps; // toman valor en resultadoAccion() para usarlos en mapa.update
     
@@ -62,7 +64,7 @@ public class AgentCar extends SingleAgent {
       msjSalida = null;
       msjEntrada = null;
       fin = false;
-      cont = 1;
+      contadorPasos = 1;
   }
 
   /**
@@ -197,12 +199,11 @@ public class AgentCar extends SingleAgent {
           realizarAccion(JSON.realizarAccion("moveSW"));
           estadoActual = RECIBIR_DATOS;
       }*/
-      if(cont == 100){
+      if(contadorPasos == 100){
           estadoActual = FINAL;
       }
       else{
-          
-          //mapa = bd.updateStatus(radar, gps, cont);
+          mapa = bd.updateStatus(radar, gps, contadorPasos);
           
 	  posiblesObjetivos = new int[5][5];
 	  eliminarObjetivosInaccesibles();
@@ -210,7 +211,7 @@ public class AgentCar extends SingleAgent {
 	  //datosRadar = [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5];
           int[] objetivo = elegirObjetivo();
 	  String movimiento = caminoActual(objetivo);
-	  cont++;
+	  contadorPasos++;
 	  nivelBateria--;
       realizarAccion(JSON.realizarAccion(movimiento));
       estadoActual = RECIBIR_DATOS;
@@ -331,7 +332,7 @@ public class AgentCar extends SingleAgent {
       realizarAccion(JSON.realizarAccion("logout"));
       resultadoAccion();
       resultadoTraza();
-      System.out.println("Pasos: " + cont);
+      System.out.println("Pasos: " + contadorPasos);
       fin = true;      
   }
   
