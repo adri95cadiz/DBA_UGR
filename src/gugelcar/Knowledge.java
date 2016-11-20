@@ -20,6 +20,7 @@ public class Knowledge {
     private static Knowledge instance = null;
     private int map_id;
     private int[][] mapMatrix;
+    private int[] pos_actual = new int[2];
     private final int TAM_VISION = 5;
     private final int MIN_SIDE = 20;
     private int actual_max_size = MIN_SIDE;
@@ -101,6 +102,9 @@ public class Knowledge {
             position_x = gpsObject.get("y").asInt();
             position_y = gpsObject.get("x").asInt();
             
+            this.pos_actual[0] = position_x;
+            this.pos_actual[1] = position_y;
+            
             //Transformamos el array JSON del radar a un array de int
             JsonArray radarJson = radar.get("radar").asArray();
             ArrayList<Integer> radarMatrix = new ArrayList<>();
@@ -126,28 +130,6 @@ public class Knowledge {
             if(radarMatrix.get(1*this.TAM_VISION + 2) == 1) lim_sup_row = 2;
             if(radarMatrix.get(4*this.TAM_VISION + 2) == 1) lim_inf_row = 3;
             if(radarMatrix.get(3*this.TAM_VISION + 2) == 1) lim_inf_row = 2;
-            
-            /*ArrayList<Integer> lista_filas = new ArrayList<>();
-            for(int i = 0; i < this.TAM_VISION; i++){
-                for(int j = 0; j < this.TAM_VISION; j++){
-                   int valor_pos = radarMatrix.get(i*this.TAM_VISION + j);
-                   //System.out.print(valor_pos +",");
-                   if( valor_pos == 1){
-                       // Limites por filas
-                       if(i < this.TAM_VISION/2){
-                           lim_sup_row = Math.max(lim_sup_row, i);
-                       } else if(i > this.TAM_VISION/2) {
-                           lim_inf_row = Math.min(lim_inf_row, i);
-                       }
-                       // Limites por columnas
-                       if(j < this.TAM_VISION/2){
-                           lim_sup_col = Math.max(lim_sup_col, j);
-                       } else if(j > this.TAM_VISION/2) {
-                           lim_inf_col = Math.min(lim_inf_col, j);
-                       }
-                   }
-                }
-            }*/
             
             this.actual_max_size = Math.max(this.actual_max_size, Math.max(position_x + (this.TAM_VISION/2), position_y + (this.TAM_VISION/2)));
 
@@ -178,28 +160,6 @@ public class Knowledge {
                     }
                 }
             }
-            /*for (int j = 0; j < this.TAM_VISION; j++) {                
-                for (int i = 0; i < this.TAM_VISION; i++) {
-                    int pos_x = (position_x -(this.TAM_VISION/2) + i);
-                    int pos_y = (position_y -(this.TAM_VISION/2) + j);
-                    int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
-                    int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
-                    
-                    if(radarValue == 1 || (j >= muroInferiorCol(j, radarMatrix) && j <= muroInferiorRow(j, radarMatrix) && i >= lim_sup_col && i <= lim_inf_col)){
-                        String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
-                                + pos_x + ", " 
-                                + pos_y + ", "
-                                + radarValue + ", "
-                                + state
-                            +");";
-                        //Ejecutamos la consulta
-                        statement.executeUpdate(querySQL);
-
-                        //Actualizamos la fila y de la matriz
-                        updateMatrix(pos_x, pos_y, state);
-                    }
-                }
-            }*/
         } catch(SQLException e){
             System.err.println("Error en la actualización");
             System.err.println(e);
@@ -214,34 +174,6 @@ public class Knowledge {
         
         return this.mapMatrix;
     }
-    
-    /*private int muroInferiorRow (int row, ArrayList<Integer> radarMatrix){
-        int muro = 0;
-        if(radarMatrix.get(row*this.TAM_VISION + 0) == 1) muro = 1;
-        if(radarMatrix.get(row*this.TAM_VISION + 1) == 1) muro = 2;
-        return muro;
-    } 
-    
-    private int muroSuperiorRow (int row, ArrayList<Integer> radarMatrix){
-        int muro = 0;
-        if(radarMatrix.get(row*this.TAM_VISION + 4) == 1) muro = 3;
-        if(radarMatrix.get(row*this.TAM_VISION + 3) == 1) muro = 2;
-        return muro;
-    }
-    
-    private int muroInferiorCol (int col, ArrayList<Integer> radarMatrix){
-        int muro = 0;
-        if(radarMatrix.get(0*this.TAM_VISION + col) == 1) muro = 1;
-        if(radarMatrix.get(1*this.TAM_VISION + col) == 1) muro = 2;
-        return muro;
-    } 
-    
-    private int muroSuperiorCol (int col, ArrayList<Integer> radarMatrix){
-        int muro = 0;
-        if(radarMatrix.get(4*this.TAM_VISION + col) == 1) muro = 1;
-        if(radarMatrix.get(3*this.TAM_VISION + col) == 1) muro = 2;
-        return muro;
-    }*/
     
     /**
      * Este método actualiza un valor de estado de una coordenada.
@@ -284,7 +216,7 @@ public class Knowledge {
 
             // Calculamos el tamaño del mapa que conocemos
             String sqlCount = "SELECT MAX(pos_x, pos_y) AS count FROM Mapa_" + this.map_id + ";";
-            System.out.println("Executing: " + sqlCount);
+            
             ResultSet rs = statement.executeQuery(sqlCount);
             while(rs.next()){
                 matrix_size = rs.getInt("count") + 1;
@@ -320,25 +252,30 @@ public class Knowledge {
         for(int i = 0; i < this.mapMatrix.length; i++){
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
-                switch (value) {
-                    case 0:
-                        System.out.print(" ⎕ ");
-                        break;
-                    case -1:
-                        System.out.print(" ▉ ");
-                        break;
-                    case -2:
-                        System.out.print(" ╳ ");
-                        break;
-                    default:
-                        if(value < 10) System.out.print(" " + value+ " ");
-                        else if(value < 100) System.out.print(" " + value);
-                        else System.out.print(value);
-                        break;
+                //if(pos_actual[0] == i && pos_actual[1] == j) System.out.print(" ⎔ ");
+                if(pos_actual[0] == i && pos_actual[1] == j) System.out.print(" ● ");
+                else{
+                    switch (value) {
+                        case 0:
+                            System.out.print(" ⎕ ");
+                            break;
+                        case -1:
+                            System.out.print("▉▉▉");
+                            break;
+                        case -2:
+                            System.out.print(" ╳ ");
+                            break;
+                        default:
+                            if(value < 10) System.out.print(" " + value+ " ");
+                            else if(value < 100) System.out.print(" " + value);
+                            else System.out.print(value);
+                            break;
+                    }
                 }
             }
             System.out.print("\n");
         }
+        
         System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
     }
 }

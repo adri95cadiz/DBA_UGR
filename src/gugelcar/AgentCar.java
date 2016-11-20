@@ -43,6 +43,7 @@ public class AgentCar extends SingleAgent {
     private ArrayList<Integer> datosTraza = new ArrayList<>();
     
     private final int MAPA = 2;
+    private final int LIMITE_PASOS = 50;
     
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
@@ -103,6 +104,7 @@ public class AgentCar extends SingleAgent {
   @Override
   public void finalize() {
     System.out.println("Gugelcar("+ this.getName() +") Terminando");
+    bd.drawMap();
     super.finalize();
   }
   
@@ -143,6 +145,7 @@ public class AgentCar extends SingleAgent {
                     this.gps = Json.parse(recibido).asObject();
                     datosGPS = JSON.leerGPS(recibido);
               } else if(recibido.contains("trace")) {
+                  System.out.println("Traza recibida");
                   this.resultadoTraza();
               } else if(login) {
                     System.out.println("ResultadoLogin: ");
@@ -202,7 +205,11 @@ public class AgentCar extends SingleAgent {
           realizarAccion(JSON.realizarAccion("moveSW"));
           estadoActual = RECIBIR_DATOS;
       }*/
-      if(contadorPasos == 10){
+      if(nivelBateria < 10){
+          repostar();
+      }
+      
+      if(contadorPasos == LIMITE_PASOS){
           estadoActual = FINAL;
       }
       else{
@@ -216,10 +223,11 @@ public class AgentCar extends SingleAgent {
 	  String movimiento = caminoActual(objetivo);
 	  contadorPasos++;
 	  nivelBateria--;
-      realizarAccion(JSON.realizarAccion(movimiento));
-      estadoActual = RECIBIR_DATOS;
-      System.out.println("Datos del GPS bien puestos: " + datosGPS[0]+datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos+"\n");
+          realizarAccion(JSON.realizarAccion(movimiento));
+          estadoActual = RECIBIR_DATOS;
+          System.out.println("Datos del GPS bien puestos: " + datosGPS[0]+datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos+"\n");
       }
+      bd.drawMap();
   }
   
   /**

@@ -5,3 +5,4 @@ dist/
 nbdist/
 .nb-gradle/
 mapas.db
+traza_*.png
