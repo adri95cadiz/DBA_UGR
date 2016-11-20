@@ -21,6 +21,7 @@ public class GugelCar {
       Car = new AgentCar(new AgentID("GugelCar"));
     } catch (Exception e) {
       System.err.println("Error al crear los agentes");
+      System.err.println(e);
       System.exit(1);
     }
     Car.start();

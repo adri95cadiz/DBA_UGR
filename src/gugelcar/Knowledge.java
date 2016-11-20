@@ -213,14 +213,27 @@ public class Knowledge {
             connection = DriverManager.getConnection("jdbc:sqlite:mapas.db");
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
-
-            // Calculamos el tamaño del mapa que conocemos
-            String sqlCount = "SELECT MAX(pos_x, pos_y) AS count FROM Mapa_" + this.map_id + ";";
             
-            ResultSet rs = statement.executeQuery(sqlCount);
+            String sqlCount;
+            ResultSet rs;
+
+            // Calculamos el tamaño máximo de la matriz
+            // Por posición X
+            sqlCount = "SELECT MAX(pos_x) AS count FROM Mapa_" + this.map_id + ";";
+            
+            rs = statement.executeQuery(sqlCount);
             while(rs.next()){
-                matrix_size = rs.getInt("count") + 1;
+                matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
             }
+            
+            // Por posición Y
+            sqlCount = "SELECT MAX(pos_y) AS count FROM Mapa_" + this.map_id + ";";
+            
+            rs = statement.executeQuery(sqlCount);
+            while(rs.next()){
+                matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
+            }     
+            
             System.out.println("El máximo de la matriz es: " + matrix_size);
             
             if(matrix_size > 0) {
