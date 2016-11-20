@@ -145,7 +145,7 @@ public class Knowledge {
                     int radarValue = radarMatrix.get(i*this.TAM_VISION + j);
                     int state = (radarValue == STATE_FREE) ? turn : radarValue*(-1);
                     
-                    if((radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)) && pos_x > 0 && pos_y > 0){
+                    if((radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)) && pos_x >= 0 && pos_y >= 0){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, radar, state) VALUES("
                                 + pos_x + ", " 
                                 + pos_y + ", "
@@ -262,9 +262,12 @@ public class Knowledge {
     
     public void drawMap(){
         System.out.println("| Mapa actual - Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length);
+        for(int i = 0; i < actual_max_size;i++) System.out.print("▉▉▉");
+        System.out.println("");
         for(int i = 0; i < this.mapMatrix.length; i++){
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
+                if(j == 0) System.out.print("▉▉▉");
                 //if(pos_actual[0] == i && pos_actual[1] == j) System.out.print(" ⎔ ");
                 if(pos_actual[0] == i && pos_actual[1] == j) System.out.print(" ● ");
                 else{
