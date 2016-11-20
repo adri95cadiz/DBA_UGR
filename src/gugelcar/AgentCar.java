@@ -202,7 +202,7 @@ public class AgentCar extends SingleAgent {
           realizarAccion(JSON.realizarAccion("moveSW"));
           estadoActual = RECIBIR_DATOS;
       }*/
-      if(contadorPasos == 100){
+      if(contadorPasos == 10){
           estadoActual = FINAL;
       }
       else{
@@ -218,7 +218,7 @@ public class AgentCar extends SingleAgent {
 	  nivelBateria--;
       realizarAccion(JSON.realizarAccion(movimiento));
       estadoActual = RECIBIR_DATOS;
-      System.out.println("Datos del GPS bien puestos: " + datosGPS[0]+datosGPS[1]);
+      System.out.println("Datos del GPS bien puestos: " + datosGPS[0]+datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos+"\n");
       }
   }
   

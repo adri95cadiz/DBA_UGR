@@ -83,6 +83,43 @@ public class TestKnowledge {
         System.out.println(turn);
         
         mapa = bd.updateStatus(radar, gps, 6);
+       bd.drawMap();
+       
+       
+       
+       
+       
+       
+       
+       // Setting GPS
+        gps = new JsonObject();
+        coord = new JsonObject();
+        coord.add("x", 23);
+        coord.add("y", 20);
+        gps.add("gps", coord);
+        
+        
+        // Setting radar
+        radar = new JsonObject();
+        radarValue = new JsonArray();
+        matrixValue = new int[]{
+            0,1,1,0,0,
+            0,1,1,1,1,
+            0,0,0,0,0,
+            0,1,0,0,0,
+            0,1,0,0,0
+           
+        };
+        for(int cell : matrixValue){
+            radarValue.add(cell);
+        }
+        radar.add("radar", radarValue);
+        
+        System.out.println(radar);
+        System.out.println(gps);
+        System.out.println(turn);
+        
+        mapa = bd.updateStatus(radar, gps, 7);
        bd.drawMap();*/
     }
 }

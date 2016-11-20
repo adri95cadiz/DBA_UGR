@@ -98,8 +98,8 @@ public class Knowledge {
             int position_x, position_y;
             // Guardamos la posición actual del agente
             JsonObject gpsObject = gps.get("gps").asObject();
-            position_x = gpsObject.get("x").asInt();
-            position_y = gpsObject.get("y").asInt();
+            position_x = gpsObject.get("y").asInt();
+            position_y = gpsObject.get("x").asInt();
             
             //Transformamos el array JSON del radar a un array de int
             JsonArray radarJson = radar.get("radar").asArray();
