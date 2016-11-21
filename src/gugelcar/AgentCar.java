@@ -45,8 +45,8 @@ public class AgentCar extends SingleAgent {
     private boolean camino_aun = false;
     Path camino = new Path(posiblesObjetivos, 12, 12);
     
-    private final int MAPA = 10;
-    private final int LIMITE_PASOS = 1000;
+    private final int MAPA = 2;
+    private final int LIMITE_PASOS = 70;
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
@@ -341,22 +341,22 @@ public class AgentCar extends SingleAgent {
      *
      * @author Adrian Portillo Sanchez
      */
-    private String pathLocalObj(int[] objetivo) {
+    private String pathLocalObj(int objetivo) {
         String mov;
         //System.out.println("Objetivo candidato a moverse: " + objetivo[0]+ objetivo[1]);
-        if (objetivo[0] == 1 && objetivo[1] == 2) {
+        if (objetivo == 5) {
             mov = "moveN";
-        } else if (objetivo[0] == 1 && objetivo[1] == 3) {
+        } else if (objetivo == 4) {
             mov = "moveNE";
-        } else if (objetivo[0] == 2 && objetivo[1] == 3) {
+        } else if (objetivo == -1) {
             mov = "moveE";
-        } else if (objetivo[0] == 3 && objetivo[1] == 3) {
+        } else if (objetivo == -6) {
             mov = "moveSE";
-        } else if (objetivo[0] == 3 && objetivo[1] == 2) {
+        } else if (objetivo == -5) {
             mov = "moveS";
-        } else if (objetivo[0] == 3 && objetivo[1] == 1) {
+        } else if (objetivo == -4) {
             mov = "moveSW";
-        } else if (objetivo[0] == 2 && objetivo[1] == 1) {
+        } else if (objetivo == 1) {
             mov = "moveW";
         } else {
             mov = "moveNW";
@@ -387,14 +387,14 @@ public class AgentCar extends SingleAgent {
         } else {
             camino_aun = true;
             if (camino_aun) {
-                posiblesObjetivos = new int[5][5];
-                eliminarObjetivosInaccesibles();
+            posiblesObjetivos = new int[5][5];
+            eliminarObjetivosInaccesibles();
                 System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
 
-                // Se decide qué casilla es mejor
-                int[] objetivo = chooseLocalObj();
-                int objetivo_id = objetivo[0] * 5 + objetivo[1];
-                // Se calcula el camino optimo para llegar hasta ella
+            // Se decide qué casilla es mejor
+            int[] objetivo_alcanzar = chooseLocalObj();
+            int objetivo_id = objetivo_alcanzar[0] * 5 + objetivo_alcanzar[1];
+            // Se calcula el camino optimo para llegar hasta ella
 
                 System.out.println("RADAR ------------------> ");
                 for (int i = 0; i < 5; i++) {
@@ -418,30 +418,43 @@ public class AgentCar extends SingleAgent {
                 System.out.println("OBJETIVO ID ------------> ");
                 System.out.println(objetivo_id);
 
-                camino.changeMap(posiblesObjetivos);
-                camino.changeObjetive(objetivo_id);
+            camino.changeMap(posiblesObjetivos);
+            camino.changeObjetive(objetivo_id);
                 System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
-                camino.pathObjetive();
+            camino.pathObjetive();
                 System.out.println("NUEVO PATH OBTENIDO");
-                path_local = camino.getPath();
+            path_local = camino.getPath();
                 System.out.println("COORDENADAS DE TODO EL PATH --------------> ");
                 for (int i = 0; i < path_local.size(); i++) {
                     System.out.print(path_local.get(i) / 5 + "-" + path_local.get(i) % 5 + " ");
                 }
                 System.out.println("\nCaminito pintao");
                 camino.printPath();
-                int[] objetivo2 = {path_local.get(1) / 5, path_local.get(1) % 5};
+                
+                // transformo las id a coordenadas y se restan, se toman en valor abosulo y depende del resultado se sabe la dirección
+                
+                int primera_casilla = path_local.get(0);
+                int segunda_casilla = path_local.get(1);
+                
+            int obj_prox_mov = primera_casilla - segunda_casilla;
+            
+                System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
+                
+            int [] obj_borrar = {path_local.get(1) / 5 , path_local.get(1) % 5};
+                
+                
+            //int[] objetivo2 = {path_local.get(1) / 5, path_local.get(1) % 5};
                 System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
-                path_local.clear();
-                System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + objetivo2[0] + objetivo2[1]);
+                
+              //  System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);
                 // Se van haciendo cada uno de los movimientos
-                String movimiento = pathLocalObj(objetivo2);
-
-                updateMap();
+            String movimiento = pathLocalObj(obj_prox_mov);
+            path_local.clear();
+            updateMap();
                 System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
                 contadorPasos++;
                 nivelBateria--;
-                realizarAccion(JSON.realizarAccion(movimiento));
+            realizarAccion(JSON.realizarAccion(movimiento));
                 estadoActual = RECIBIR_DATOS;
                 
             }
