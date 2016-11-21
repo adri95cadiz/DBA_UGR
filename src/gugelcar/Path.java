@@ -1,15 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gugelcar;
 
 import java.util.ArrayList;
 
 /**
  *
- * @author Lopeare
+ * @author Raúl López Arévalo
+ * 
+ * Clase que calcula el camino óptimo desde una posición A a otra B en un mapa 
+ * utilizando el algoritmo A*.
+ * 
  */
 public class Path {
 
@@ -17,29 +16,56 @@ public class Path {
     private ArrayList<Node> open_list = new ArrayList<>();
     private ArrayList<Node> close_list = new ArrayList<>();
     private int objetive_id;
-    private int agent_id;
+    private int start_id;
     private int[][] map;
-    
+    /**
+     * Constructor
+     * 
+     * @param map Mapa
+     * @param agent_id ID posición actual
+     * @param objetive_id ID posición destino
+     */
     public Path(int[][] map, int agent_id, int objetive_id) {
         this.map = map;
         this.map[objetive_id / 5][objetive_id % 5] = 2;
-        this.agent_id = agent_id;
+        this.start_id = agent_id;
         this.objetive_id = objetive_id;
     }
+    /**
+     * Actualiza el ID del objetivo
+     * 
+     * @param node_id ID nuevo
+     */
     public void changeObjetive( int node_id ){
         this.objetive_id = node_id;
     }
+    /**
+     * Actualiza el mapa
+     * 
+     * @param map Mapa nuevo
+     */
     public void changeMap( int[][] map ){
         this.map = map;
     }
-    // Devuelve el coste del nodo actual hasta la posicion del agente
-    public int costToCurrentNode(int node_id) {
+    /**
+     * Calcula el coste del nodo actual hasta la posición del nodo inicial
+     * 
+     * @param node_id ID del nodo a saber su coste
+     * @return 1 Si el nodo está en la cercanía de la posición inicial
+     *         2 Si el nodo está más alejado
+     */
+    private int costToCurrentNode(int node_id) {
         boolean ext_node = node_id / 5 == 4 || node_id / 5 == 0
                 || node_id % 5 == 4 || node_id % 5 == 0;
         return ext_node ? 2 : 1;
     }
-
-    public int costToObjetiveNode(int node_id) {
+    /**
+     * Calcula el coste dle nodo actual hasta la posición del nodo objetivo
+     * 
+     * @param node_id ID del nodo a saber su coste
+     * @return Valor del coste
+     */
+    private int costToObjetiveNode(int node_id) {
         int coord_i = node_id / 5;
         int coord_j = node_id % 5;
         int obj_i = this.objetive_id / 5;
@@ -47,13 +73,22 @@ public class Path {
 
         return Math.abs(coord_i - obj_i) + Math.abs(coord_j - obj_j);
     }
-
-    public int calculateCostNode(int node_id) {
+    /**
+     * Calcula el coste total de moverse a un Nodo dado
+     * 
+     * @param node_id ID del nodo a saber su coste
+     * @return Coste total
+     */
+    private int calculateCostNode(int node_id) {
         return costToCurrentNode(node_id) + costToObjetiveNode(node_id);
     }
-
-    // Comprueba si un nodo dado está en open_list
-    public boolean containsNodeOpenList(int node_id) {
+    /**
+     * Comprueba si un Nodo se encuentra dentro de <open_list>
+     * 
+     * @param node_id ID del nodo a comprobar.
+     * @return exist <true> si se encuentra, <false> en caso contrario
+     */
+    private boolean containsNodeOpenList(int node_id) {
         boolean exist = false;
         for (Node current_node : open_list) {
             if (current_node.getId() == node_id) {
@@ -62,9 +97,13 @@ public class Path {
         }
         return exist;
     }
-
-    // Comprueba si un nodo dado está en close_list
-    public boolean containsNodeCloseList(int node_id) {
+    /**
+     * Compreuba si un Nodo se encuentra dentor de <close_list>
+     * 
+     * @param node_id ID del nodo a comprobar
+     * @return exist <true> si se encuentra, <false> en caso contrario
+     */
+    private boolean containsNodeCloseList(int node_id) {
         boolean exist = false;
         for (Node current_node : close_list) {
             if (current_node.getId() == node_id) {
@@ -73,14 +112,22 @@ public class Path {
         }
         return exist;
     }
-
-    // Comprueba si un nodo está en alguna lista
-    public boolean containsNodeSomeList(int node_id) {
+    /**
+     * Comprueba si un Nodo se encuentra en alguna lista <open_list> o <close_list>
+     * 
+     * @param node_id ID del nodo a comprobar
+     * @return <true> si se encuentra en alguna, <false> en caso contrario
+     */
+    private boolean containsNodeSomeList(int node_id) {
         return containsNodeOpenList(node_id) || containsNodeCloseList(node_id);
     }
-
-    // Añade a open_list los nodos adyacentes a uno dado
-    public void addNextNodesOpenList(int node_id) {
+    /**
+     * Añade a <open_list> todos los nodos adyacentes a uno dado siempre que no 
+     * se encuetren ya dentro.
+     * 
+     * @param node_id ID del Nodo del que se quieren añadr todos sus adyacentes
+     */
+    private void addNextNodesOpenList(int node_id) {
         int[] dif_coord_i = {-1, -1, -1, 0, 0, 1, 1, 1};
         int[] dif_coord_j = {-1, 0, 1, -1, 1, -1, 0, 1};
         // coordenadas del nodo actual
@@ -96,7 +143,7 @@ public class Path {
             // no es el raíz
             boolean is_in_matrix = coord_i >= 0 && coord_i <= 4 && coord_j >= 0 && coord_j <= 4;
             // no es el raíz
-            boolean is_not_agent = id_next_node != agent_id;
+            boolean is_not_agent = id_next_node != start_id;
             // no está en ninguna lista
             boolean is_not_any_list = !containsNodeSomeList(id_next_node);
             // es alcanzable
@@ -111,8 +158,13 @@ public class Path {
         }
     }
 
-    // Toma el nodo con un coste menor y lo devuelve
-    public Node getBetterNode() {
+    /**
+     * Obtiene el nodo con el menor coste de entre todos los que hay 
+     * en <open_list>. Se presupone que la lista no está vacía
+     * 
+     * @return node Devuelve el nodo con el coste mejor
+     */
+    private Node getBetterNode() {
         int low_cost = (int) Math.pow(10, 10);
         Node node = null;
         for (Node current_node : open_list) {
@@ -123,13 +175,21 @@ public class Path {
         }
         return node;
     }
-
-    public boolean isObjetive() {
+    /**
+     * Comprueba si el nodo objetivo se encuentra en <open_list>
+     * 
+     * @return <true> si <objetive_id> está en <open_list>
+     */
+    private boolean isObjetive() {
         return containsNodeOpenList(objetive_id);
     }
-
-    // Recupera un nodo dado su id de open_list
-    public Node getNodeOpenList(int node_id) {
+    /**
+     * Obtiene un nodo dado de <open_list>. Se presupone que el nodo existe.
+     * 
+     * @param node_id ID del nodo que queremos obtener
+     * @return node Nodo que queríamos obtener
+     */
+    private Node getNodeOpenList(int node_id) {
         Node node = null;
         for (Node current_node : open_list) {
             if (current_node.getId() == node_id) {
@@ -138,9 +198,13 @@ public class Path {
         }
         return node;
     }
-
-    // Recupera un nodo padre dado el id de su hijo de close_list
-    public Node getNodeCloseList(int node_id) {
+    /**
+     * Obtiene un nodo dado de <close_list>. Se presupone que el nodo existe.
+     * 
+     * @param node_id ID del nodo que queremos obtener
+     * @return node Nodo que queríamos obtener
+     */
+    private Node getNodeCloseList(int node_id) {
         Node node = null;
         for (Node current_node : close_list) {
             if (current_node.getId() == node_id) {
@@ -149,8 +213,13 @@ public class Path {
         }
         return node;
     }
-
-    public void pathObjetive() {
+    /**
+     * Calcula la ruta óptima entre la posición inicial <start_id> y la final 
+     * <objetive_id>.
+     * Guarda los ID´s de las casillas en <path_objetive>.
+     * 
+     */
+    private void pathObjetive() {
         boolean encontrado = false;
         boolean agent = false;
 
@@ -159,8 +228,8 @@ public class Path {
         open_list.clear();
         close_list.clear();
 
-        close_list.add(new Node(agent_id, -1, -1));
-        addNextNodesOpenList(agent_id);
+        close_list.add(new Node(start_id, -1, -1));
+        addNextNodesOpenList(start_id);
         if(isObjetive()){
                     encontrado = true;
                 }
@@ -177,18 +246,19 @@ public class Path {
         while (!agent) {
             node = getNodeCloseList(node.getParentId());
             path_objetive.add(0, node.getId());
-            if (node.getId() == agent_id) {
+            if (node.getId() == start_id) {
                 agent = true;
             }
         }
     }
-
+    /**
+     * Devuelve el camino óptimo guardado
+     * 
+     * @return <path_objetive>
+     */
     public ArrayList<Integer> getPath() {
-        ArrayList<Integer> path = new ArrayList<>();
-        for (int i = 0; i < path_objetive.size(); i++) {
-            path.add(path_objetive.get(i));
-        }
-        return path;
+        this.pathObjetive();
+        return path_objetive;
     }
     /*public ArrayList<int[]> getPath(){
         ArrayList<int[]> path = new ArrayList<>();
@@ -202,16 +272,24 @@ public class Path {
         }
         return path;
     }*/
-
+    /**
+     * Imprime por pantalla los ID´s de las casillas que forman el camino óptimo.
+     */
     public void printPath() {
         for (int i = 0; i < path_objetive.size(); i++) {
             System.out.print(path_objetive.get(i) + "-");
         }
         System.out.println("\n");
     }
-
-    public void printData() {
-        System.out.println("Agent ID: " + agent_id);
+    /**
+     * Imprime por pantalla:
+     * <start_id>
+     * <objetive_id>
+     * <open_list>
+     * <close_lsit>
+     */
+    private void printData() {
+        System.out.println("Agent ID: " + start_id);
         System.out.println("Objetive ID: " + objetive_id);
         // Impresión del mapa
         for (int i = 0; i < 5; i++) {
