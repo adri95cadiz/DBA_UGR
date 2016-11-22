@@ -7,12 +7,9 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Esta clase contiene el agente que realizara toda la funcionalidad
@@ -40,7 +37,6 @@ public class AgentCar extends SingleAgent {
     private float[][] datosScanner = new float[5][5];
     private int[][] posiblesObjetivos = new int[5][5];
     private int contadorPasos;
-    private ArrayList<Integer> datosTraza = new ArrayList<>();
     private ArrayList<Integer> path_local = new ArrayList<>();
     private boolean no_exist_path = true;
     Path camino = new Path(posiblesObjetivos, 12, 12);
@@ -50,7 +46,6 @@ public class AgentCar extends SingleAgent {
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
-    int[][] mapa;
     JsonObject radar, gps; // toman valor en resultadoAccion() para usarlos en mapa.update
 
     public AgentCar(AgentID aid) throws Exception {
@@ -215,7 +210,7 @@ public class AgentCar extends SingleAgent {
      * Método que actualiza el mapa desde la base de datos
      */
     private void updateMap() {
-        mapa = bd.updateStatus(radar, gps, contadorPasos);
+        bd.updateStatus(radar, gps, contadorPasos);
     }
 
     /**
@@ -250,9 +245,7 @@ public class AgentCar extends SingleAgent {
      */
     private void eliminarObjetivosInaccesiblesRec(int row, int col) {
         if (row < 0 || row > 4 || col < 0 || col > 4) {
-            return;
         } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {
-            return;
         } else if (datosRadar[row][col] == 1) {
             posiblesObjetivos[row][col] = -1;
         } else {
@@ -324,13 +317,13 @@ public class AgentCar extends SingleAgent {
                     //System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
                     
                     // Comrueba que no se esté accediendo a una posición inválida de la matriz de la BD.
-                    if (a >= 0 && b >= 0 && a < mapa.length && b < mapa.length) {
+                    if (a >= 0 && b >= 0 && a < bd.getMatrixSize() && b < bd.getMatrixSize()) {
                         //System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
-                            if (mapa[a][b] < low_moving_count || (mapa[a][b] == low_moving_count && datosScanner[i][j] < low_dist2)) {
+                            if (bd.getStatus(a, b) < low_moving_count || (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
                                 //if (posiblesObjetivos[i][j] == 0) {
                                 //System.out.println("Entra despues");
-                                low_moving_count = mapa[a][b];
+                                low_moving_count = bd.getStatus(a, b);
                                 //System.out.println(low_moving_count);
                                 low_dist2 = datosScanner[i][j];
                                 objetive[0] = i;
@@ -362,22 +355,31 @@ public class AgentCar extends SingleAgent {
     private String pathLocalObj(int objetivo) {
         String mov;
         //System.out.println("Objetivo candidato a moverse: " + objetivo[0]+ objetivo[1]);
-        if (objetivo == 5) {
-            mov = "moveN";
-        } else if (objetivo == 4) {
-            mov = "moveNE";
-        } else if (objetivo == -1) {
-            mov = "moveE";
-        } else if (objetivo == -6) {
-            mov = "moveSE";
-        } else if (objetivo == -5) {
-            mov = "moveS";
-        } else if (objetivo == -4) {
-            mov = "moveSW";
-        } else if (objetivo == 1) {
-            mov = "moveW";
-        } else {
-            mov = "moveNW";
+        switch (objetivo) {
+            case 5:
+                mov = "moveN";
+                break;
+            case 4:
+                mov = "moveNE";
+                break;
+            case -1:
+                mov = "moveE";
+                break;
+            case -6:
+                mov = "moveSE";
+                break;
+            case -5:
+                mov = "moveS";
+                break;
+            case -4:
+                mov = "moveSW";
+                break;
+            case 1:
+                mov = "moveW";
+                break;
+            default:
+                mov = "moveNW";
+                break;
         }
         return mov;
     }
