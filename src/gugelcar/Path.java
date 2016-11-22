@@ -5,10 +5,10 @@ import java.util.ArrayList;
 /**
  *
  * @author Raúl López Arévalo
- * 
- * Clase que calcula el camino óptimo desde una posición A a otra B en un mapa 
+ *
+ * Clase que calcula el camino óptimo desde una posición A a otra B en un mapa
  * utilizando el algoritmo A*.
- * 
+ *
  */
 public class Path {
 
@@ -19,9 +19,10 @@ public class Path {
     private int start_id;
     private int[][] map;
     private int size_map;
+
     /**
      * Constructor
-     * 
+     *
      * @param map Mapa
      * @param agent_id ID posición actual
      * @param objetive_id ID posición destino
@@ -33,56 +34,63 @@ public class Path {
         this.start_id = agent_id;
         this.objetive_id = objetive_id;
     }
+
     /**
      * Actualiza el ID del comienzo
+     *
      * @param node_id ID nuevo
      */
-    public void chageStarte( int node_id ){
+    public void chageStarte(int node_id) {
         this.start_id = node_id;
     }
+
     /**
      * Actualiza el ID del objetivo
-     * 
+     *
      * @param node_id ID nuevo
      */
-    public void changeObjetive( int node_id ){
+    public void changeObjetive(int node_id) {
         this.objetive_id = node_id;
     }
+
     /**
      * Actualiza el mapa
-     * 
+     *
      * @param map Mapa nuevo
      */
-    public void changeMap( int[][] map ){
+    public void changeMap(int[][] map) {
         this.map = map;
         this.size_map = map.length;
     }
+
     /**
      * Devuelve el tamaño del mapa
-     * 
-     * @return 
+     *
+     * @return
      */
-    public int getSizeMap(){
+    public int getSizeMap() {
         return this.size_map;
     }
+
     /**
      * Calcula el coste del nodo actual hasta la posición del nodo inicial
-     * 
+     *
      * @param node_id ID del nodo a saber su coste
-     * @return 1 Si el nodo está en la cercanía de la posición inicial
-     *         2 Si el nodo está más alejado
+     * @return 1 Si el nodo está en la cercanía de la posición inicial 2 Si el
+     * nodo está más alejado
      */
     private int costToCurrentNode(int node_id) {
         int coord_i = node_id / this.size_map;
         int coord_j = node_id % this.size_map;
         int obj_i = this.start_id / this.size_map;
         int obj_j = this.start_id % this.size_map;
-        
+
         return Math.abs(coord_i - obj_i) + Math.abs(coord_j - obj_j);
     }
+
     /**
      * Calcula el coste dle nodo actual hasta la posición del nodo objetivo
-     * 
+     *
      * @param node_id ID del nodo a saber su coste
      * @return Valor del coste
      */
@@ -94,18 +102,20 @@ public class Path {
 
         return Math.abs(coord_i - obj_i) + Math.abs(coord_j - obj_j);
     }
+
     /**
      * Calcula el coste total de moverse a un Nodo dado
-     * 
+     *
      * @param node_id ID del nodo a saber su coste
      * @return Coste total
      */
     private int calculateCostNode(int node_id) {
         return costToCurrentNode(node_id) + costToObjetiveNode(node_id);
     }
+
     /**
      * Comprueba si un Nodo se encuentra dentro de <open_list>
-     * 
+     *
      * @param node_id ID del nodo a comprobar.
      * @return exist <true> si se encuentra, <false> en caso contrario
      */
@@ -118,9 +128,10 @@ public class Path {
         }
         return exist;
     }
+
     /**
      * Compreuba si un Nodo se encuentra dentor de <close_list>
-     * 
+     *
      * @param node_id ID del nodo a comprobar
      * @return exist <true> si se encuentra, <false> en caso contrario
      */
@@ -133,19 +144,22 @@ public class Path {
         }
         return exist;
     }
+
     /**
-     * Comprueba si un Nodo se encuentra en alguna lista <open_list> o <close_list>
-     * 
+     * Comprueba si un Nodo se encuentra en alguna lista <open_list> o
+     * <close_list>
+     *
      * @param node_id ID del nodo a comprobar
      * @return <true> si se encuentra en alguna, <false> en caso contrario
      */
     private boolean containsNodeSomeList(int node_id) {
         return containsNodeOpenList(node_id) || containsNodeCloseList(node_id);
     }
+
     /**
-     * Añade a <open_list> todos los nodos adyacentes a uno dado siempre que no 
+     * Añade a <open_list> todos los nodos adyacentes a uno dado siempre que no
      * se encuetren ya dentro.
-     * 
+     *
      * @param node_id ID del Nodo del que se quieren añadr todos sus adyacentes
      */
     private void addNextNodesOpenList(int node_id) {
@@ -180,9 +194,9 @@ public class Path {
     }
 
     /**
-     * Obtiene el nodo con el menor coste de entre todos los que hay 
-     * en <open_list>. Se presupone que la lista no está vacía
-     * 
+     * Obtiene el nodo con el menor coste de entre todos los que hay en
+     * <open_list>. Se presupone que la lista no está vacía
+     *
      * @return node Devuelve el nodo con el coste mejor
      */
     private Node getBetterNode() {
@@ -196,17 +210,19 @@ public class Path {
         }
         return node;
     }
+
     /**
      * Comprueba si el nodo objetivo se encuentra en <open_list>
-     * 
+     *
      * @return <true> si <objetive_id> está en <open_list>
      */
     private boolean isObjetive() {
         return containsNodeOpenList(objetive_id);
     }
+
     /**
      * Obtiene un nodo dado de <open_list>. Se presupone que el nodo existe.
-     * 
+     *
      * @param node_id ID del nodo que queremos obtener
      * @return node Nodo que queríamos obtener
      */
@@ -219,9 +235,10 @@ public class Path {
         }
         return node;
     }
+
     /**
      * Obtiene un nodo dado de <close_list>. Se presupone que el nodo existe.
-     * 
+     *
      * @param node_id ID del nodo que queremos obtener
      * @return node Nodo que queríamos obtener
      */
@@ -234,11 +251,11 @@ public class Path {
         }
         return node;
     }
+
     /**
-     * Calcula la ruta óptima entre la posición inicial <start_id> y la final 
-     * <objetive_id>.
-     * Guarda los ID´s de las casillas en <path_objetive>.
-     * 
+     * Calcula la ruta óptima entre la posición inicial <start_id> y la final
+     * <objetive_id>. Guarda los ID´s de las casillas en <path_objetive>.
+     *
      */
     private void pathObjetive() {
         boolean encontrado = false;
@@ -251,10 +268,10 @@ public class Path {
 
         close_list.add(new Node(start_id, -1, -1));
         addNextNodesOpenList(start_id);
-        if(isObjetive()){
-                    encontrado = true;
-                }
-        while (!encontrado) {
+        if (isObjetive()) {
+            encontrado = true;
+        }
+        while (!encontrado && !open_list.isEmpty()) {
             node = getBetterNode();
             open_list.remove(node);
             close_list.add(node);
@@ -262,25 +279,31 @@ public class Path {
             encontrado = isObjetive();
         }
 
-        path_objetive.add(objetive_id);
-        node = getNodeOpenList(objetive_id);
-        while (!agent) {
-            node = getNodeCloseList(node.getParentId());
-            path_objetive.add(0, node.getId());
-            if (node.getId() == start_id) {
-                agent = true;
+        if (open_list.isEmpty()) {
+            path_objetive.add(-1);
+        } else {
+            path_objetive.add(objetive_id);
+            node = getNodeOpenList(objetive_id);
+            while (!agent) {
+                node = getNodeCloseList(node.getParentId());
+                path_objetive.add(0, node.getId());
+                if (node.getId() == start_id) {
+                    agent = true;
+                }
             }
         }
     }
+
     /**
      * Devuelve el camino óptimo guardado
-     * 
+     *
      * @return <path_objetive>
      */
     public ArrayList<Integer> getPath() {
         this.pathObjetive();
         return path_objetive;
     }
+
     /*public ArrayList<int[]> getPath(){
         ArrayList<int[]> path = new ArrayList<>();
         int[] coord = new int[2];
@@ -294,7 +317,8 @@ public class Path {
         return path;
     }*/
     /**
-     * Imprime por pantalla los ID´s de las casillas que forman el camino óptimo.
+     * Imprime por pantalla los ID´s de las casillas que forman el camino
+     * óptimo.
      */
     public void printPath() {
         for (int i = 0; i < path_objetive.size(); i++) {
@@ -302,6 +326,7 @@ public class Path {
         }
         System.out.println("\n");
     }
+
     /**
      * Imprime por pantalla:
      * <start_id>

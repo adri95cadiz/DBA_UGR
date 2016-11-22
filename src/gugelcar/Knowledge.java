@@ -43,7 +43,7 @@ public class Knowledge {
         return instance;
     }
     
-    /**
+    /********** Estos métodos han sido añadidos por Raúl López Arévalo*********
      * @autor Raúl López Arévalo
      * 
      * Comprueba si un valor está contenido en la matriz o no
@@ -107,7 +107,10 @@ public class Knowledge {
         }
         return this.mapMatrixOptim;
     }
-    
+    /**
+     * 
+     *              FIN MÉTODOS RAÚL LÓPEZ
+     */
     private void setMapID(int id){
         this.map_id = id;
     }
