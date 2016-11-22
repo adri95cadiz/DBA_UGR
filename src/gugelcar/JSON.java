@@ -156,7 +156,7 @@ public class JSON {
             JsonObject objeto = Json.parse(respuesta).asObject();
             JsonObject gpsObjeto = objeto.get("gps").asObject();
             
-            System.out.println("Contenido GPS: " + gpsObjeto);
+            //System.out.println("Contenido GPS: " + gpsObjeto);
             
             gps[0] = (gpsObjeto.get("y")).asInt();
             gps[1] = (gpsObjeto.get("x")).asInt();
