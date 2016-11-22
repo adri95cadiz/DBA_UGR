@@ -8,13 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Clase encargada del conocimiento compartido de los agentes
  * 
  * @author Samuel Peregrina
- * @version 1.0
+ * @version 2.0
  */
 public class Knowledge {
     private static Knowledge instance = null;
@@ -39,7 +38,7 @@ public class Knowledge {
     public static Knowledge getDB(int map_id){        
         if(instance == null){
             instance = new Knowledge(map_id);
-        }else{ instance.setMapID(map_id); };
+        }else{ instance.setMapID(map_id); }
         return instance;
     }
     
@@ -77,13 +76,7 @@ public class Knowledge {
             }
         }
     }
-    /**
-     *  Este metodo devuelve la matriz de mapa
-     */
-    public int[][] getMapMatrix (){
-        return this.mapMatrix;    	
-    }
-    
+        
     /**
      *  Este método es el encargado de recibir los datos obtenidos por el agente y 
      *  añadirlos a su conocimiento
@@ -91,9 +84,8 @@ public class Knowledge {
      * @param radar JsonObject que contiene la información del radar
      * @param gps JsonObject que contiene la posición del agente
      * @param turn int que contiene el número discreto del turno del movimiento del agente
-     * @return Una matriz que contiene todo el conociento del agente sobre el mapa
      */
-    public int[][] updateStatus(JsonObject radar, JsonObject gps, int turn) {
+    public void updateStatus(JsonObject radar, JsonObject gps, int turn) {
         Connection connection  = null;
         try{
             int position_x, position_y;
@@ -171,8 +163,6 @@ public class Knowledge {
                 System.err.println(e);
             }
         }
-        
-        return this.mapMatrix;
     }
     
     /**
@@ -260,6 +250,9 @@ public class Knowledge {
         }
     }
     
+    /**
+     * Este método dibuja el mapa conocido por el agente
+     */
     public void drawMap(){
         System.out.println("| Mapa actual - Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length);
         for(int i = 0; i < actual_max_size;i++) System.out.print("▉▉▉");
@@ -293,5 +286,26 @@ public class Knowledge {
         }
         
         System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
+    }
+    
+    /**
+     * Devuelve el contenido en el mapa conocido del agente.
+     * En caso de que la posición pedida esté fuera del conocimiento devuelve STATE_WALL
+     * 
+     * @param px Posición X a obtener
+     * @param py Posición Y a obtener
+     * @return int Que contiene el contenido en las coordenadas pedidas
+     */
+    public int getStatus(int px, int py){
+        return (px < 0 || py < 0 || px > this.actual_max_size  || py > this.actual_max_size) ? this.STATE_WALL : this.mapMatrix[px][py];
+    }
+    
+    /**
+     * Devuelve el tamaño máximo conocido del mapa actual
+     * 
+     * @return El tamaño máximo conocido de la matriz
+     */
+    public int getMatrixSize(){
+        return this.actual_max_size;
     }
 }

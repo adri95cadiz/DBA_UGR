@@ -1,8 +1,6 @@
 nbproject/private/
 build/
-nbbuild/
+nbproject/
 dist/
-nbdist/
-.nb-gradle/
 mapas.db
 traza_*.png

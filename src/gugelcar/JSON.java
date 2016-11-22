@@ -163,16 +163,4 @@ public class JSON {
         }
         return gps;
     }
-    
-    public static ArrayList<Integer> leerTraza(String respuesta) {
-        ArrayList<Integer> traza = new ArrayList<>();
-        if(!respuesta.contains("CRASHED")) {
-            JsonObject objeto = Json.parse(respuesta).asObject();
-            JsonArray vector = objeto.get("trace").asArray();
-            for(JsonValue valor : vector) {
-                traza.add(valor.asInt());
-            }
-        }
-        return traza;
-    }
 }
