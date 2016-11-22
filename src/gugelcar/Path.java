@@ -18,6 +18,7 @@ public class Path {
     private int objetive_id;
     private int start_id;
     private int[][] map;
+    private int size_map;
     /**
      * Constructor
      * 
@@ -26,10 +27,18 @@ public class Path {
      * @param objetive_id ID posición destino
      */
     public Path(int[][] map, int agent_id, int objetive_id) {
+        this.size_map = map.length;
         this.map = map;
-        this.map[objetive_id / 5][objetive_id % 5] = 2;
+        this.map[objetive_id / this.size_map][objetive_id % this.size_map] = 2;
         this.start_id = agent_id;
         this.objetive_id = objetive_id;
+    }
+    /**
+     * Actualiza el ID del comienzo
+     * @param node_id ID nuevo
+     */
+    public void chageStarte( int node_id ){
+        this.start_id = node_id;
     }
     /**
      * Actualiza el ID del objetivo
@@ -46,6 +55,11 @@ public class Path {
      */
     public void changeMap( int[][] map ){
         this.map = map;
+        this.size_map = map.length;
+    }
+    
+    public int getSizeMap(){
+        return this.size_map;
     }
     /**
      * Calcula el coste del nodo actual hasta la posición del nodo inicial
@@ -55,9 +69,12 @@ public class Path {
      *         2 Si el nodo está más alejado
      */
     private int costToCurrentNode(int node_id) {
-        boolean ext_node = node_id / 5 == 4 || node_id / 5 == 0
-                || node_id % 5 == 4 || node_id % 5 == 0;
-        return ext_node ? 2 : 1;
+        int coord_i = node_id / this.size_map;
+        int coord_j = node_id % this.size_map;
+        int obj_i = this.start_id / this.size_map;
+        int obj_j = this.start_id % this.size_map;
+        
+        return Math.abs(coord_i - obj_i) + Math.abs(coord_j - obj_j);
     }
     /**
      * Calcula el coste dle nodo actual hasta la posición del nodo objetivo
@@ -66,10 +83,10 @@ public class Path {
      * @return Valor del coste
      */
     private int costToObjetiveNode(int node_id) {
-        int coord_i = node_id / 5;
-        int coord_j = node_id % 5;
-        int obj_i = this.objetive_id / 5;
-        int obj_j = this.objetive_id % 5;
+        int coord_i = node_id / this.size_map;
+        int coord_j = node_id % this.size_map;
+        int obj_i = this.objetive_id / this.size_map;
+        int obj_j = this.objetive_id % this.size_map;
 
         return Math.abs(coord_i - obj_i) + Math.abs(coord_j - obj_j);
     }
@@ -136,12 +153,12 @@ public class Path {
         int id_next_node;
 
         for (int i = 0; i < 8; i++) {
-            id_next_node = (node_id / 5 + dif_coord_i[i]) * 5 + (node_id % 5 + dif_coord_j[i]);
-            coord_i = node_id / 5 + dif_coord_i[i];
-            coord_j = node_id % 5 + dif_coord_j[i];
+            id_next_node = (node_id / this.size_map + dif_coord_i[i]) * this.size_map + (node_id % this.size_map + dif_coord_j[i]);
+            coord_i = node_id / this.size_map + dif_coord_i[i];
+            coord_j = node_id % this.size_map + dif_coord_j[i];
             // no está en la matriz& id_next_node <= 24;
             // no es el raíz
-            boolean is_in_matrix = coord_i >= 0 && coord_i <= 4 && coord_j >= 0 && coord_j <= 4;
+            boolean is_in_matrix = coord_i >= 0 && coord_i < this.size_map && coord_j >= 0 && coord_j < this.size_map;
             // no es el raíz
             boolean is_not_agent = id_next_node != start_id;
             // no está en ninguna lista
@@ -149,7 +166,7 @@ public class Path {
             // es alcanzable
             boolean is_reachable = false;
             if (is_in_matrix) {
-                is_reachable = map[id_next_node / 5][id_next_node % 5] != -1;
+                is_reachable = map[id_next_node / this.size_map][id_next_node % this.size_map] != -1;
             }
             // Si el nodo está en la matriz, no es el raiz, no se encuentra en open_list y es accesible
             if (is_not_agent && is_not_any_list && is_reachable) {
