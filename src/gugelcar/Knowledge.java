@@ -299,4 +299,13 @@ public class Knowledge {
     public int getStatus(int px, int py){
         return (px < 0 || py < 0 || px > this.actual_max_size  || py > this.actual_max_size) ? this.STATE_WALL : this.mapMatrix[px][py];
     }
+    
+    /**
+     * Devuelve el tamaño máximo conocido del mapa actual
+     * 
+     * @return El tamaño máximo conocido de la matriz
+     */
+    public int getMatrixSize(){
+        return this.actual_max_size;
+    }
 }
