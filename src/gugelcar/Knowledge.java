@@ -19,6 +19,7 @@ public class Knowledge {
     private static Knowledge instance = null;
     private int map_id;
     private int[][] mapMatrix;
+    private int[][] mapMatrixOptim;
     private int[] pos_actual = new int[2];
     private final int TAM_VISION = 5;
     private final int MIN_SIDE = 20;
@@ -40,6 +41,71 @@ public class Knowledge {
             instance = new Knowledge(map_id);
         }else{ instance.setMapID(map_id); }
         return instance;
+    }
+    
+    /**
+     * @autor Raúl López Arévalo
+     * 
+     * Comprueba si un valor está contenido en la matriz o no
+     * @param value Valor a comprobar
+     * @return <true> si está
+     */
+    public boolean contains( int value ){
+        boolean exist_value = false;
+        for( int i = 0; i < this.mapMatrix.length; i++){
+            for ( int j = 0; j < this.mapMatrix.length; j++){
+                if( this.mapMatrix[i][j] == value ){
+                    exist_value = true;
+                }
+            }
+        }
+        return exist_value;
+    }
+    /**
+     * @autor Raúl López Arévalo
+     * 
+     * Devuelve el ID que le corresponde a a un valor de la matriz si está
+     * 
+     * @param value Valor del que queremos obtener su ID
+     * @return id ID del valor
+     */
+    public int getIDValue( int value ){
+        int id = -1;
+        for( int i = 0; i < this.mapMatrix.length; i++){
+            for ( int j = 0; j < this.mapMatrix.length; j++){
+                if( this.mapMatrix[i][j] == value ){
+                    id = i*this.mapMatrix.length+j;
+                }
+            }
+        }
+        return id;
+    }
+    /**
+     * @autor Raúl López Arévalo
+     * 
+     * Devuelve el tamaño del mapa
+     * 
+     * @return Tamañao del mapa 
+     */
+    public int tamMap(){
+        return this.mapMatrix.length;
+    }/**
+     * @autor Raúl López Arévalo
+     * 
+     * Transforma el conocimiento del mapa en otro mapa. Las posiciones no 
+     * visitadas se toman como muros.
+     * @return 
+     */
+    public int[][] getMap(){
+        this.mapMatrixOptim = this.mapMatrix;
+        for( int i = 0; i < this.mapMatrixOptim.length; i++){
+            for ( int j = 0; j < this.mapMatrixOptim.length; j++){
+                if( this.mapMatrixOptim[i][j] == 0 ){
+                    this.mapMatrixOptim[i][j] = -1;
+                }
+            }
+        }
+        return this.mapMatrixOptim;
     }
     
     private void setMapID(int id){

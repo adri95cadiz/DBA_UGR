@@ -43,7 +43,8 @@ public class AgentCar extends SingleAgent {
 
     private boolean check = true;
     private final int MAPA = 2;
-    private final int LIMITE_PASOS = 10;
+    private final int LIMITE_PASOS = 100;
+    private final boolean EXPLORAR = false;
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
@@ -442,7 +443,7 @@ public class AgentCar extends SingleAgent {
             estadoActual = FINAL;
         } else {
 
-           /*if (bd.contains(-2) && check) {
+           if (bd.contains(-2) && check && !EXPLORAR) {
                 System.out.println("ESTE MAPA YA TIENE GUARDADO EL OBJETIVO O PARTE DE EL");
                 check = false;
                 int tamMap = bd.tamMap();
@@ -465,7 +466,7 @@ public class AgentCar extends SingleAgent {
                 System.out.println("ESTE ES EL CAMINO A SEGUIR");
                 camino.printPath();
                 no_exist_path = false;
-            }*/
+            }
 
             // Si no existe ningún camino óptimo local a seguir, se calcula otro
             if (no_exist_path) {

@@ -57,7 +57,11 @@ public class Path {
         this.map = map;
         this.size_map = map.length;
     }
-    
+    /**
+     * Devuelve el tamaño del mapa
+     * 
+     * @return 
+     */
     public int getSizeMap(){
         return this.size_map;
     }
