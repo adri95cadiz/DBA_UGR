@@ -42,7 +42,7 @@ public class AgentCar extends SingleAgent {
     Path camino = new Path(posiblesObjetivos, 12, 12);
 
     private final int MAPA = 1;
-    private final int LIMITE_PASOS = 1000;
+    private final int LIMITE_PASOS = 100;
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
