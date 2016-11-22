@@ -97,6 +97,7 @@ public class Knowledge {
      * @return 
      */
     public int[][] getMap(){
+        // Cuidado que se sobreescribe la mapMatrix tmbn, pero no nos afecta
         this.mapMatrixOptim = this.mapMatrix;
         for( int i = 0; i < this.mapMatrixOptim.length; i++){
             for ( int j = 0; j < this.mapMatrixOptim.length; j++){

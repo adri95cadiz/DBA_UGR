@@ -41,10 +41,11 @@ public class AgentCar extends SingleAgent {
     private boolean no_exist_path = true;
     Path camino = new Path(posiblesObjetivos, 12, 12);
 
+    // Valores modificables según que comportamiento del agente deseamos
     private boolean check = true;
-    private final int MAPA = 2;
-    private final int LIMITE_PASOS = 100;
-    private final boolean EXPLORAR = false;
+    private final int MAPA = 9;
+    private final int LIMITE_PASOS = 1000;
+    private final boolean EXPLORAR = true;
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
@@ -109,7 +110,7 @@ public class AgentCar extends SingleAgent {
     @Override
     public void finalize() {
         System.out.println("Gugelcar(" + this.getName() + ") Terminando");
-        bd.drawMap();
+        //bd.drawMap();
         super.finalize();
     }
 
@@ -140,7 +141,7 @@ public class AgentCar extends SingleAgent {
                 //System.out.println("Recibiendo respuesta2.");
                 msjEntrada = receiveACLMessage();
                 String recibido = msjEntrada.getContent();
-                System.out.println("Respuesta recibida. " + recibido + "\n\n");
+                //System.out.println("Respuesta recibida. " + recibido + "\n\n");
                 if (recibido.contains("scanner")) {
                     datosScanner = JSON.leerScanner(recibido);
                 } else if (recibido.contains("radar")) {
@@ -310,6 +311,23 @@ public class AgentCar extends SingleAgent {
             float low_dist2 = (float) Math.pow(10, 10);
             int low_moving_count = (int) Math.pow(10, 10);
             //System.out.println("\t\t\tExplorando el mapa");
+            
+//            System.out.println("Vision del agente");
+//            for (int i = 0; i <= 4; i++) {
+//                for (int j = 0; j <= 4; j++) {
+//                    System.out.print(posiblesObjetivos[i][j]+" ");
+//                }System.out.println("\n");
+//            }
+//            
+//            System.out.println("Vision de matriz");
+//            for (int i = 0; i <= 4; i++) {
+//                for (int j = 0; j <= 4; j++) {
+//                    int a = datosGPS[0] - 2 + i;
+//                    int b = datosGPS[1] - 2 + j;
+//                    System.out.print(bd.getStatus(a,b)+" ");
+//                }System.out.println("\n");
+//            }
+            
             for (int i = 0; i <= 4; i++) {
                 for (int j = 0; j <= 4; j++) {
                     int a = datosGPS[0] - 2 + i;
@@ -317,12 +335,15 @@ public class AgentCar extends SingleAgent {
                     //System.out.println("\t\t\tDatos del gps: " + datosGPS[0] + "," + datosGPS[1]);
                     //System.out.println("\t\t\tVamos a acceder a: " + a + "," + b);
                     //System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
-                    
+
                     // Comrueba que no se esté accediendo a una posición inválida de la matriz de la BD.
                     if (a >= 0 && b >= 0 && a < bd.getMatrixSize() && b < bd.getMatrixSize()) {
                         //System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
-                            if (bd.getStatus(a, b) < low_moving_count || (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
+                            if (bd.getStatus(a, b) < low_moving_count || (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)){//&& datosScanner[i][j] < low_dist2){
+                                //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
+                                System.out.print(i+","+j+": "+bd.getStatus(a,b)+" - ");
+                                System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
                                 //if (posiblesObjetivos[i][j] == 0) {
                                 //System.out.println("Entra despues");
                                 low_moving_count = bd.getStatus(a, b);
@@ -335,7 +356,7 @@ public class AgentCar extends SingleAgent {
                         }
                     }
                 }
-
+                System.out.println("\n");
             }
             //System.out.println("\n\n\t\tObjetivo experimental para moverse: " + objetive[0] + objetive[1]);
         }
@@ -348,14 +369,15 @@ public class AgentCar extends SingleAgent {
      *
      * @param objetivo Recibe la diferencia entre el ID de la casilla en la que
      * se encuentra y la casilla a la que se moverá en el siguiente turno. El ID
-     * 0 correspondería a la esquina superior izquierda. El ID 25 correspondería.
-     * a la esquina inferior derecha.
+     * 0 correspondería a la esquina superior izquierda. El ID 25
+     * correspondería. a la esquina inferior derecha.
      *
-     * @return mov Devuelve un String que contiene la dirección a la que moverse.
+     * @return mov Devuelve un String que contiene la dirección a la que
+     * moverse.
      *
      */
     private String pathLocalObj(int objetivo) {
-        System.out.println("TAMAÑO DEL MAPA -----------------------------> " + camino.getSizeMap());
+        System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
         int[] diff_ids = {
             camino.getSizeMap(),
             camino.getSizeMap() - 1,
@@ -366,51 +388,24 @@ public class AgentCar extends SingleAgent {
             -camino.getSizeMap() - 1
         };
         String mov;
-        
-       if( objetivo == diff_ids[0] ){
+
+        if (objetivo == diff_ids[0]) {
             mov = "moveN";
-        }else if( objetivo == diff_ids[1] ){
+        } else if (objetivo == diff_ids[1]) {
             mov = "moveNE";
-        }else if( objetivo == diff_ids[2] ){
+        } else if (objetivo == diff_ids[2]) {
             mov = "moveNW";
-        }else if( objetivo == diff_ids[3] ){
+        } else if (objetivo == diff_ids[3]) {
             mov = "moveE";
-        }else if( objetivo == diff_ids[4] ){
+        } else if (objetivo == diff_ids[4]) {
             mov = "moveW";
-        }else if( objetivo == diff_ids[5] ){
+        } else if (objetivo == diff_ids[5]) {
             mov = "moveSW";
-        }else if( objetivo == diff_ids[6] ){
+        } else if (objetivo == diff_ids[6]) {
             mov = "moveSE";
-        }else{
+        } else {
             mov = "moveS";
         }
-        //System.out.println("Objetivo candidato a moverse: " + objetivo[0]+ objetivo[1]);
-        /*switch (objetivo) {
-            case 5:
-                mov = "moveN";
-                break;
-            case 4:
-                mov = "moveNE";
-                break;
-            case -1:
-                mov = "moveE";
-                break;
-            case -6:
-                mov = "moveSE";
-                break;
-            case -5:
-                mov = "moveS";
-                break;
-            case -4:
-                mov = "moveSW";
-                break;
-            case 1:
-                mov = "moveW";
-                break;
-            default:
-                mov = "moveNW";
-                break;
-        }*/
         return mov;
     }
 
@@ -442,8 +437,12 @@ public class AgentCar extends SingleAgent {
         if (contadorPasos == LIMITE_PASOS) {
             estadoActual = FINAL;
         } else {
-
-           if (bd.contains(-2) && check && !EXPLORAR) {
+            // Si en la matriz de conocimiento está guardado el objetivo,
+            // no se ha comprobado antes, 
+            // y la opcion explorar está desactivada: 
+            // El agente encontrará un camino optimo desde donde empieza hasta el objetivo
+            // pasando por zonas que ya ha explorado anteriormente (otras sesiones)
+            if (bd.contains(-2) && !EXPLORAR) {
                 System.out.println("ESTE MAPA YA TIENE GUARDADO EL OBJETIVO O PARTE DE EL");
                 check = false;
                 int tamMap = bd.tamMap();
@@ -466,24 +465,30 @@ public class AgentCar extends SingleAgent {
                 System.out.println("ESTE ES EL CAMINO A SEGUIR");
                 camino.printPath();
                 no_exist_path = false;
+
             }
+            if (path_local.contains(-1)) {
+                fin = true;
+                System.out.println("OBJETIVO INACCESIBLE");
+            } else {
 
-            // Si no existe ningún camino óptimo local a seguir, se calcula otro
-            if (no_exist_path) {
-                /**
-                 * -Calcula los objetivos no accesibles por el agente
-                 * -De entre los válidos elige una casilla hacia la que moverse
-                 * -Se crea un path óptimo desde el agente hasta dicha casilla
-                 */
-                path_local.clear();
-                posiblesObjetivos = new int[5][5];
-                eliminarObjetivosInaccesibles();
-                //System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
+                // Si no existe ningún camino óptimo local a seguir, se calcula otro
+                if (no_exist_path) {
+                    /**
+                     * -Calcula los objetivos no accesibles por el agente -De
+                     * entre los válidos elige una casilla hacia la que moverse
+                     * -Se crea un path óptimo desde el agente hasta dicha
+                     * casilla
+                     */
+                    path_local.clear();
+                    posiblesObjetivos = new int[5][5];
+                    eliminarObjetivosInaccesibles();
+                    //System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
 
-                // Se decide la casilla óptima a moverse en la matriz 5x5
-                int[] objetivo_alcanzar = chooseLocalObj();
-                int objetivo_id = objetivo_alcanzar[0] * 5 + objetivo_alcanzar[1];
-                // Se calcula el camino optimo para llegar hasta ella
+                    // Se decide la casilla óptima a moverse en la matriz 5x5
+                    int[] objetivo_alcanzar = chooseLocalObj();
+                    int objetivo_id = objetivo_alcanzar[0] * camino.getSizeMap() + objetivo_alcanzar[1];
+                    // Se calcula el camino optimo para llegar hasta ella
 /*
                 System.out.println("RADAR ------------------> ");
                 for (int i = 0; i < 5; i++) {
@@ -505,62 +510,66 @@ public class AgentCar extends SingleAgent {
 
                 System.out.println("OBJETIVO ID ------------> ");
                 System.out.println(objetivo_id);
-*/
-                // Actualizar el objeto camino con el nuevo radar y la nueva pos final
-                camino.changeMap(posiblesObjetivos);
-                camino.changeObjetive(objetivo_id);
-                camino.chageStarte(12);
-                //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
-                //System.out.println("NUEVO PATH OBTENIDO");
-                path_local = camino.getPath();
-                System.out.println("COORDENADAS DE TODO EL PATH --------------> ");
-                for (int i = 0; i < path_local.size(); i++) {
-                    System.out.print(path_local.get(i) / 5 + "-" + path_local.get(i) % 5 + " ");
+                     */
+                    // Actualizar el objeto camino con el nuevo radar y la nueva pos final
+                    camino.changeMap(posiblesObjetivos);
+                    camino.changeObjetive(objetivo_id);
+                    camino.chageStarte(12);
+                    //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
+                    //System.out.println("NUEVO PATH OBTENIDO");
+                    path_local = camino.getPath();
+//                    System.out.println("COORDENADAS DE TODO EL PATH --------------> ");
+//                    for (int i = 0; i < path_local.size(); i++) {
+//                        System.out.print(path_local.get(i) / 5 + "-" + path_local.get(i) % 5 + " ");
+//                    }
                 }
-                System.out.println("\nCaminito pintao");
-            }
-            /**
-             * Si ya existía un path óptimo: -Calcula la posición a la que se
-             * debe de mover según el path -Elimina dicha posición del path -Una
-             * vez que se haya completado el path se vuelve a calcular uno
-             */
-            no_exist_path = false;
-            camino.printPath();
-            // Se transforman las IDs de las casillas a coordenadas para saber
-            // identificar la dirección en la que se debe de mover
-            int primera_casilla = path_local.get(0);
-            int segunda_casilla = path_local.get(1);
-            int obj_prox_mov = primera_casilla - segunda_casilla;
-            System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
-            System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
-            //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);*/
-            
-            // Se obtiene la dirección en la que moverse
-            String movimiento = pathLocalObj(obj_prox_mov);
-            
-            path_local.remove(0);
-            // Si el path_local restante contiene solamente una posición, es la 
-            // del propio agente por lo que se borra.
-            if (path_local.size() == 1) {
-                no_exist_path = true;
-            }
-            /****************
-             * Una vez se sabe en que dirección se quiere mover:
-             * -Actualiza el mapa de la base de datos
-             * -Control sobre número de pasos y batería
-             * -Manda la acción del movimiento
-             * -Espera a recibir la respuesta
-             * */
-            updateMap();
-            //System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
-            contadorPasos++;
-            nivelBateria--;
-            realizarAccion(JSON.realizarAccion(movimiento));
-            System.out.println("\t\tPaso numero----------> " + contadorPasos);
-            estadoActual = RECIBIR_DATOS;
+                /**
+                 * Si ya existía un path óptimo: -Calcula la posición a la que
+                 * se debe de mover según el path -Elimina dicha posición del
+                 * path -Una vez que se haya completado el path se vuelve a
+                 * calcular uno
+                 */
+                no_exist_path = false;
+                System.out.println("PATH A SEGUIR");
+                camino.printPath();
+                // Se opera las IDs de las casillas a coordenadas para saber
+                // identificar la dirección en la que se debe de mover
+                int primera_casilla = path_local.get(0);
+                int segunda_casilla = path_local.get(1);
+                int obj_prox_mov = primera_casilla - segunda_casilla;
+                //System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
+                //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
+                //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);*/
 
+                // Se obtiene la dirección en la que moverse
+                String movimiento = pathLocalObj(obj_prox_mov);
+
+                path_local.remove(0);
+                // Si el path_local restante contiene solamente una posición, es la 
+                // del propio agente por lo que se borra.
+                if (path_local.size() == 1) {
+                    no_exist_path = true;
+                }
+                /**
+                 * **************
+                 * Una vez se sabe en que dirección se quiere mover: -Actualiza
+                 * el mapa de la base de datos -Control sobre número de pasos y
+                 * batería -Manda la acción del movimiento -Espera a recibir la
+                 * respuesta
+             *
+                 */
+                updateMap();
+                //System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
+                contadorPasos++;
+                nivelBateria--;
+                System.out.println("realiza acción de mover despues de actuaizar updateMap();");
+                realizarAccion(JSON.realizarAccion(movimiento));
+                System.out.println("\t\tPASO NUMERO----------> " + contadorPasos);
+                estadoActual = RECIBIR_DATOS;
+                bd.drawMap();
+            }
         }
-        //bd.drawMap();
+        
     }
 
     /**
