@@ -34,7 +34,7 @@ public class Knowledge {
      * Método que devuelve la instancia de Knowledge del agente
      * 
      * @param map_id El identificador del número de mapa que vamos a usar
-     * @return
+     * @return La instancia de la BD
      */
     public static Knowledge getDB(int map_id){        
         if(instance == null){
@@ -48,7 +48,7 @@ public class Knowledge {
      * 
      * Comprueba si un valor está contenido en la matriz o no
      * @param value Valor a comprobar
-     * @return <true> si está
+     * @return true si está
      */
     public boolean contains( int value ){
         boolean exist_value = false;
@@ -60,7 +60,8 @@ public class Knowledge {
             }
         }
         return exist_value;
-    }
+    }    
+    
     /**
      * @autor Raúl López Arévalo
      * 
@@ -80,6 +81,8 @@ public class Knowledge {
         }
         return id;
     }
+    
+    
     /**
      * @autor Raúl López Arévalo
      * 
@@ -89,7 +92,9 @@ public class Knowledge {
      */
     public int tamMap(){
         return this.mapMatrix.length;
-    }/**
+    }
+    
+    /**
      * @autor Raúl López Arévalo
      * 
      * Transforma el conocimiento del mapa en otro mapa. Las posiciones no 
@@ -112,10 +117,21 @@ public class Knowledge {
      * 
      *              FIN MÉTODOS RAÚL LÓPEZ
      */
+    
+    /**
+     * Setea el id del mapa a usar
+     * 
+     * @param id del mapa a utilizar
+     */
     private void setMapID(int id){
         this.map_id = id;
     }
 
+    /**
+     * Constructor de la clase Knowledge
+     * 
+     * @param map_id Indice del mapa a utilizar
+     */
     private Knowledge(int map_id) {     
         Connection connection = null;
         this.setMapID(map_id);
@@ -246,16 +262,26 @@ public class Knowledge {
     private void updateMatrix(int posx, int posy, int value){
         // Comprobamos el tamaño de la matriz
         int max = Math.max(this.mapMatrix.length, this.actual_max_size+1);
+                
+        // Comprobamos si hay que redimensionar la matriz
+        int diff = 0;
+        int diff_min = max - this.tamMap();
         
         // Si nuestra matriz es más pequeña, le aumentamos el tamaño
-        if(max > this.mapMatrix.length){
-            int[][] tmp = this.mapMatrix;
-            this.mapMatrix = new int[max][max];
+        if (max > this.tamMap()){
+            if(diff_min < 5) max += diff_min; //Nos aseguramos que es como mínimo 5 casillas más grande
+            diff = max;
+        } 
+        
+        if(diff > 0){
+            System.out.println("Redimensionado en "+diff);
+           int[][] tmp = this.mapMatrix;
+            this.mapMatrix = new int[diff][diff];
             for(int i = 0; i < tmp.length; i++){
                 for(int j = 0; j < tmp[i].length; j++){
                     this.mapMatrix[i][j] = tmp[i][j];
                 }
-            }
+            } 
         }
         
         this.mapMatrix[posx][posy] = value;
