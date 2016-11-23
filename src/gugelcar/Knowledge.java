@@ -97,9 +97,10 @@ public class Knowledge {
      * @return 
      */
     public int[][] getMap(){
-        this.mapMatrixOptim = this.mapMatrix;
+        this.mapMatrixOptim = new int[this.mapMatrix.length][this.mapMatrix.length];
         for( int i = 0; i < this.mapMatrixOptim.length; i++){
             for ( int j = 0; j < this.mapMatrixOptim.length; j++){
+                mapMatrixOptim[i][j] = mapMatrix[i][j];
                 if( this.mapMatrixOptim[i][j] == 0 ){
                     this.mapMatrixOptim[i][j] = -1;
                 }

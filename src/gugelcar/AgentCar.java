@@ -42,7 +42,7 @@ public class AgentCar extends SingleAgent {
     Path camino = new Path(posiblesObjetivos, 12, 12);
 
     private boolean check = true;
-    private final int MAPA = 2;
+    private final int MAPA = 1;
     private final int LIMITE_PASOS = 100;
     private final boolean EXPLORAR = false;
 
