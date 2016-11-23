@@ -112,10 +112,19 @@ public class Knowledge {
      * 
      *              FIN MÉTODOS RAÚL LÓPEZ
      */
+    
+    /**
+     * @author Samuel Peregrina
+     * @param id 
+     */
     private void setMapID(int id){
         this.map_id = id;
     }
-
+    /**
+     * @author Samuel Peregrina
+     * Inicializa la matriz de conocimiento
+     * @param map_id ID de la matriz correspondiente al numero de mapa
+     */
     private Knowledge(int map_id) {     
         Connection connection = null;
         this.setMapID(map_id);
@@ -148,6 +157,7 @@ public class Knowledge {
     }
         
     /**
+     * @author Samuel Peregrina
      *  Este método es el encargado de recibir los datos obtenidos por el agente y 
      *  añadirlos a su conocimiento
      * 
@@ -236,6 +246,7 @@ public class Knowledge {
     }
     
     /**
+     * @author Samuel Peregrina
      * Este método actualiza un valor de estado de una coordenada.
      * En caso necesario redimensiona la matriz.
      * 
@@ -262,6 +273,7 @@ public class Knowledge {
     }
     
     /**
+     * @author Samuel Peregrina
      * Este método se encarga de crear la matriz, si tiene datos carga los datos.
      * En el caso de que todavía no hubiese datos inicializa la matriz con valores por defecto.
      */
@@ -321,6 +333,7 @@ public class Knowledge {
     }
     
     /**
+     * @author Samuel Peregrina
      * Este método dibuja el mapa conocido por el agente
      */
     public void drawMap(){
@@ -359,6 +372,7 @@ public class Knowledge {
     }
     
     /**
+     * @author Samuel Peregrina
      * Devuelve el contenido en el mapa conocido del agente.
      * En caso de que la posición pedida esté fuera del conocimiento devuelve STATE_WALL
      * 
@@ -371,6 +385,7 @@ public class Knowledge {
     }
     
     /**
+     * @author Samuel Peregrina
      * Devuelve el tamaño máximo conocido del mapa actual
      * 
      * @return El tamaño máximo conocido de la matriz

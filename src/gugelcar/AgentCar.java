@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Esta clase contiene el agente que realizara toda la funcionalidad
  *
  * @author Samuel Peregrina
- * @author Luis Gallego
+ * @author Luis Gallego 
  * @version 1.0
  */
 public class AgentCar extends SingleAgent {
@@ -42,14 +42,19 @@ public class AgentCar extends SingleAgent {
     Path camino = new Path(posiblesObjetivos, 12, 12);
 
     private boolean check = true;
-    private final int MAPA = 9;
+    private final int MAPA = 4;
     private final int LIMITE_PASOS = 1000;
-    private final boolean EXPLORAR = false;
+    private final boolean EXPLORAR = true;
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
     JsonObject radar, gps; // toman valor en resultadoAccion() para usarlos en mapa.update
 
+    /**
+     * @autor @author Luis Gallego Germán Valdearenas Jiménez
+     * @param aid
+     * @throws Exception 
+     */
     public AgentCar(AgentID aid) throws Exception {
         super(aid);
     }
@@ -57,7 +62,7 @@ public class AgentCar extends SingleAgent {
     /**
      * Inicializamos variables
      *
-     * @author Luis Gallego
+     * @author Luis Gallego Germán Valdearenas Jiménez
      */
     @Override
     public void init() {
@@ -72,7 +77,7 @@ public class AgentCar extends SingleAgent {
     /**
      * Metodo que ejecuta el agente donde controlamos los estados
      *
-     * @author Luis Gallego
+     * @author Luis Gallego Germán Valdearenas Jiménez
      */
     @Override
     public void execute() {
@@ -103,7 +108,7 @@ public class AgentCar extends SingleAgent {
     /**
      * Metodo con el que se cierra sesion.
      *
-     * @author Luis Gallego
+     * @author Luis Gallego Germán Valdearenas Jiménez
      *
      */
     @Override
@@ -112,7 +117,11 @@ public class AgentCar extends SingleAgent {
         bd.drawMap();
         super.finalize();
     }
-
+    /**
+     * @author Luis Gallego Germán Valdearenas Jiménez
+     * 
+     * Realiza el login del agente
+     */
     private void realizarLogin() {
         System.out.println("Enviando login.");
         realizarAccion(JSON.realizarLogin(this.MAPA));
@@ -120,7 +129,11 @@ public class AgentCar extends SingleAgent {
         //System.out.println("Pasamos a recibir datos login");
         estadoActual = RECIBIR_DATOS;
     }
-
+    /**
+     * @author Luis Gallego Germán Valdearenas Jiménez
+     * Manda al servidor la acción a realizar
+     * @param accion Accion realizada por el agente
+     */
     private void realizarAccion(String accion) {
         System.out.println("Enviando accion " + accion + " al servidor");
         msjSalida = new ACLMessage();
@@ -131,7 +144,10 @@ public class AgentCar extends SingleAgent {
         System.out.println("Accion enviada.");
         //estadoActual = RECIBIR_DATOS;
     }
-
+    /**
+     * @author Luis Gallego Germán Valdearenas Jiménez
+     * Recibe el resultado de la accion realizada
+     */
     private void resultadoAccion() {
         System.out.println("Recibiendo respuesta.");
         boolean resultado = true;
@@ -179,7 +195,7 @@ public class AgentCar extends SingleAgent {
 
     /**
      * *************************************************************************
-     * @author Raúl López Arévalo
+     * @author Raúl López Arévalo Luis Gallego
      *
      * Muestra que la traza se ha guardado correctamente mediante un mensaje por
      * pantalla y guarda la misma en un archivo .png con el nombre
