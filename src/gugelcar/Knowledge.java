@@ -259,23 +259,15 @@ public class Knowledge {
      * @param posy int Posición y de la coordenada
      * @param value int Valor a actualizar
      */
-    private void updateMatrix(int posx, int posy, int value){
-        // Comprobamos el tamaño de la matriz
-        int max = Math.max(this.mapMatrix.length, this.actual_max_size+1);
-                
+    private void updateMatrix(int posx, int posy, int value){                
         // Comprobamos si hay que redimensionar la matriz
-        int diff = 0;
-        int diff_min = max - this.tamMap();
-        
-        // Si nuestra matriz es más pequeña, le aumentamos el tamaño
-        if (max > this.tamMap()){
-            if(diff_min < 5) max += diff_min; //Nos aseguramos que es como mínimo 5 casillas más grande
-            diff = max;
-        } 
-        
-        if(diff > 0){
-            System.out.println("Redimensionado en "+diff);
-           int[][] tmp = this.mapMatrix;
+                
+        // Nos aseguramos que el tamaño de la matriz sea como mínimo 5 casillas más que la posición del agente
+        int diff_min = this.tamMap() - Math.max(this.pos_actual[0], this.pos_actual[1]);
+        if(diff_min < 5){
+            int diff = this.tamMap() + (5 - diff_min);
+            
+            int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[diff][diff];
             for(int i = 0; i < tmp.length; i++){
                 for(int j = 0; j < tmp[i].length; j++){
@@ -302,27 +294,39 @@ public class Knowledge {
             
             String sqlCount;
             ResultSet rs;
-
-            // Calculamos el tamaño máximo de la matriz
-            // Por posición X
-            sqlCount = "SELECT MAX(pos_x) AS count FROM Mapa_" + this.map_id + ";";
+            
+            // Comprobamos si ya hay información del mapa
+            sqlCount = "SELECT COUNT(*) AS count FROM Mapa_" + this.map_id + ";";
             
             rs = statement.executeQuery(sqlCount);
             while(rs.next()){
-                matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
+                matrix_size = rs.getInt("count");
             }
             
-            // Por posición Y
-            sqlCount = "SELECT MAX(pos_y) AS count FROM Mapa_" + this.map_id + ";";
-            
-            rs = statement.executeQuery(sqlCount);
-            while(rs.next()){
-                matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
-            }     
-            
-            System.out.println("El máximo de la matriz es: " + matrix_size);
-            
+            System.out.println("\nCantidad de celdas conocidas: " + matrix_size);
+
             if(matrix_size > 0) {
+                matrix_size = 0;
+                // Calculamos el tamaño máximo de la matriz
+                // Por posición X
+                sqlCount = "SELECT MAX(pos_x) AS count FROM Mapa_" + this.map_id + ";";
+
+                rs = statement.executeQuery(sqlCount);
+                while(rs.next()){
+                    matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
+                }
+
+                // Por posición Y
+                sqlCount = "SELECT MAX(pos_y) AS count FROM Mapa_" + this.map_id + ";";
+
+                rs = statement.executeQuery(sqlCount);
+                while(rs.next()){
+                    matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
+                }     
+
+                System.out.println("El máximo de la matriz es: " + matrix_size);
+            
+            
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
 
@@ -332,6 +336,8 @@ public class Knowledge {
                     this.mapMatrix[rs.getInt("pos_x")][rs.getInt("pos_y")] = rs.getInt("state");
                 }
             }else{
+                System.out.println("Creamos matriz desde cero");
+                
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
             }
         } catch(SQLException e){
