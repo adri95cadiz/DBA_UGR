@@ -279,7 +279,7 @@ public class Path {
             encontrado = isObjetive();
         }
 
-        if (open_list.isEmpty()) {
+        if (open_list.isEmpty() && !encontrado) {
             path_objetive.add(-1);
         } else {
             path_objetive.add(objetive_id);

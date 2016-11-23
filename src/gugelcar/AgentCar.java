@@ -42,8 +42,8 @@ public class AgentCar extends SingleAgent {
     Path camino = new Path(posiblesObjetivos, 12, 12);
 
     private boolean check = true;
-    private final int MAPA = 1;
-    private final int LIMITE_PASOS = 100;
+    private final int MAPA = 9;
+    private final int LIMITE_PASOS = 1000;
     private final boolean EXPLORAR = false;
 
     // base de datos
@@ -117,7 +117,7 @@ public class AgentCar extends SingleAgent {
         System.out.println("Enviando login.");
         realizarAccion(JSON.realizarLogin(this.MAPA));
         login = true;
-        System.out.println("Pasamos a recibir datos login");
+        //System.out.println("Pasamos a recibir datos login");
         estadoActual = RECIBIR_DATOS;
     }
 
@@ -140,7 +140,7 @@ public class AgentCar extends SingleAgent {
                 //System.out.println("Recibiendo respuesta2.");
                 msjEntrada = receiveACLMessage();
                 String recibido = msjEntrada.getContent();
-                System.out.println("Respuesta recibida. " + recibido + "\n\n");
+                //System.out.println("Respuesta recibida. " + recibido + "\n\n");
                 if (recibido.contains("scanner")) {
                     datosScanner = JSON.leerScanner(recibido);
                 } else if (recibido.contains("radar")) {
@@ -467,7 +467,14 @@ public class AgentCar extends SingleAgent {
                 camino.printPath();
                 no_exist_path = false;
             }
-
+           if (path_local.contains(-1)) {
+                fin = true;
+                System.out.println("OBJETIVO INACCESIBLE");
+                realizarAccion(JSON.realizarAccion("logout"));
+                resultadoAccion();
+                resultadoTraza();
+                System.out.println("Pasos: " + contadorPasos);
+            } else {
             // Si no existe ningún camino óptimo local a seguir, se calcula otro
             if (no_exist_path) {
                 /**
@@ -513,11 +520,11 @@ public class AgentCar extends SingleAgent {
                 //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
                 //System.out.println("NUEVO PATH OBTENIDO");
                 path_local = camino.getPath();
-                System.out.println("COORDENADAS DE TODO EL PATH --------------> ");
-                for (int i = 0; i < path_local.size(); i++) {
-                    System.out.print(path_local.get(i) / 5 + "-" + path_local.get(i) % 5 + " ");
-                }
-                System.out.println("\nCaminito pintao");
+//                //System.out.println("COORDENADAS DE TODO EL PATH --------------> ");
+//                for (int i = 0; i < path_local.size(); i++) {
+//                    System.out.print(path_local.get(i) / 5 + "-" + path_local.get(i) % 5 + " ");
+//                }
+//                System.out.println("\nCaminito pintao");
             }
             /**
              * Si ya existía un path óptimo: -Calcula la posición a la que se
@@ -525,14 +532,15 @@ public class AgentCar extends SingleAgent {
              * vez que se haya completado el path se vuelve a calcular uno
              */
             no_exist_path = false;
+               System.out.println("CAMINO A SEGUIR:");
             camino.printPath();
             // Se transforman las IDs de las casillas a coordenadas para saber
             // identificar la dirección en la que se debe de mover
             int primera_casilla = path_local.get(0);
             int segunda_casilla = path_local.get(1);
             int obj_prox_mov = primera_casilla - segunda_casilla;
-            System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
-            System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
+            //System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
+            //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
             //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);*/
             
             // Se obtiene la dirección en la que moverse
@@ -560,7 +568,8 @@ public class AgentCar extends SingleAgent {
             estadoActual = RECIBIR_DATOS;
 
         }
-        //bd.drawMap();
+        bd.drawMap();
+        }
     }
 
     /**

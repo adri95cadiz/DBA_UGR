@@ -22,7 +22,7 @@ public class Knowledge {
     private int[][] mapMatrixOptim;
     private int[] pos_actual = new int[2];
     private final int TAM_VISION = 5;
-    private final int MIN_SIDE = 20;
+    private final int MIN_SIDE = 200;
     private int actual_max_size = MIN_SIDE;
         
     public final int STATE_FREE = 0;
