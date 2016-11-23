@@ -42,9 +42,9 @@ public class AgentCar extends SingleAgent {
     Path camino = new Path(posiblesObjetivos, 12, 12);
 
     private boolean check = true;
-    private final int MAPA = 4;
+    private final int MAPA =11;
     private final int LIMITE_PASOS = 1000;
-    private final boolean EXPLORAR = true;
+    private final boolean EXPLORAR = false;
 
     // base de datos
     Knowledge bd = Knowledge.getDB(this.MAPA);
@@ -481,6 +481,8 @@ public class AgentCar extends SingleAgent {
                 System.out.println("OK");
                 System.out.println("ESTE ES EL CAMINO A SEGUIR");
                 camino.printPath();
+                System.out.println("MATRIZ OPTIMA ----------------------------->");
+                bd.printoptim();
                 no_exist_path = false;
             }
            if (path_local.contains(-1)) {
@@ -575,6 +577,7 @@ public class AgentCar extends SingleAgent {
              * -Manda la acción del movimiento
              * -Espera a recibir la respuesta
              * */
+            
             updateMap();
             //System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
             contadorPasos++;

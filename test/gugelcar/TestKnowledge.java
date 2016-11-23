@@ -15,7 +15,7 @@ import com.eclipsesource.json.JsonValue;
  */
 public class TestKnowledge {
     public static void main(String[] args) throws Exception {
-        Knowledge bd = Knowledge.getDB(10);
+        Knowledge bd = Knowledge.getDB(9);
         bd.drawMap();
         /*int turn = 5;
         int[][] mapa;

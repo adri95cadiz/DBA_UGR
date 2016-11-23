@@ -104,9 +104,43 @@ public class Knowledge {
                 if( this.mapMatrixOptim[i][j] == 0 ){
                     this.mapMatrixOptim[i][j] = -1;
                 }
+                if( this.mapMatrixOptim[i][j] >0){
+                    this.mapMatrixOptim[i][j] = 0;
+                }
             }
         }
         return this.mapMatrixOptim;
+    }
+    
+    
+    public void printoptim(){
+        for(int i = 0; i < this.mapMatrixOptim.length; i++){
+            for (int j = 0; j < this.mapMatrixOptim[i].length; j++) {
+                int value = this.mapMatrixOptim[i][j];
+                if(j == 0) System.out.print("▉▉▉");
+                //if(pos_actual[0] == i && pos_actual[1] == j) System.out.print(" ⎔ ");
+                if(pos_actual[0] == i && pos_actual[1] == j) System.out.print(" ● ");
+                else{
+                    switch (value) {
+                        case 0:
+                            System.out.print(" ⎕ ");
+                            break;
+                        case -1:
+                            System.out.print("▉▉▉");
+                            break;
+                        case -2:
+                            System.out.print(" ╳ ");
+                            break;
+                        default:
+                            if(value < 10) System.out.print(" " + value+ " ");
+                            else if(value < 100) System.out.print(" " + value);
+                            else System.out.print(value);
+                            break;
+                    }
+                }
+            }
+            System.out.print("\n");
+    }
     }
     /**
      * 

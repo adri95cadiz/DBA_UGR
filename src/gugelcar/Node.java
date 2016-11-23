@@ -24,44 +24,44 @@ public class Node {
     }
     /**
      * Obtiene el ID del nodo
-     * @return <box_id>
+     * @return box_id
      */
     public int getId(){
         return box_id;
     }
     /**
      * Obtiene el ID del padre del nodo
-     * @return <parent_id>
+     * @return parent_id
      */
     public int getParentId(){
         return parent_id;
     }
     /**
      * Obtiene el coste del nodo
-     * @return <cost>
+     * @return cost
      */
     public int getCost(){
         return cost;
     }
     /**
-     * Calcula la coordenada <X> que le correspondería en la matriz de mapa
-     * @return Devuelve la coordenada <X> como <int>
+     * Calcula la coordenada X que le correspondería en la matriz de mapa
+     * @return Devuelve la coordenada X como int
      */
     public int getCoorX(){
         return box_id / 5;
     }
     /**
-     * Calcula la coordenada <Y> que le correspondería en la matriz de mapa
-     * @return Devuelve la coordenada <Y> como <int>
+     * Calcula la coordenada Y que le correspondería en la matriz de mapa
+     * @return Devuelve la coordenada Y como int
      */
     public int getCoorY(){
         return box_id % 5;
     }
     /**
      * Imprime por pantalla las propiedades del nodo:
-     * <box_id> Su ID
-     * <parent_id> El ID de su padre
-     * <cost> Su coste
+     * box_id Su ID
+     * parent_id El ID de su padre
+     * cost Su coste
      */
     public void print(){
         System.out.println("ID: "+box_id+" Parent ID: "+parent_id+ " Cost: "+cost);

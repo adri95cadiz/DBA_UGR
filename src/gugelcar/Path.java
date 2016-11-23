@@ -114,10 +114,10 @@ public class Path {
     }
 
     /**
-     * Comprueba si un Nodo se encuentra dentro de <open_list>
+     * Comprueba si un Nodo se encuentra dentro de open_list
      *
      * @param node_id ID del nodo a comprobar.
-     * @return exist <true> si se encuentra, <false> en caso contrario
+     * @return exist true si se encuentra, false en caso contrario
      */
     private boolean containsNodeOpenList(int node_id) {
         boolean exist = false;
@@ -130,10 +130,10 @@ public class Path {
     }
 
     /**
-     * Compreuba si un Nodo se encuentra dentor de <close_list>
+     * Compreuba si un Nodo se encuentra dentor de close_list
      *
      * @param node_id ID del nodo a comprobar
-     * @return exist <true> si se encuentra, <false> en caso contrario
+     * @return exist true si se encuentra, false en caso contrario
      */
     private boolean containsNodeCloseList(int node_id) {
         boolean exist = false;
@@ -146,18 +146,18 @@ public class Path {
     }
 
     /**
-     * Comprueba si un Nodo se encuentra en alguna lista <open_list> o
-     * <close_list>
+     * Comprueba si un Nodo se encuentra en alguna lista open_list o
+     * close_list
      *
      * @param node_id ID del nodo a comprobar
-     * @return <true> si se encuentra en alguna, <false> en caso contrario
+     * @return true si se encuentra en alguna, false en caso contrario
      */
     private boolean containsNodeSomeList(int node_id) {
         return containsNodeOpenList(node_id) || containsNodeCloseList(node_id);
     }
 
     /**
-     * Añade a <open_list> todos los nodos adyacentes a uno dado siempre que no
+     * Añade a open_list todos los nodos adyacentes a uno dado siempre que no
      * se encuetren ya dentro.
      *
      * @param node_id ID del Nodo del que se quieren añadr todos sus adyacentes
@@ -195,7 +195,7 @@ public class Path {
 
     /**
      * Obtiene el nodo con el menor coste de entre todos los que hay en
-     * <open_list>. Se presupone que la lista no está vacía
+     * open_list. Se presupone que la lista no está vacía
      *
      * @return node Devuelve el nodo con el coste mejor
      */
@@ -212,16 +212,16 @@ public class Path {
     }
 
     /**
-     * Comprueba si el nodo objetivo se encuentra en <open_list>
+     * Comprueba si el nodo objetivo se encuentra en open_list
      *
-     * @return <true> si <objetive_id> está en <open_list>
+     * @return true si objetive_id está en open_list
      */
     private boolean isObjetive() {
         return containsNodeOpenList(objetive_id);
     }
 
     /**
-     * Obtiene un nodo dado de <open_list>. Se presupone que el nodo existe.
+     * Obtiene un nodo dado de open_list. Se presupone que el nodo existe.
      *
      * @param node_id ID del nodo que queremos obtener
      * @return node Nodo que queríamos obtener
@@ -237,7 +237,7 @@ public class Path {
     }
 
     /**
-     * Obtiene un nodo dado de <close_list>. Se presupone que el nodo existe.
+     * Obtiene un nodo dado de close_list. Se presupone que el nodo existe.
      *
      * @param node_id ID del nodo que queremos obtener
      * @return node Nodo que queríamos obtener
@@ -253,8 +253,8 @@ public class Path {
     }
 
     /**
-     * Calcula la ruta óptima entre la posición inicial <start_id> y la final
-     * <objetive_id>. Guarda los ID´s de las casillas en <path_objetive>.
+     * Calcula la ruta óptima entre la posición inicial start_id y la final
+     * objetive_id. Guarda los ID´s de las casillas en path_objetive.
      *
      */
     private void pathObjetive() {
@@ -297,7 +297,7 @@ public class Path {
     /**
      * Devuelve el camino óptimo guardado
      *
-     * @return <path_objetive>
+     * @return path_objetive
      */
     public ArrayList<Integer> getPath() {
         this.pathObjetive();
@@ -329,10 +329,10 @@ public class Path {
 
     /**
      * Imprime por pantalla:
-     * <start_id>
-     * <objetive_id>
-     * <open_list>
-     * <close_lsit>
+     * start_id
+     * objetive_id
+     * open_list
+     * close_lsit
      */
     private void printData() {
         System.out.println("Agent ID: " + start_id);
