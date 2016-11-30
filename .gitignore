@@ -1,0 +1,6 @@
+nbproject/private/
+build/
+nbproject/
+dist/
+mapas.db
+traza_*.png
