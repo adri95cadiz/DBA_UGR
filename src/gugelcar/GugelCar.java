@@ -19,7 +19,7 @@ public class GugelCar {
     AgentsConnection.connect(SERVERPATH,PORT, "Haldus", "Esquivel", "Pegaso", false);
     try {
       Car = new AgentCar(new AgentID("GugelCar"));
-    } catch (Exception e) {
+    } catch (Exception e) { 
       System.err.println("Error al crear los agentes");
       System.err.println(e);
       System.exit(1);
