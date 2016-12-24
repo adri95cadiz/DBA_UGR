@@ -1,4 +1,4 @@
-package gugelcar;
+package practica3;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
