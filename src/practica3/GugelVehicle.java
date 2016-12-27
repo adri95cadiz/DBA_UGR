@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package practica3;
 
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.util.HashMap;
 
 /**
  *
@@ -15,11 +11,14 @@ import es.upv.dsic.gti_ia.core.SingleAgent;
  */
 public class GugelVehicle extends SingleAgent {
     
-    private final String NOMBRE_CONTROLADOR = "Controlador_";
+    private final String NOMBRE_CONTROLADOR = "Controlador2_";
     private final String NOMBRE_SERVIDOR = "Haldus";
     private ACLMessage msjEntrada, msjSalida;
     String receptor;
     boolean fin;
+    private String conversationID;
+    boolean primero;
+    private HashMap<String, String> reply;
     
     public GugelVehicle(AgentID id) throws Exception{
         super(id);
@@ -29,14 +28,25 @@ public class GugelVehicle extends SingleAgent {
         System.out.println("Iniciandose " + getName());
         msjEntrada = null;
         msjSalida = null;
-        fin = false;        
-    }
+        fin = false;
+        conversationID = null;
+        primero = true;        
+        reply = new HashMap<>();
+        reply.put("Vehiculo10", null);
+        reply.put("Vehiculo11", null);
+        reply.put("Vehiculo12", null);
+        reply.put("Vehiculo13", null); 
+    }   
     
     public void execute(){
         while(!fin){
             try {
                 msjEntrada = receiveACLMessage();
-                System.out.println(getName() + " ha recibido: " + msjEntrada.getContent());
+                System.out.println(getName() + " ha recibido: " + msjEntrada.getContent() + " " + msjEntrada.getConversationId() + " " + msjEntrada.getReplyWith());
+                conversationID = msjEntrada.getConversationId();
+                if(!msjEntrada.getReplyWith().isEmpty()) {
+                    reply.put(getName(), msjEntrada.getReplyWith());   
+                }                             
                 if(msjEntrada.getPerformativeInt() == ACLMessage.CANCEL){
                     fin = true;                    
                 } else {
@@ -45,6 +55,7 @@ public class GugelVehicle extends SingleAgent {
                     } else {
                         receptor = NOMBRE_SERVIDOR;
                     }
+                    //System.out.println("El reply de " + getName() + " vale " + reply.get(getName()));
                     enviar(receptor, msjEntrada.getPerformativeInt(), msjEntrada.getContent());
                 }
             } catch (InterruptedException ex) {
@@ -63,9 +74,9 @@ public class GugelVehicle extends SingleAgent {
         msjSalida.setReceiver(new AgentID(receptor));
         msjSalida.setPerformative(performativa);
         msjSalida.setContent(contenido);
-        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " y el contenido " + contenido);
+        msjSalida.setConversationId(conversationID);
+        msjSalida.setInReplyTo(reply.get(getName()));
+        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " contenido " + contenido + " " + conversationID + " " + reply.get(getName()));
         this.send(msjSalida);
-    }
-    
-    
+    }      
 }

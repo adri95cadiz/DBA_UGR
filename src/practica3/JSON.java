@@ -9,8 +9,6 @@ import java.awt.Point;
  */
 public class JSON {
       
-    private static String key; 
-    
     /**
      * Generamos la cadena necesaria para registrarse en un mundo.
      * @param cadena Nombre del mapa.
@@ -28,11 +26,13 @@ public class JSON {
      * @param cadena Contenido de la key en Json.
      * @author Luis Gallego Quero
      */
-    public static void guardarKey(String cadena) {
+    public static void leerKey(String cadena) {
         JsonObject objeto = Json.parse(cadena).asObject();
-        key = objeto.getString("result", null);
+        String key = objeto.getString("result", null);
+        System.out.println("Key obtenida: " + key);
+        //return key;
     }
-    
+       
     /**
      * Generamos la cadena necesaria para hacer login en el mundo.
      * @author Luis Gallego Quero
@@ -41,7 +41,6 @@ public class JSON {
     public static String registrarse() { // checkin
         JsonObject objeto = new JsonObject();
         objeto.add("command", "checkin");
-        objeto.add("key", key);
         return objeto.toString();
     }
     
@@ -54,7 +53,6 @@ public class JSON {
     public static String mover(String cadena) {
         JsonObject objeto = new JsonObject();
         objeto.add("command", cadena);
-        objeto.add("key", key);
         return objeto.toString();
     }
     
@@ -66,7 +64,6 @@ public class JSON {
     public static String repostar() {
         JsonObject objeto = new JsonObject();
         objeto.add("command", "refuel");
-        objeto.add("key", key);
         return objeto.toString();
     }
     
@@ -80,26 +77,6 @@ public class JSON {
         JsonObject objeto = parseToJson(cadena);
         int rol = objeto.getInt("rol", -1);
         return Rol.getRol(rol);
-    }
-    
-    /**
-     * Genera una cadena con la key y su valor.
-     * @author Luis Gallego Quero
-     * @return Cadena con el Json codificado.
-     */
-    public static String key() {
-        JsonObject objeto = new JsonObject();
-        objeto.add("key", key);
-        return objeto.toString();
-    }
-    
-    /**
-     * Devuelve la key guardada de la sesión.
-     * @author Luis Gallego Quero
-     * @return Key de la sesión.
-     */
-    public static String getKey() {
-        return key;
     }
     
     /**
@@ -161,9 +138,30 @@ public class JSON {
         percepcion.setEnergia(resultado.getInt("energy", -1));
         
         // Ha llegado al objetivo?
-        percepcion.setLlegado(radar[radar.length/2][radar.length/2] == 3);
+        percepcion.setLlegado((resultado.getBoolean("goal", true)));
+        //percepcion.setLlegado(radar[radar.length/2][radar.length/2] == 3);
         
         return percepcion;        
-    }           
+    }  
+    
+     /**
+     * Genera una cadena con la key y su valor.
+     * @author Luis Gallego Quero
+     * @return Cadena con el Json codificado.
+     */
+    /*public static String key() {
+        JsonObject objeto = new JsonObject();
+        objeto.add("key", key);
+        return objeto.toString();
+    }*/
+    
+    /**
+     * Devuelve la key guardada de la sesión.
+     * @author Luis Gallego Quero
+     * @return Key de la sesión.
+     */
+    /*public static String getKey() {
+        return key;
+    }*/
             
 }

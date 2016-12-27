@@ -52,7 +52,7 @@ public class Percepcion {
     }
 
     public void setLlegado(boolean llegado) {
-	this.llegado = llegado;
+        this.llegado = llegado;
     }
 
     public String getNombreVehicle() {

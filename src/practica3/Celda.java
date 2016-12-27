@@ -35,11 +35,11 @@ public enum Celda {
      * @return Valor de la última posición.
      */
     public static Celda getUlt_Posicion(String nombre) {
-	if (nombre.equals("Vehiculo0")) {
+	if (nombre.equals("Vehiculo10")) {
 	    return ULT_POSICION0;
-	} else if (nombre.equals("Vehiculo1")) {
+	} else if (nombre.equals("Vehiculo11")) {
 	    return ULT_POSICION1;
-	} else if (nombre.equals("Vehiculo2")) {
+	} else if (nombre.equals("Vehiculo12")) {
 	    return ULT_POSICION2;
 	} else {
 	    return ULT_POSICION3;

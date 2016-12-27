@@ -56,13 +56,12 @@ public class PropiedadesVehicle {
     /**
      * Actualiza los parametros a partir de la percepción.
      * 
-     * @param percepcion 
+     * @param percepcion Percepción con los datos a actualizar.
      * @author Luis Gallego Quero
      */
     public void actualizarPercepcion(Percepcion percepcion){
         gps = percepcion.getGps();
         bateria = percepcion.getBateria();
         llegado = percepcion.getLlegado();
-    }
-    
+    }    
 }
