@@ -142,26 +142,5 @@ public class JSON {
         //percepcion.setLlegado(radar[radar.length/2][radar.length/2] == 3);
         
         return percepcion;        
-    }  
-    
-     /**
-     * Genera una cadena con la key y su valor.
-     * @author Luis Gallego Quero
-     * @return Cadena con el Json codificado.
-     */
-    /*public static String key() {
-        JsonObject objeto = new JsonObject();
-        objeto.add("key", key);
-        return objeto.toString();
-    }*/
-    
-    /**
-     * Devuelve la key guardada de la sesión.
-     * @author Luis Gallego Quero
-     * @return Key de la sesión.
-     */
-    /*public static String getKey() {
-        return key;
-    }*/
-            
+    }              
 }

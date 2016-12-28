@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public class GugelVehicle extends SingleAgent {
     
-    private final String NOMBRE_CONTROLADOR = "Controlador2_";
+    private final String NOMBRE_CONTROLADOR = "Controlador_";
     private final String NOMBRE_SERVIDOR = "Haldus";
     private ACLMessage msjEntrada, msjSalida;
     String receptor;
@@ -48,14 +48,13 @@ public class GugelVehicle extends SingleAgent {
                     reply.put(getName(), msjEntrada.getReplyWith());   
                 }                             
                 if(msjEntrada.getPerformativeInt() == ACLMessage.CANCEL){
-                    fin = true;                    
+                    fin = true; 
                 } else {
                     if(msjEntrada.getSender().name.equals(NOMBRE_SERVIDOR)){
                         receptor = NOMBRE_CONTROLADOR;
                     } else {
                         receptor = NOMBRE_SERVIDOR;
                     }
-                    //System.out.println("El reply de " + getName() + " vale " + reply.get(getName()));
                     enviar(receptor, msjEntrada.getPerformativeInt(), msjEntrada.getContent());
                 }
             } catch (InterruptedException ex) {
@@ -74,8 +73,11 @@ public class GugelVehicle extends SingleAgent {
         msjSalida.setReceiver(new AgentID(receptor));
         msjSalida.setPerformative(performativa);
         msjSalida.setContent(contenido);
-        msjSalida.setConversationId(conversationID);
-        msjSalida.setInReplyTo(reply.get(getName()));
+        
+        if(receptor == NOMBRE_SERVIDOR) {
+            msjSalida.setInReplyTo(reply.get(getName()));
+            msjSalida.setConversationId(conversationID);
+        }        
         System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " contenido " + contenido + " " + conversationID + " " + reply.get(getName()));
         this.send(msjSalida);
     }      

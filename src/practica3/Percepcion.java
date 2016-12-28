@@ -13,7 +13,7 @@ public class Percepcion {
     private int[][] radar;
     private int energia;
     private boolean llegado;
-    private String nombreDrone;
+    private String nombreVehiculo;
     
     public Point getGps() {
 	return this.gps;
@@ -56,10 +56,10 @@ public class Percepcion {
     }
 
     public String getNombreVehicle() {
-	return this.nombreDrone;
+	return this.nombreVehiculo;
     }
 
     public void setNombreVehicle(String nombreDrone) {
-	this.nombreDrone = nombreDrone;
+	this.nombreVehiculo = nombreDrone;
     }
 }
