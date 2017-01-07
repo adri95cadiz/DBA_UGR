@@ -362,6 +362,14 @@ public class Knowledge {
     }
 
 
+    /**
+     * Método que actualiza la posición de un agente. 
+     * En el caso de que ese agente no esté en la lista de agentes lo incluye
+     *
+     * @param agentName Nombre del agente a actualizar/añadir
+     * @param posx Posición X a actualizar
+     * @param posy Posición Y a actualizar
+     */
     private void setAgentPosition(String agentName, int posx, int posy){
         AgentPosition aPos = new AgentPosition(agentName, posx, posy);
         int index = agentsPosition.indexOf(aPos);
@@ -373,6 +381,13 @@ public class Knowledge {
         }        
     }
 
+    /**
+     * Método para comprobar si hay un agente en una posición concreta
+     *
+     * @param posx Posición X a comprobar
+     * @param posy Posición Y a comprobar
+     * @return Devuelve true en caso de que en la posición dada exista un agente
+     */
     public boolean isAnyAgentInPosition(int posx, int posy){
         boolean isInPosition = false;
 
@@ -417,33 +432,38 @@ public class Knowledge {
             this.position = new Cell(posx, posy, STATE_VEHICLE);
         }
 
+        /**
+         * Devuelve el nombre del agente
+         *
+         * @return El nombre del agente
+         */
         public String getAgentName(){
             return this.agentName;
         }
 
         /**
-         * Método para comprobar si un agente ocupa una posición específica
+         * Comprueba si un agente ocupa una posición específica
          * 
          * @param posx Posición X a comprobar
          * @param posy Posición Y a comprobar
-         * @return Devuelve true en caso de que ocupe la posición
+         * @return true en caso de que ocupe la posición
          */
         public boolean isIn(int posx, int posy){
             return this.position.isPosition(posx, posy);
         }
 
         /**
-        * Método para comprobar si es un agente concreto
+        * Comprueba si es un agente concreto
         *
         * @param name Nombre a comprobar
-        * @return Devuelve true si es el agente a comprobar
+        * @return True si es el agente a comprobar
         */
         public boolean isAgent(String name){
             return this.agentName == name;
         }
 
         /**
-         * Método para cambiar la posición que ocupa un agent_es
+         * Cambia la posición que ocupa un agente
          *
          * @param posx Nueva posición X a ocupar
          * @param posy Nueva posición Y a ocupar
