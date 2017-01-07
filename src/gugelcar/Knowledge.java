@@ -395,10 +395,10 @@ public class Knowledge {
     }
 
     /**
-    * Clase envoltorio para poder guardar todas las posiciones de los agentes actuales
-    *
-    * @author Samuel Peregrina Morillas
-    */
+     * Clase envoltorio para poder guardar todas las posiciones de los agentes actuales
+     *
+     * @author Samuel Peregrina Morillas
+     */
     class AgentPosition {
         private String agentName;
         private Cell position;
