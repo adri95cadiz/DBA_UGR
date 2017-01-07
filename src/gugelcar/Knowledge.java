@@ -224,19 +224,13 @@ public class Knowledge {
      * @param value int Valor a actualizar
      */
     private void updateMatrix(int posx, int posy, int value){
-        // Comprobamos si hay que redimensionar la matriz
+        int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
 
-        // Nos aseguramos que el tamaño de la matriz sea como mínimo 5 casillas más que la posición del agente
-        int diff_min = this.mapSize() - Math.max(this.posActual.getPosX(), this.posActual.getPosY());
-        if(diff_min < 5){
-            int diff = this.mapSize() + (5 - diff_min);
-
-            int[][] tmp = this.mapMatrix;
-            this.mapMatrix = new int[diff][diff];
-            for(int i = 0; i < tmp.length; i++){
-                for(int j = 0; j < tmp[i].length; j++){
-                    this.mapMatrix[i][j] = tmp[i][j];
-                }
+        int[][] tmp = this.mapMatrix;
+        this.mapMatrix = new int[maxWidth][maxWidth];
+        for(int i = 0; i < tmp.length; i++){
+            for(int j = 0; j < tmp[i].length; j++){
+                this.mapMatrix[i][j] = tmp[i][j];
             }
         }
 
