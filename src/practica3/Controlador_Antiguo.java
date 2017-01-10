@@ -1,4 +1,4 @@
-package gugelcar;
+/*package practica3;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
@@ -10,6 +10,7 @@ import es.upv.dsic.gti_ia.core.SingleAgent;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.awt.Point;
 
 /**
  * Esta clase contiene el agente que realizara toda la funcionalidad
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * @author Luis Gallego 
  * @version 1.0
  */
-public class AgentCar extends SingleAgent {
+public class Controlador_Antiguo extends SingleAgent {
 
     // Diferentes estados del bot
     private final int LOGIN = 0;
@@ -56,7 +57,7 @@ public class AgentCar extends SingleAgent {
      * @param aid
      * @throws Exception 
      */
-    public AgentCar(AgentID aid) throws Exception {
+    public Controlador_Antiguo(AgentID aid) throws Exception {
         super(aid);
     }
 

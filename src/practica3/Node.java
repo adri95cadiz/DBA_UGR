@@ -1,4 +1,4 @@
-package gugelcar;
+package practica3;
 
 /**
  * @author Raúl López Arévalo
