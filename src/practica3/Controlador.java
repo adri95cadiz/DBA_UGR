@@ -186,14 +186,15 @@ public class Controlador extends SingleAgent {
                 }                
                 for(int i=0; i<flota.size(); i++) {
                     mensaje = receiveACLMessage();
-                    /*if(mensaje != null && mensaje.getPerformativeInt() == ACLMessage.INFORM) {  
+               
+                    if(mensaje != null && mensaje.getPerformativeInt() == ACLMessage.INFORM) {  
                         PropiedadesVehicle propiedades = new PropiedadesVehicle();
                         
-                        System.out.println("Esto es lo que deberían de ser las propiedades: " + mensaje.getContent());
+                        //System.out.println("Esto es lo que deberían de ser las propiedades: " + mensaje.getContent());
                         
                        //propiedades.setRol(JSON.getRol(mensaje.getContent()));
                         flota.put(mensaje.getSender().name, propiedades);  
-                    }*/
+                    }
                 }     
             }           
         } catch (InterruptedException ex) {
@@ -422,7 +423,7 @@ public class Controlador extends SingleAgent {
         System.out.println("\n\tFASE REPOSTAR.");
         subEstadoBuscando = Estado.MOVER;
         subEstadoEncontrado = Estado.MOVER;
-        PropiedadesVehicle propiedades = flota.get(vehiculoElegido);
+        PropiedadesVehicle propiedades = flota.get(vehiculoElegido);                    //????¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
        if(!propiedades.getLlegado()) { // Repostamos si no estamos en objetivo.
             /*
             Añadir condiciones? En plan, no repostar si esta demasiado
