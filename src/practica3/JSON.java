@@ -110,6 +110,8 @@ public class JSON {
         return matriz;
     }
     
+    
+    
     /**
      * Convierte una cadena Json en un objeto Percepcion
      * @param cadena Contiene codificada las percepciones.
@@ -126,8 +128,8 @@ public class JSON {
         
         //Posicion en el mundo
         Point gps = new Point();
-        gps.x = resultado.getInt("x", -1);
-        gps.y = resultado.getInt("y", -1);
+        gps.x = resultado.getInt("y", -1);
+        gps.y = resultado.getInt("x", -1);
         percepcion.setGps(gps);
         
         // El radar lo recibimos como array pero lo utilizamos como matriz.

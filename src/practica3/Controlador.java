@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class Controlador extends SingleAgent {
     
-    private final String NOMBRE_CONTROLADOR = "Haldus";
+    private final String NOMBRE_SERVIDOR = "Haldus";
     private final short TAM_MAPA = 500;
     private short tamMapa = 0;
     private String mundo;
@@ -52,13 +52,13 @@ public class Controlador extends SingleAgent {
     }
     
     public void init() {
-        System.out.println("Iniciandose " + getName());
+        System.out.println("Iniciandose Controlador " + getName());
         fin = false;
         buscando = true;
         estadoActual = Estado.INICIAL;
         subEstadoBuscando = Estado.ELECCION_VEHICULO;
         subEstadoEncontrado = Estado.ELECCION_VEHICULO;
-        flota = new HashMap<>();
+        flota = new HashMap<>();  
         flota.put("Vehiculo0", null);
         flota.put("Vehiculo1", null);
         flota.put("Vehiculo2", null);
@@ -81,7 +81,7 @@ public class Controlador extends SingleAgent {
             Si al ejecutar veis errores posiblemente sean porque el 
             coche se ha estrellado.
             */            
-            System.out.println("Execute fin: " + fin + " fase: " + estadoActual);
+            System.out.println("Execute fin: " + fin + "\nFase: " + estadoActual);
             switch (estadoActual) {
                 case INICIAL:
                     faseInicial();
@@ -154,6 +154,7 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero.
      */
     private void enviarMensaje(String receptor, int performativa, String contenido) {
+        System.out.println("\nEn el enviar Mensaje del controlador: \n");
         ACLMessage msjSalida = new ACLMessage();
         msjSalida.setSender(this.getAid());
         msjSalida.setReceiver(new AgentID(receptor));
@@ -169,13 +170,15 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero.
      */
     private void iniciarConversacion() {
+        System.out.println("\n\tINICIO CONVERSACION");
         String contenido = JSON.suscribirse(mundo);
-        enviarMensaje(NOMBRE_CONTROLADOR, ACLMessage.SUBSCRIBE, contenido);
+        enviarMensaje(NOMBRE_SERVIDOR, ACLMessage.SUBSCRIBE, contenido);
         ACLMessage mensaje = null;
         try {
             mensaje = receiveACLMessage();
+            
             if(mensaje.getPerformativeInt() == ACLMessage.INFORM) {
-                JSON.leerKey(mensaje.getContent()); 
+                JSON.leerKey(mensaje.getContent());
                 conversationID = mensaje.getConversationId();
                 for(String vehiculo : flota.keySet()) {
                     contenido = JSON.registrarse();
@@ -183,24 +186,29 @@ public class Controlador extends SingleAgent {
                 }                
                 for(int i=0; i<flota.size(); i++) {
                     mensaje = receiveACLMessage();
-                    if(mensaje != null && mensaje.getPerformativeInt() == ACLMessage.INFORM) {  
+                    /*if(mensaje != null && mensaje.getPerformativeInt() == ACLMessage.INFORM) {  
                         PropiedadesVehicle propiedades = new PropiedadesVehicle();
-                        propiedades.setRol(JSON.getRol(mensaje.getContent()));
+                        
+                        System.out.println("Esto es lo que deberían de ser las propiedades: " + mensaje.getContent());
+                        
+                       //propiedades.setRol(JSON.getRol(mensaje.getContent()));
                         flota.put(mensaje.getSender().name, propiedades);  
-                    }
+                    }*/
                 }     
             }           
         } catch (InterruptedException ex) {
             System.err.println(ex.toString());
             estadoActual = Estado.FINALIZAR;
         }
+        System.out.println("\tFIN INICIO CONVERSACION");
     }
     
     /**
      * Inicializamos las propiedades de cada vehiculo.
      * @author Luis Gallego Quero.
      */
-    private void inicializarPropiedadesVehiculo() {
+    private void inicializarPropiedadesVehiculo() { // En realidad las propiedades del vehículo se podrían coger antes, en la inicialización
+        System.out.println("\n\tINICIO PROPIEDADES VEHICULO");
         String contenido, nomVehiculo;
         ACLMessage mensaje = null;
         PropiedadesVehicle propiedades;
@@ -208,7 +216,7 @@ public class Controlador extends SingleAgent {
         
         for(String vehiculo : flota.keySet()) {
             contenido = "";
-            enviarMensaje(vehiculo, ACLMessage.QUERY_REF, contenido);
+            enviarMensaje(vehiculo, ACLMessage.QUERY_REF, contenido); //Petición de percepción
         }        
         try {
             for(int i=0; i<flota.size(); i++) {
@@ -220,11 +228,14 @@ public class Controlador extends SingleAgent {
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
-                    if(percepcion.getGps().y == 99) {
+                    if(percepcion.getGps().x == 99) {
                         tamMapa = 100;
-                    } else if(percepcion.getGps().y == 499 || percepcion.getGps().x >= 100) {
+                    } else if(percepcion.getGps().x == 499 || percepcion.getGps().y >= 100) {
                         tamMapa = 500;
                     }
+                    System.out.println("\nNombre vehiculo: " + nomVehiculo);
+                        System.out.println("\nRol: " + propiedades.getRol());
+                        System.out.println("\nNombre vehiculo" + flota.get(nomVehiculo));
                     System.out.println(mensaje.getContent());
                 }
             }            
@@ -232,6 +243,7 @@ public class Controlador extends SingleAgent {
 	    System.err.println(ex.toString());
 	    estadoActual = Estado.FINALIZAR;
 	}       
+        System.out.println("\tFIN PROPIEDADES VEHICULO");
     }
     
     /**
@@ -264,7 +276,7 @@ public class Controlador extends SingleAgent {
         for(String vehiculo : flota.keySet()) {
             enviarMensaje(vehiculo, ACLMessage.CANCEL, "");
         }
-        enviarMensaje(NOMBRE_CONTROLADOR, ACLMessage.CANCEL, "");        
+        enviarMensaje(NOMBRE_SERVIDOR, ACLMessage.CANCEL, "");        
         ACLMessage mensaje = null;
         try {
             mensaje = receiveACLMessage();
@@ -312,7 +324,7 @@ public class Controlador extends SingleAgent {
      * Elegimos el movimiento mas optimo para el vehiculo seleccionado.
      */
     private void faseMover() {
-        System.out.println("FASE MOVER.");
+        System.out.println("\n\tFASE MOVER.");
         if(buscando) {
             // Para el caso en el que aún no sabemos donde esta el punto objetivo.
             mover();
@@ -332,10 +344,10 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero
      */
     private void mover() {
-        System.out.println("MOVER().");
+        System.out.println("\n\t MOVER()");
         String decision = "moveE";        
         cont++; 
-        if(decision.contains("logout")) {
+        if(decision.contains("logout")) { // cuando se produce esto?????????????????????????????????????????????????
             System.out.println("No se donde moverme.");
             subEstadoBuscando = Estado.ELECCION_VEHICULO;
             subEstadoEncontrado = Estado.ELECCION_VEHICULO;
@@ -365,7 +377,7 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero
      */
     private void fasePercibir() {
-        System.out.println("FASE PERCIBIR.");
+        System.out.println("\n\tFASE PERCIBIR.");
         enviarMensaje(vehiculoElegido, ACLMessage.QUERY_REF, "");
         try{
             ACLMessage mensaje = receiveACLMessage();
@@ -407,7 +419,7 @@ public class Controlador extends SingleAgent {
         el paso de mensaje de repostar. Habría que hacerle una pequeña
         heuristica de cuando si y cuando no repostar.
         */
-        System.out.println("FASE REPOSTAR.");
+        System.out.println("\n\tFASE REPOSTAR.");
         subEstadoBuscando = Estado.MOVER;
         subEstadoEncontrado = Estado.MOVER;
         PropiedadesVehicle propiedades = flota.get(vehiculoElegido);
@@ -454,7 +466,7 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero
      */
     private void faseObjetivoEncontrado() {
-        System.out.println("FASE OBJETIVO ENCONTRADO.");
+        System.out.println("\n\tFASE OBJETIVO ENCONTRADO.");
         if(buscando) {
             buscando = false;
             estadoActual = Estado.OBJETIVO_ENCONTRADO;

@@ -17,35 +17,38 @@ public class GugelVehicle extends SingleAgent {
     String receptor;
     boolean fin;
     private String conversationID;
-    boolean primero;
-    private HashMap<String, String> reply;
+    //boolean primero;
+    String reply;
+    //private HashMap<String, String> reply;
     
     public GugelVehicle(AgentID id) throws Exception{
         super(id);
     }
     
     public void init(){
-        System.out.println("Iniciandose " + getName());
+        System.out.println("Iniciandose vehiculo " + getName());
         msjEntrada = null;
         msjSalida = null;
         fin = false;
         conversationID = null;
+        /*
         primero = true;        
-        reply = new HashMap<>();
+        reply = new HashMap<>();   // Creo que esto no hace falta
         reply.put("Vehiculo0", null);
         reply.put("Vehiculo1", null);
         reply.put("Vehiculo2", null);
-        reply.put("Vehiculo3", null); 
+        reply.put("Vehiculo3", null); */
     }   
     
     public void execute(){
         while(!fin){
             try {
                 msjEntrada = receiveACLMessage();
-                System.out.println(getName() + " ha recibido: " + msjEntrada.getContent() + " " + msjEntrada.getConversationId() + " " + msjEntrada.getReplyWith());
+                System.out.println("\n"+getName() + " ha recibido: " + msjEntrada.getContent() + " ConvID: " + msjEntrada.getConversationId() + " Reply: " + msjEntrada.getReplyWith());
                 conversationID = msjEntrada.getConversationId();
                 if(!msjEntrada.getReplyWith().isEmpty()) {
-                    reply.put(getName(), msjEntrada.getReplyWith());   
+                    reply = msjEntrada.getReplyWith();
+                    //reply.put(getName(), msjEntrada.getReplyWith());   
                 }                             
                 if(msjEntrada.getPerformativeInt() == ACLMessage.CANCEL){
                     fin = true; 
@@ -68,6 +71,7 @@ public class GugelVehicle extends SingleAgent {
     }
     
     private void enviar(String receptor, int performativa, String contenido) {
+        System.out.println("\nEn el enviar mensaje del vehiculo \n");
         msjSalida = new ACLMessage();
         msjSalida.setSender(this.getAid());
         msjSalida.setReceiver(new AgentID(receptor));
@@ -75,10 +79,10 @@ public class GugelVehicle extends SingleAgent {
         msjSalida.setContent(contenido);
         
         if(receptor == NOMBRE_SERVIDOR) {
-            msjSalida.setInReplyTo(reply.get(getName()));
+            msjSalida.setInReplyTo(reply);
             msjSalida.setConversationId(conversationID);
         }        
-        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " contenido " + contenido + " " + conversationID + " " + reply.get(getName()));
+        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " Contenido: " + contenido + "ConvID: " + conversationID + "Reply: " + reply);
         this.send(msjSalida);
     }      
 }
