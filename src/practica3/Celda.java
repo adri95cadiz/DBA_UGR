@@ -17,11 +17,11 @@ public enum Celda {
      * @return Valor de la celda.
      */
     public static Celda getRecorrido(String nombre) {
-	if (nombre.equals("Vehiculo10")) {
+	if (nombre.equals("Vehiculo0")) {
 	    return RECORRIDO0;
-	} else if (nombre.equals("Vehiculo11")) {
+	} else if (nombre.equals("Vehiculo1")) {
 	    return RECORRIDO1;
-	} else if (nombre.equals("Vehiculo12")) {
+	} else if (nombre.equals("Vehiculo2")) {
 	    return RECORRIDO2;
 	} else {
 	    return RECORRIDO3;
@@ -35,11 +35,11 @@ public enum Celda {
      * @return Valor de la última posición.
      */
     public static Celda getUlt_Posicion(String nombre) {
-	if (nombre.equals("Vehiculo10")) {
+	if (nombre.equals("Vehiculo0")) {
 	    return ULT_POSICION0;
-	} else if (nombre.equals("Vehiculo11")) {
+	} else if (nombre.equals("Vehiculo1")) {
 	    return ULT_POSICION1;
-	} else if (nombre.equals("Vehiculo12")) {
+	} else if (nombre.equals("Vehiculo2")) {
 	    return ULT_POSICION2;
 	} else {
 	    return ULT_POSICION3;

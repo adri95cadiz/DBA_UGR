@@ -43,10 +43,10 @@ public class Controlador extends SingleAgent {
         subEstadoBuscando = Estado.ELECCION_VEHICULO;
         subEstadoEncontrado = Estado.ELECCION_VEHICULO;
         flota = new HashMap<>();
-        flota.put("Vehiculo10", null);
-        flota.put("Vehiculo11", null);
-        flota.put("Vehiculo12", null);
-        flota.put("Vehiculo13", null);  
+        flota.put("Vehiculo0", null);
+        flota.put("Vehiculo1", null);
+        flota.put("Vehiculo2", null);
+        flota.put("Vehiculo3", null);  
         conversationID = null;
         objetivoEncontrado = false;
         puntoObjetivo = null;
@@ -277,12 +277,12 @@ public class Controlador extends SingleAgent {
             es decir, estarían todos en modo "explorador".
             ¿Utilizar solo los de menor consumo y mayor campo de vision?
             */
-            vehiculoElegido = "Vehiculo10";
+            vehiculoElegido = "Vehiculo0";
         } else {
             /*
             Ya no estamos buscando por lo que conocemos el punto.            
             */
-            vehiculoElegido = "Vehiculo11";
+            vehiculoElegido = "Vehiculo1";
         }
         
     }

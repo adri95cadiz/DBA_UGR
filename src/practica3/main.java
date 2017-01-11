@@ -24,7 +24,7 @@ public class main {
         //El agentID ahora es Controlador, no GugelCar.
         control = new Controlador(new AgentID("Controlador_"), mundo);
         for(int i=0; i < vehiculos.length; i++){
-            vehiculos[i] = new GugelVehicle(new AgentID("Vehiculo1" + i));
+            vehiculos[i] = new GugelVehicle(new AgentID("Vehiculo" + i));
             vehiculos[i].start();
         }
         control.start();
