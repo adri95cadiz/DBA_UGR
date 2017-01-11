@@ -7,6 +7,22 @@ import java.awt.Point;
 import java.util.HashMap;
 import javafx.util.Pair;
 
+
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import edu.emory.mathcs.backport.java.util.Arrays;
+import es.upv.dsic.gti_ia.core.ACLMessage;
+import es.upv.dsic.gti_ia.core.AgentID;
+import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.awt.Point;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Luis Gallego Quero
@@ -259,6 +275,11 @@ public class Controlador extends SingleAgent {
             mensaje = receiveACLMessage(); 
             if(mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                 System.out.println("TRAZA: " + mensaje.getContent());
+                try {
+                    resultadoTraza( mensaje );
+                } catch (IOException ex) {
+                    Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } 
             System.out.println("Se finaliza la sesión de trabajo.");
         } catch (InterruptedException ex) {
@@ -270,7 +291,7 @@ public class Controlador extends SingleAgent {
      * Elegimos el vehículo mas adecuado para la ocasión.
      */
     private void faseEleccionVehiculo() {
-        System.out.println("FASE ELECCION VEHICULO.");
+        System.out.println("\n\tFASE ELECCION VEHICULO.");
         if(buscando) {
             /*
             Caso en el cual aún no sabemos donde esta el punto objetivo,
@@ -415,12 +436,12 @@ public class Controlador extends SingleAgent {
         } 
         System.out.println("FIN FASE REPOSTAR.");
         
-        if(cont == 3 && !cont2) {
+        /*if(cont == 3 && !cont2) {
                 System.out.println("Entra cont == 3.");
                 cont2 = true;
                 estadoActual = Estado.BUSCAR;
                 subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
-        }
+        }*/
         
         if(cont == 5) {
                 System.out.println("Entra cont == 5.");
@@ -444,4 +465,25 @@ public class Controlador extends SingleAgent {
     /*private void objetivoEncontrado() {
         subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
     }*/
+    
+    private void resultadoTraza( ACLMessage msjEntrada ) throws FileNotFoundException, IOException {
+        System.out.println("Recibiendo respuesta traza.");
+       
+            
+
+            JsonObject injson = Json.parse(msjEntrada.getContent()).asObject();
+            
+            System.out.println("Esto es lo que contiene la traza en json: " + injson);
+            
+            JsonArray ja = injson.get("trace").asArray();
+            byte data[] = new byte[ja.size()];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = (byte) ja.get(i).asInt();
+            }
+            FileOutputStream fos = new FileOutputStream("traza_" + this.mundo + ".png");
+            fos.write(data);
+            fos.close();
+            System.out.println("Traza Guardada");
+       
+    }
 }
