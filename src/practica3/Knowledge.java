@@ -30,7 +30,7 @@ public class Knowledge {
     public final int STATE_WORLD_END = 2;
     public final int STATE_GOAL = 3;
     public final int STATE_VEHICLE = 4;
-    public final int STATE_UNKNOW = 0;
+    public final int STATE_UNKNOW = 5;
 
     /**
      * Método que devuelve la instancia de Knowledge del agente
@@ -352,7 +352,20 @@ public class Knowledge {
      * @return int Que contiene el contenido en las coordenadas pedidas
      */
     public int getContent(int px, int py){
-        return (px < 0 || py < 0 || px > this.mapSize()  || py > this.mapSize()) ? this.STATE_WALL : this.mapMatrix[px][py];
+        return (px < 0 || py < 0 || px > this.mapSize()  || py > this.mapSize()) ? this.STATE_UNKNOW : this.mapMatrix[px][py];
+    }
+
+    /**
+     * Devuelve una copia de la matriz de Knowledge incluyendo los todos los vehículos
+     * 
+     * @return Matriz copia de la matriz almacenada en Knowledge
+     */
+    public int[][] getKnowledgeMatrix(){
+        int[][] cloneMatrix = mapMatrix.clone();
+        for(AgentPosition ap: this.agentsPosition){
+            cloneMatrix[ap.getPosition().getPosX()][ap.getPosition().getPosY()] = STATE_VEHICLE;
+        }
+        return cloneMatrix;
     }
 
 
@@ -433,6 +446,14 @@ public class Knowledge {
          */
         public String getAgentName(){
             return this.agentName;
+        }
+
+        /**
+         * Devuelve la posición del Agente
+         * @return Cell correspondiente a la posición del agente
+         */
+        public Cell getPosition(){
+            return position;
         }
 
         /**
