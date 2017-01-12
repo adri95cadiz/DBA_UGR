@@ -355,6 +355,15 @@ public class Knowledge {
         return (px < 0 || py < 0 || px > this.mapSize()  || py > this.mapSize()) ? this.STATE_WALL : this.mapMatrix[px][py];
     }
 
+    /**
+     * Devuelve una copia de la matriz de Knowledge
+     * 
+     * @return Matriz copia de la matriz almacenada en Knowledge
+     */
+    public int[][] getKnowledgeMatrix(){
+        return mapMatrix.clone();
+    }
+
 
     /**
      * Método que actualiza la posición de un agente. 
