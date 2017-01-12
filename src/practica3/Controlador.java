@@ -225,7 +225,7 @@ public class Controlador extends SingleAgent {
                 if(mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                     nomVehiculo = mensaje.getSender().name;
                     propiedades = flota.get(nomVehiculo);
-                    percepcion = JSON.getPercepción(mensaje.getContent());
+                    percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
@@ -386,7 +386,7 @@ public class Controlador extends SingleAgent {
             if(mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                 String nombreVehiculo = mensaje.getSender().name;
                 PropiedadesVehicle propiedades = flota.get(nombreVehiculo);
-                Percepcion percepcion = JSON.getPercepción(mensaje.getContent());
+                Percepcion percepcion = JSON.getPercepcion(mensaje.getContent());
                 percepcion.setNombreVehicle(nombreVehiculo);
                 propiedades.actualizarPercepcion(percepcion);
                 flota.put(nombreVehiculo, propiedades); 

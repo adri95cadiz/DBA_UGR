@@ -106,7 +106,7 @@ public class JSON {
      * @author Luis Gallego Quero
      * @return Devuelve las percepciones de la cadena.
      */
-    public static Percepcion getPercepción(String cadena) {
+    public static Percepcion getPercepcion(String cadena) {
         JsonObject objeto = parseToJson(cadena);
         JsonObject resultado = objeto.get("result").asObject();
         
