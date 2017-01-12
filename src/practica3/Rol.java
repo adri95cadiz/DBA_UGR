@@ -42,12 +42,14 @@ public enum Rol {
      * @author Luis Gallego Quero
      * @return El rol identificado.
      */
-    public static Rol getRol(int id) {
-        for(Rol x : Rol.values()){
-            if(x.id == id) {
-                return x;
-            }
-        }
-        return null;
+    public static Rol getRol(int consumo, int alcance, boolean volar) {
+       
+        if(consumo==2 && alcance==3 && !volar) 
+            return AVION;
+        else if(consumo==1 && alcance==5 && !volar) 
+            return COCHE;
+        else
+            return CAMION;
+        //return null;
     }    
 }

@@ -66,19 +66,7 @@ public class JSON {
         objeto.add("command", "refuel");
         return objeto.toString();
     }
-    
-    /**
-     * Convierte el rol codificado en Json a un valor entero.
-     * @param cadena string que contiene el rol de un dron
-     * @author Luis Gallego Quero
-     * @return Devuelve el rol concreto de un dron
-     */
-    public static Rol getRol(String cadena) {
-        JsonObject objeto = parseToJson(cadena);
-        int rol = objeto.getInt("rol", -1);
-        return Rol.getRol(rol);
-    }
-    
+        
     /**
      * Convierte una cadena codificada en Json a un objeto JsonObject
      * @param cadena string codificado en Json
@@ -144,5 +132,25 @@ public class JSON {
         //percepcion.setLlegado(radar[radar.length/2][radar.length/2] == 3);
         
         return percepcion;        
-    }              
+    }  
+    
+    /**
+     * Convierte el rol codificado en Json a un valor entero.
+     * @param cadena string que contiene el rol de un dron
+     * @author Luis Gallego Quero
+     * @return Devuelve el rol concreto de un dron
+     */
+    public static Rol getRol(String cadena) {
+        int consumo;
+        int alcance;
+        boolean volar;
+        
+        JsonObject objeto = parseToJson(cadena);
+        JsonObject resultado = objeto.get("capabilities").asObject();
+        consumo = resultado.getInt("fuelrate", -1);
+        alcance = resultado.getInt("range", -1);
+        volar = resultado.getBoolean("fly", false);
+        
+        return Rol.getRol(consumo, alcance, volar);
+    }
 }

@@ -192,7 +192,7 @@ public class Controlador extends SingleAgent {
                         
                         //System.out.println("Esto es lo que deberían de ser las propiedades: " + mensaje.getContent());
                         
-                       //propiedades.setRol(JSON.getRol(mensaje.getContent()));
+                        propiedades.setRol(JSON.getRol(mensaje.getContent()));
                         flota.put(mensaje.getSender().name, propiedades);  
                     }
                 }     

@@ -49,8 +49,8 @@ public class PropiedadesVehicle {
 	this.rol = rol;
     }
 
-    public void setRol(int id) {
-	this.rol = Rol.getRol(id);
+    public void setRol(int consumo, int alcance, boolean volar) {
+	this.rol = Rol.getRol(consumo,alcance,volar);
     }
     
     /**
