@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Clase encargada del conocimiento compartido de los agentes
@@ -157,14 +156,15 @@ public class Knowledge {
      *
      * @param radar JsonObject que contiene la información del radar
      * @param gps JsonObject que contiene la posición del agente
+     * @param vision Rago de vision del agente
      */
-    public void updateStatus(String agentName, JsonObject radar, JsonObject gps) {
+    public void updateStatus(String agentName, JsonObject radar, JsonObject gps, int vision) {
         try{
-            int position_x, position_y;
             // Guardamos la posición actual del agente
-            JsonObject gpsObject = gps.get("gps").asObject();
-            position_x = gpsObject.get("y").asInt();
-            position_y = gpsObject.get("x").asInt();
+            int position_x, position_y;
+            Cell position = Knowledge.getGPSData(gps);
+            position_x = position.getPosX();
+            position_y = position.getPosY();
 
             this.setAgentPosition(agentName, position_x, position_y);
 
@@ -175,18 +175,15 @@ public class Knowledge {
             for (int i = 0; i < radarJson.size(); i++) {
                 radarMatrix.add(radarJson.get(i).asInt());
             }
-            
-            // Calculamos el radio de visión a partir del radar
-            int tamVision = (int)Math.sqrt(radarMatrix.size());
 
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
 
-            for (int i = 0; i < tamVision; i++) {
-                for (int j = 0; j < tamVision; j++) {
-                    int pos_x = (position_x -(tamVision/2) + i);
-                    int pos_y = (position_y -(tamVision/2) + j);
-                    int radarValue = radarMatrix.get(i*tamVision + j);
+            for (int i = 0; i < vision; i++) {
+                for (int j = 0; j < vision; j++) {
+                    int pos_x = (position_x -(vision/2) + j);
+                    int pos_y = (position_y -(vision/2) + i);
+                    int radarValue = radarMatrix.get(j*vision + i);
 
                     if(pos_x >= 0 && pos_y >= 0){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, contains) VALUES("
@@ -226,11 +223,13 @@ public class Knowledge {
     private void updateMatrix(int posx, int posy, int value){
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
 
-        int[][] tmp = this.mapMatrix;
-        this.mapMatrix = new int[maxWidth][maxWidth];
-        for(int i = 0; i < tmp.length; i++){
-            for(int j = 0; j < tmp[i].length; j++){
-                this.mapMatrix[i][j] = tmp[i][j];
+        if(maxWidth > this.mapSize()){
+            int[][] tmp = this.mapMatrix;
+            this.mapMatrix = new int[maxWidth][maxWidth];
+            for(int i = 0; i < tmp.length; i++){
+                for(int j = 0; j < tmp[i].length; j++){
+                    this.mapMatrix[i][j] = tmp[i][j];
+                }
             }
         }
 
@@ -405,6 +404,38 @@ public class Knowledge {
             }
         }
         return isInPosition;
+    }
+
+    public static Cell getGPSData(JsonObject gps){
+        Cell position = new Cell();
+
+        JsonObject gpsObject = gps.get("gps").asObject();
+        position.set(gpsObject.get("x").asInt(), gpsObject.get("y").asInt(), -1);
+
+        return position;
+    }
+
+    public static ArrayList<Integer> getRadarData(JsonObject radar){
+        JsonArray radarJson = radar.get("radar").asArray();
+        ArrayList<Integer> radarMatrix = new ArrayList<>();
+
+        for (int i = 0; i < radarJson.size(); i++) {
+            radarMatrix.add(radarJson.get(i).asInt());
+        }
+
+        return radarMatrix;
+    }
+
+    public static int[][] getRadarMatrix(JsonObject radar, int vision){
+        ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
+        int[][] matrix = new int[vision][vision];
+
+        for (int i = 0; i < vision; i++) {
+            for(int j = 0; j < vision; j++){
+
+            }            
+        }
+        return matrix;
     }
 
     /**
