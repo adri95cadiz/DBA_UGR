@@ -257,7 +257,7 @@ public class Knowledge {
                 matrix_size = rs.getInt("count");
             }
 
-            System.out.println("\nCantidad de celdas conocidas: " + matrix_size);
+            output.concat("\nCantidad de celdas conocidas: " + matrix_size);
 
             if(matrix_size > 0) {
                 matrix_size = 0;
@@ -278,7 +278,7 @@ public class Knowledge {
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
-                System.out.println("El máximo de la matriz es: " + matrix_size);
+                output.concat("El máximo de la matriz es: " + matrix_size);
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
@@ -289,7 +289,7 @@ public class Knowledge {
                     this.mapMatrix[rs.getInt("pos_x")][rs.getInt("pos_y")] = rs.getInt("state");
                 }
             }else{
-                System.out.println("Creamos matriz desde cero");
+                output.concat("Creamos matriz desde cero");
 
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
             }
@@ -306,39 +306,49 @@ public class Knowledge {
     }
 
     /**
-     * Este método dibuja el mapa conocido por el agente
+     * Genera el mapa conocido por el agente
      */
-    public void drawMap(){
-        System.out.println("| Mapa actual - Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length);
-        for(int i = 0; i < this.mapSize();i++) System.out.print("▉▉▉");
-        System.out.println("");
+    public String drawMapToString(){
+        String output = "";
+        for(int i = 0; i < this.mapSize();i++) output.concat(" ▉▉▉");
+        output.concat("");
         for(int i = 0; i < this.mapMatrix.length; i++){
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
-                if(j == 0) System.out.print("▉▉▉");
-                if(isAnyAgentInPosition(i, j)) System.out.print(" ● ");
+                if(j == 0) output.concat("▉▉▉");
+                if(isAnyAgentInPosition(i, j)) output.concat(" ● ");
                 else{
                     switch (value) {
                         case 0:
-                            System.out.print(" ⎕ ");
+                            output.concat(" ⎕ ");
                             break;
                         case -1:
-                            System.out.print("▉▉▉");
+                            output.concat("▉▉▉");
                             break;
                         case -2:
-                            System.out.print(" ╳ ");
+                            output.concat(" ╳ ");
                             break;
                         default:
-                            if(value < 10) System.out.print(" " + value+ " ");
-                            else if(value < 100) System.out.print(" " + value);
-                            else System.out.print(value);
+                            if(value < 10) output.concat(" " + value+ " ");
+                            else if(value < 100) output.concat(" " + value);
+                            else output.concat(value+"");
                             break;
                     }
                 }
             }
-            System.out.print("\n");
+            output.concat("\n");
         }
+        return output;
+    }
 
+    /**
+     * Dibuja el mapa en consola
+     */
+    public void drawMap(){
+        System.out.println("-----------------------------------------------------------------------------------------------------");
+        System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
+        System.out.println("-----------------------------------------------------------------------------------------------------");
+        System.out.println(drawMapToString());
         System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
     }
 
