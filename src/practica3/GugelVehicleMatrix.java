@@ -98,6 +98,9 @@ class GugelVehicleMatrix {
          */
         private String agentName;
 
+        /**
+         * Contructor por defecto de Vehicle
+         */
         public Vehicle(String agentName, int vision){
             this.turn = 0;
             this.vision = vision;
@@ -105,14 +108,24 @@ class GugelVehicleMatrix {
             this.localMatrix = new int[db.mapSize()][db.mapSize()];
         }
 
+        /**
+         * Actualiza los datos del agente
+         *
+         * @param radar Objeto radar que contiene la visualización del agente
+         * @param gps Objeto gps que contiene las coordenadas del agente
+         */
         public void updateAgent(JsonObject radar, JsonObject gps){
             db.updateStatus(agentName, radar, gps, vision);
             this.turn++;
             this.position = Knowledge.getGPSData(gps);
             this.updateLocalMatrix(radar);
-
         }
 
+        /**
+         * Actualiza las posiciones de la matriz local
+         *
+         * @param radar Objeto radar que contiene los datos a actualizar en la matriz
+         */
         private void updateLocalMatrix(JsonObject radar){
             ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
         
@@ -143,6 +156,8 @@ class GugelVehicleMatrix {
 
         /**
          * Devuelve la matriz local del Agente
+         *
+         * @return Matriz local del agente
          */
         public int[][] getLocalMatrix(){
             return this.localMatrix;
@@ -150,10 +165,23 @@ class GugelVehicleMatrix {
 
         /**
          * Devuelve una combinación de la matriz local del agente y 
-         * de la matriz de Knowledge
+         * de la matriz de Knowledge.
+         *
+         * Esta matriz está compuesta por número positivos que hacen referencia a estados del mapa
+         * y datos negativos, que hacen referencia a la última vez que el agente estuvo en la celda
+         * 
+         * @return matriz combinada
          */
-        public Cell[][] getCombinedKnowledge(){
-            return null;
+        public int[][] getCombinedKnowledge(){
+            int[][] map = db.getKnowledgeMatrix();
+            for(int i= 0; i < db.mapSize(); i++){
+                for(int j = 0; j < db.mapSize(); j++){
+                    if(map[i][j] == db.STATE_FREE && this.localMatrix[i][j] > 0 ){
+                        map[i][j] = (-1) * this.localMatrix[i][j];
+                    }
+                }
+            }
+            return map;
         }
 
         /**
