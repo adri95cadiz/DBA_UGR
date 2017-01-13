@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Clase encargada del conocimiento compartido de los agentes
@@ -157,14 +156,15 @@ public class Knowledge {
      *
      * @param radar JsonObject que contiene la información del radar
      * @param gps JsonObject que contiene la posición del agente
+     * @param vision Rago de vision del agente
      */
-    public void updateStatus(String agentName, JsonObject radar, JsonObject gps) {
+    public void updateStatus(String agentName, JsonObject radar, JsonObject gps, int vision) {
         try{
-            int position_x, position_y;
             // Guardamos la posición actual del agente
-            JsonObject gpsObject = gps.get("gps").asObject();
-            position_x = gpsObject.get("y").asInt();
-            position_y = gpsObject.get("x").asInt();
+            int position_x, position_y;
+            Cell position = Knowledge.getGPSData(gps);
+            position_x = position.getPosX();
+            position_y = position.getPosY();
 
             this.setAgentPosition(agentName, position_x, position_y);
 
@@ -175,18 +175,15 @@ public class Knowledge {
             for (int i = 0; i < radarJson.size(); i++) {
                 radarMatrix.add(radarJson.get(i).asInt());
             }
-            
-            // Calculamos el radio de visión a partir del radar
-            int tamVision = (int)Math.sqrt(radarMatrix.size());
 
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
 
-            for (int i = 0; i < tamVision; i++) {
-                for (int j = 0; j < tamVision; j++) {
-                    int pos_x = (position_x -(tamVision/2) + i);
-                    int pos_y = (position_y -(tamVision/2) + j);
-                    int radarValue = radarMatrix.get(i*tamVision + j);
+            for (int i = 0; i < vision; i++) {
+                for (int j = 0; j < vision; j++) {
+                    int pos_x = (position_x -(vision/2) + j);
+                    int pos_y = (position_y -(vision/2) + i);
+                    int radarValue = radarMatrix.get(j*vision + i);
 
                     if(pos_x >= 0 && pos_y >= 0){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, contains) VALUES("
@@ -226,11 +223,13 @@ public class Knowledge {
     private void updateMatrix(int posx, int posy, int value){
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
 
-        int[][] tmp = this.mapMatrix;
-        this.mapMatrix = new int[maxWidth][maxWidth];
-        for(int i = 0; i < tmp.length; i++){
-            for(int j = 0; j < tmp[i].length; j++){
-                this.mapMatrix[i][j] = tmp[i][j];
+        if(maxWidth > this.mapSize()){
+            int[][] tmp = this.mapMatrix;
+            this.mapMatrix = new int[maxWidth][maxWidth];
+            for(int i = 0; i < tmp.length; i++){
+                for(int j = 0; j < tmp[i].length; j++){
+                    this.mapMatrix[i][j] = tmp[i][j];
+                }
             }
         }
 
@@ -258,7 +257,7 @@ public class Knowledge {
                 matrix_size = rs.getInt("count");
             }
 
-            System.out.println("\nCantidad de celdas conocidas: " + matrix_size);
+            output.concat("\nCantidad de celdas conocidas: " + matrix_size);
 
             if(matrix_size > 0) {
                 matrix_size = 0;
@@ -279,7 +278,7 @@ public class Knowledge {
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
-                System.out.println("El máximo de la matriz es: " + matrix_size);
+                output.concat("El máximo de la matriz es: " + matrix_size);
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
@@ -290,7 +289,7 @@ public class Knowledge {
                     this.mapMatrix[rs.getInt("pos_x")][rs.getInt("pos_y")] = rs.getInt("state");
                 }
             }else{
-                System.out.println("Creamos matriz desde cero");
+                output.concat("Creamos matriz desde cero");
 
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
             }
@@ -307,39 +306,49 @@ public class Knowledge {
     }
 
     /**
-     * Este método dibuja el mapa conocido por el agente
+     * Genera el mapa conocido por el agente
      */
-    public void drawMap(){
-        System.out.println("| Mapa actual - Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length);
-        for(int i = 0; i < this.mapSize();i++) System.out.print("▉▉▉");
-        System.out.println("");
+    public String drawMapToString(){
+        String output = "";
+        for(int i = 0; i < this.mapSize();i++) output.concat(" ▉▉▉");
+        output.concat("");
         for(int i = 0; i < this.mapMatrix.length; i++){
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
-                if(j == 0) System.out.print("▉▉▉");
-                if(isAnyAgentInPosition(i, j)) System.out.print(" ● ");
+                if(j == 0) output.concat("▉▉▉");
+                if(isAnyAgentInPosition(i, j)) output.concat(" ● ");
                 else{
                     switch (value) {
                         case 0:
-                            System.out.print(" ⎕ ");
+                            output.concat(" ⎕ ");
                             break;
                         case -1:
-                            System.out.print("▉▉▉");
+                            output.concat("▉▉▉");
                             break;
                         case -2:
-                            System.out.print(" ╳ ");
+                            output.concat(" ╳ ");
                             break;
                         default:
-                            if(value < 10) System.out.print(" " + value+ " ");
-                            else if(value < 100) System.out.print(" " + value);
-                            else System.out.print(value);
+                            if(value < 10) output.concat(" " + value+ " ");
+                            else if(value < 100) output.concat(" " + value);
+                            else output.concat(value+"");
                             break;
                     }
                 }
             }
-            System.out.print("\n");
+            output.concat("\n");
         }
+        return output;
+    }
 
+    /**
+     * Dibuja el mapa en consola
+     */
+    public void drawMap(){
+        System.out.println("-----------------------------------------------------------------------------------------------------");
+        System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
+        System.out.println("-----------------------------------------------------------------------------------------------------");
+        System.out.println(drawMapToString());
         System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
     }
 
@@ -405,6 +414,38 @@ public class Knowledge {
             }
         }
         return isInPosition;
+    }
+
+    public static Cell getGPSData(JsonObject gps){
+        Cell position = new Cell();
+
+        JsonObject gpsObject = gps.get("gps").asObject();
+        position.set(gpsObject.get("x").asInt(), gpsObject.get("y").asInt(), -1);
+
+        return position;
+    }
+
+    public static ArrayList<Integer> getRadarData(JsonObject radar){
+        JsonArray radarJson = radar.get("radar").asArray();
+        ArrayList<Integer> radarMatrix = new ArrayList<>();
+
+        for (int i = 0; i < radarJson.size(); i++) {
+            radarMatrix.add(radarJson.get(i).asInt());
+        }
+
+        return radarMatrix;
+    }
+
+    public static int[][] getRadarMatrix(JsonObject radar, int vision){
+        ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
+        int[][] matrix = new int[vision][vision];
+
+        for (int i = 0; i < vision; i++) {
+            for(int j = 0; j < vision; j++){
+
+            }            
+        }
+        return matrix;
     }
 
     /**
