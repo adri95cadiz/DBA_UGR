@@ -5,7 +5,6 @@ import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
 import java.awt.Point;
 import java.util.HashMap;
-import javafx.util.Pair;
 
 
 import com.eclipsesource.json.Json;

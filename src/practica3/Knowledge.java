@@ -242,6 +242,7 @@ public class Knowledge {
      */
     private void createMatrix() {
         try {
+            String output = "";
             int matrix_size = 0;
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
