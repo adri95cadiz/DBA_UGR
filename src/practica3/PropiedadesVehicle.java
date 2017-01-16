@@ -11,14 +11,23 @@ public class PropiedadesVehicle {
     private Point gps;
     private int bateria;
     private boolean llegado;
+    private int[] radar;
     private Rol rol;
     
     public PropiedadesVehicle() {
 	super();
     }
-
-    public Point getGps() {
-	return this.gps;
+    public int[] getRadar(){
+        return this.radar;
+    }
+    public void setRadar( int[]radar){
+        this.radar = radar;
+    }
+    public int[] getGps() {
+        int[] gps = new int[2];
+        gps[0]= this.gps.x;
+        gps[1]= this.gps.y;
+	return gps;
     }
 
     public void setGps(Point gps) {

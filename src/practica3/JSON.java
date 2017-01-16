@@ -98,6 +98,16 @@ public class JSON {
         return matriz;
     }
     
+    private static int[] parseRadar(JsonArray vector){
+        final int TAM = (int) (vector.size());
+        int[] matriz = new int[TAM];
+        int i=0, j=0;
+        for(JsonValue valor : vector){
+            matriz[i] = valor.asInt();
+            i++;
+        }
+        return matriz;
+    }
     
     
     /**
