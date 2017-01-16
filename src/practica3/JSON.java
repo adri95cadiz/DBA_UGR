@@ -125,9 +125,8 @@ public class JSON {
         percepcion.setBateria(resultado.getInt("battery", -1));
         
         //Posicion en el mundo
-        Point gps = new Point();
-        gps.x = resultado.getInt("y", -1);
-        gps.y = resultado.getInt("x", -1);
+        Cell gps = new Cell();
+        gps.set(resultado.getInt("x", -1), resultado.getInt("y", -1), 0);
         percepcion.setGps(gps);
         
         // El radar lo recibimos como array pero lo utilizamos como matriz.

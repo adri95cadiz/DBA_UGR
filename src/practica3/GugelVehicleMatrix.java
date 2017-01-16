@@ -52,6 +52,10 @@ class GugelVehicleMatrix {
     public void getCombinedKnowledge(String agentName){
         getVehicle(agentName).getCombinedKnowledge();
     }
+    
+    public void updateMatrix(String agentName, ArrayList<Integer> radar, Cell gps){
+        this.getVehicle(agentName).updateAgent(radar, gps);
+    }
 
     /**
      * Devuelve un {@link Vehicle} almacenado en la instancia
@@ -59,7 +63,7 @@ class GugelVehicleMatrix {
      * @param agentName Nombre del agente a buscar
      * @return Objeto {@link Vehicle} en caso de que exista, {@link null} cuando no existe
      */
-    public Vehicle getVehicle(String agentName){
+    private Vehicle getVehicle(String agentName){
         for(Vehicle v: vehicles){
             if(v.isAgent(agentName)) return  v;
         }

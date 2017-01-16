@@ -1,23 +1,16 @@
 package practica3;
 
-import com.bubble.utils.ArrayUtils;
-import es.upv.dsic.gti_ia.core.ACLMessage;
-import es.upv.dsic.gti_ia.core.AgentID;
-import es.upv.dsic.gti_ia.core.SingleAgent;
-import java.awt.Point;
 import java.util.HashMap;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.awt.Point;
 import java.io.FileNotFoundException;
 import static java.lang.Math.floor;
 import java.util.logging.Level;
@@ -41,13 +34,13 @@ public class Controlador extends SingleAgent {
     //private Celda[][] mapa = new Celda[TAM_MAPA][TAM_MAPA];
     //private double[][] scanner = new double[TAM_MAPA][TAM_MAPA];   
     private boolean objetivoEncontrado;
-    private Point puntoObjetivo = new Point();
+    private Cell puntoObjetivo = new Cell();
     ArrayList<String> vehiculosExploradores = new ArrayList<String>(); 
     private int[][] posiblesObjetivos;
     private boolean cont2;
     //Path camino = new Path(posiblesObjetivos, 12, 12);
     int cont;
-    // Valores modificables según que comportamiento del agente deseamos    
+    // Valores modificables según que comportamiento del agene deseamos    
     private final int MAPA =11; 
     private boolean check = true;
     private final int LIMITE_PASOS = 1000;
@@ -239,9 +232,9 @@ public class Controlador extends SingleAgent {
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA)));
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
-                    if (percepcion.getGps().x == 99) {
+                    if (percepcion.getGps().getPosX() == 99) {
                         tamMapa = 100;
-                    } else if (percepcion.getGps().x == 499 || percepcion.getGps().y >= 100) {
+                    } else if (percepcion.getGps().getPosX() == 499 || percepcion.getGps().getPosY() >= 100) {
                         tamMapa = 500;
                     }
                     System.out.println("\nNombre vehiculo: " + nomVehiculo);
@@ -563,7 +556,7 @@ public class Controlador extends SingleAgent {
      *
      * @return objetivo Devuelve las coordenadas de la casilla como int[].
      */
-    private int[] chooseLocalObj(int pasos, int[]datosGPS, int[][]datosScanner) {
+    private int[] chooseLocalObj(int pasos, int[]datosGPS, int[][]datosScanner) {       //HACE FALTA SACAR LA DISTANCIA DE ALGUNA FORMA NUEVA ¿CON CLASE NODE?¿
         int[] objetive = new int[2];
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);

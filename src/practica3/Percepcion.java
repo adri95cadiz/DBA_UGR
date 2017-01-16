@@ -1,6 +1,5 @@
 package practica3;
 
-import java.awt.Point;
 
 /**
  * Clase que contiene la información sobre el mundo que recibe de un vehiculo.
@@ -8,18 +7,18 @@ import java.awt.Point;
  */
 public class Percepcion {
     
-    private Point gps;
+    private Cell gps;
     private int bateria;
     private int[][] radar;
     private int energia;
     private boolean llegado;
     private String nombreVehiculo;
     
-    public Point getGps() {
+    public Cell getGps() {
 	return this.gps;
     }
 
-    public void setGps(Point gps) {
+    public void setGps(Cell gps) {
 	this.gps = gps;
     }
 

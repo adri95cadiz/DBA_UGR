@@ -1,7 +1,5 @@
 package practica3;
 
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import java.util.ArrayList;
 
@@ -58,7 +56,7 @@ public class PropiedadesVehicle {
     }
     
     public void updateMatrix(){
-        matriz.getVehicle(nombre).updateAgent(new ArrayList<>(Arrays.asList(radar)), this.gps);
+        matriz.updateMatrix(nombre, new ArrayList<>(Arrays.asList(radar)), this.gps);
     }
     
     public void setGps(Cell gps) {
