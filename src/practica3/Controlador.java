@@ -24,7 +24,6 @@ public class Controlador extends SingleAgent {
 
     private final String NOMBRE_SERVIDOR = "Haldus";
     private final short TAM_MAPA = 500;
-    private short tamMapa = 0;
     private String mundo;
     private String conversationID;
     private String vehiculoElegido;
@@ -234,11 +233,6 @@ public class Controlador extends SingleAgent {
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA)));
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
-                    if (percepcion.getGps().getPosX() == 99) {
-                        tamMapa = 100;
-                    } else if (percepcion.getGps().getPosX() == 499 || percepcion.getGps().getPosY() >= 100) {
-                        tamMapa = 500;
-                    }
                     System.out.println("\nNombre vehiculo: " + nomVehiculo);
                     System.out.println("\nRol: " + propiedades.getRol());
                     System.out.println("\nNombre vehiculo" + flota.get(nomVehiculo));
@@ -262,9 +256,6 @@ public class Controlador extends SingleAgent {
         inicializarPropiedadesVehiculo();
         if (estadoActual != Estado.FINALIZAR) {
             estadoActual = Estado.BUSCAR;
-        }
-        if (tamMapa == 0) {
-            estadoActual = Estado.INICIAL;
         }
         // Cogemos los vehículos que sean coche, que serán los que exploren
         for (String vehiculo : flota.keySet()) {
