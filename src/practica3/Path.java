@@ -338,8 +338,8 @@ public class Path {
         System.out.println("Agent ID: " + start_id);
         System.out.println("Objetive ID: " + objetive_id);
         // Impresión del mapa
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < this.map[0].length; i++) {
+            for (int j = 0; j < this.map[0].length; j++) {
                 System.out.print(this.map[i][j] + " ");
             }
             System.out.println("\n");
