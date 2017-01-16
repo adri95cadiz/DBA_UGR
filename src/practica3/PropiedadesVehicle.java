@@ -1,5 +1,8 @@
 package practica3;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import java.awt.Point;
 
 /**
@@ -13,23 +16,51 @@ public class PropiedadesVehicle {
     private boolean llegado;
     private int[][] radar;
     private Rol rol;
+    private int pasos;
+    private String mundo;
+    private String nombre;
+    private GugelVehicleMatrix matriz;
+    
     
     public PropiedadesVehicle() {
 	super();
     }
+    
     public int[][] getRadar(){
         return this.radar;
     }
+    
     public void setRadar(int[][] radar){
         this.radar = radar;
     }
+    
     public int[] getGps() {
         int[] gps = new int[2];
         gps[0]= this.gps.x;
         gps[1]= this.gps.y;
 	return gps;
     }
-
+    
+    public void darPaso(){
+        pasos++;
+    }
+    
+    public int getPasos(){
+        return pasos;
+    }
+    
+    public GugelVehicleMatrix getMatrix(){
+        return matriz;
+    }
+    
+    public void setMatrix(GugelVehicleMatrix matriz){
+        this.matriz = matriz;
+    }
+    
+    public void updateMatrix(){
+        matriz.getVehicle(nombre).updateAgent(Json.parse(Arrays.deepToString(radar)).asObject(), Json.parse(this.getGps().toString()).asObject());
+    }
+    
     public void setGps(Point gps) {
 	this.gps = gps;
     }
@@ -62,6 +93,10 @@ public class PropiedadesVehicle {
 	this.rol = Rol.getRol(consumo,alcance,volar);
     }
     
+    public String getNombre(){
+        return nombre;
+    }
+    
     /**
      * Actualiza los parametros a partir de la percepción.
      * 
@@ -69,6 +104,7 @@ public class PropiedadesVehicle {
      * @author Luis Gallego Quero
      */
     public void actualizarPercepcion(Percepcion percepcion){
+        nombre = percepcion.getNombreVehicle();
         gps = percepcion.getGps();
         bateria = percepcion.getBateria();
         llegado = percepcion.getLlegado();

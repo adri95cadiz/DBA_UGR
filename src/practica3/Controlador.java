@@ -230,6 +230,7 @@ public class Controlador extends SingleAgent {
                     propiedades = flota.get(nomVehiculo);
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
+                    propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.mundo)));
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
                     if (percepcion.getGps().x == 99) {
@@ -403,6 +404,8 @@ public class Controlador extends SingleAgent {
             int alcance = r.getAlcance();
             System.out.println("\nAlcance: " + alcance);
             System.out.println("\nConsumo: " + r.getConsumo());
+            int pasos = p.getPasos();
+            System.out.println("\nPasos dados: " + pasos);
         System.out.println("======================================================================");
         
         /*
@@ -417,18 +420,18 @@ public class Controlador extends SingleAgent {
         } else {
             posiblesObjetivos = new int [alcance][alcance];
             eliminarObjetivosInaccesibles(radar.clone(), alcance);
-            System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
-            /*for (int i = 0; i < 5; i++) {
+            /*System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
+            for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         System.out.print(posiblesObjetivos[i][j] + "-");
                     }
                     System.out.println("\n");
                 }   */ 
             // Se decide la casilla óptima a moverse en la matriz 5x5
-            /*
-            int[] objetivo_alcanzar = chooseLocalObj();
-            int objetivo_id = objetivo_alcanzar[0] * camino.getSizeMap() + objetivo_alcanzar[1];
-            */
+            
+            int[] objetivo_alcanzar = chooseLocalObj(pasos, coord, radar);
+            //int objetivo_id = objetivo_alcanzar[0] * camino.getSizeMap() + objetivo_alcanzar[1];
+            
             // Se calcula el camino optimo para llegar hasta ella
 /*
             System.out.println("RADAR ------------------> ");
@@ -497,14 +500,14 @@ public class Controlador extends SingleAgent {
         int pos_inicial = (int) floor(alcance/2.0);
         eliminarObjetivosInaccesiblesRec(radar.clone(), alcance, pos_inicial, pos_inicial);
         posiblesObjetivos[pos_inicial][pos_inicial] = -1;          //Pone la posicion actual a -1, no se deberia deliberar sobre ella.
-        for (int i = 0; i < alcance; i++) {		//Pone los objetivos no alcanzados a -1, tampoco son accesibles.
+        for (int i = 0; i < alcance; i++) {                        //Pone los objetivos no alcanzados a -1, tampoco son accesibles.
             for (int j = 0; j < alcance; j++) {
                 if (posiblesObjetivos[i][j] == 0) {
                     posiblesObjetivos[i][j] = -1;
                 }
             }
         }
-        for (int i = 0; i < alcance; i++) {		//Pone los 1's a 0's dejando finalmente los accesibles a 0 y los inaccesibles a -1.
+        for (int i = 0; i < alcance; i++) {                         //Pone los 1's a 0's dejando finalmente los accesibles a 0 y los inaccesibles a -1.
             for (int j = 0; j < alcance; j++) {
                 if (posiblesObjetivos[i][j] == 1) {
                     posiblesObjetivos[i][j] = 0;
@@ -538,6 +541,152 @@ public class Controlador extends SingleAgent {
             }
         }
     }
+    
+    /**
+     * *************************************************************************
+     * @author Raúl López Arévalo, Adrián Portillo Sánchez
+     *
+     * Determina la mejor posición a la que moverse dentro del mapa local [alcance x alcance].
+     * En el primer movimiento decide la casilla objetivo teniendo en cuenta si
+     * es accesible y la cercanía al objetivo.
+     *
+     * A partir del primer movimiento para decidir esta casilla tiene en cuenta
+     * el mapa de la base de datos.
+     *
+     * @return objetivo Devuelve las coordenadas de la casilla como int[].
+     */
+    private int[] chooseLocalObj(int pasos, int[]datosGPS, int[][]datosScanner) {
+        int[] objetive = new int[2];
+        if (pasos <= 1) { //cambiar a 1
+            float low_dist = (float) Math.pow(10, 10);
+
+            for (int i = 1; i <= 3; i++) {
+                for (int j = 1; j <= 3; j++) {
+                    //System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
+                    //System.out.println("Distancia menor: " + low_dist + "  datosScanner: " + datosScanner[i][j]);
+                    if (posiblesObjetivos[i][j] == 0 && datosScanner[i][j] < low_dist) {
+                        low_dist = datosScanner[i][j];
+                        objetive[0] = i;
+                        objetive[1] = j;
+                        //System.out.println("Encontrado nuevo objetivo mejor para moverse");
+                    }
+                }
+            }
+        }
+        //System.out.println("DATOS GPS :  " + datosGPS[0] + "," + datosGPS[1]);
+
+        /*for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                //System.out.print(posiblesObjetivos[i][j] + "-");
+            }
+            //System.out.println("\n");
+        }*/
+        //System.out.println("");
+
+        if (pasos > 0) {
+
+            float low_dist2 = (float) Math.pow(10, 10);
+            int low_moving_count = (int) Math.pow(10, 10);
+            //System.out.println("\t\t\tExplorando el mapa");
+            
+//            System.out.println("Vision del agente");
+//            for (int i = 0; i <= 4; i++) {
+//                for (int j = 0; j <= 4; j++) {
+//                    System.out.print(posiblesObjetivos[i][j]+" ");
+//                }System.out.println("\n");
+//            }
+//            
+//            System.out.println("Vision de matriz");
+//            for (int i = 0; i <= 4; i++) {
+//                for (int j = 0; j <= 4; j++) {
+//                    int a = datosGPS[0] - 2 + i;
+//                    int b = datosGPS[1] - 2 + j;
+//                    System.out.print(bd.getStatus(a,b)+" ");
+//                }System.out.println("\n");
+//            }
+            
+            for (int i = 0; i <= 4; i++) {
+                for (int j = 0; j <= 4; j++) {
+                    int a = datosGPS[0] - 2 + i;
+                    int b = datosGPS[1] - 2 + j;
+                    //System.out.println("\t\t\tDatos del gps: " + datosGPS[0] + "," + datosGPS[1]);
+                    //System.out.println("\t\t\tVamos a acceder a: " + a + "," + b);
+                    //System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
+
+                    // Comrueba que no se esté accediendo a una posición inválida de la matriz de la BD.
+                    if (a >= 0 && b >= 0 && a < Knowledge.getDB(this.mundo).mapSize() && b < Knowledge.getDB(this.mundo).mapSize()) {
+                        //System.out.println("Entra primero");
+                        if (posiblesObjetivos[i][j] == 0) {
+                            int casilla = Knowledge.getDB(this.mundo).getContent(a, b);
+                            if (casilla < low_moving_count || (casilla == low_moving_count && datosScanner[i][j] < low_dist2)){//&& datosScanner[i][j] < low_dist2){
+                                //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
+                                System.out.print(i+","+j+": "+casilla+" - ");
+                                System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
+                                //if (posiblesObjetivos[i][j] == 0) {
+                                //System.out.println("Entra despues");
+                                low_moving_count = casilla;
+                                //System.out.println(low_moving_count);
+                                low_dist2 = datosScanner[i][j];
+                                objetive[0] = i;
+                                objetive[1] = j;
+                                //System.out.println("NUEVO OBJETIVO EXPERIMENTAL ENCONTRADO ----> " + objetive[0] + "," + objetive[1]);
+                            }
+                        }
+                    }
+                }
+                System.out.println("\n");
+            }
+            //System.out.println("\n\n\t\tObjetivo experimental para moverse: " + objetive[0] + objetive[1]);
+        }
+        return objetive;
+    }
+    
+     /**
+     * *************************************************************************
+     * @author Raúl López Arévalo, Adrián Portillo Sánchez
+     *
+     * @param objetivo Recibe la diferencia entre el ID de la casilla en la que
+     * se encuentra y la casilla a la que se moverá en el siguiente turno. El ID
+     * 0 correspondería a la esquina superior izquierda. El ID 25
+     * correspondería. a la esquina inferior derecha.
+     *
+     * @return mov Devuelve un String que contiene la dirección a la que
+     * moverse.
+     *
+     */
+    private String pathLocalObj(int objetivo) {
+        System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
+        int[] diff_ids = {
+            camino.getSizeMap(),
+            camino.getSizeMap() - 1,
+            camino.getSizeMap() + 1,
+            -1,
+            +1,
+            -camino.getSizeMap() + 1,
+            -camino.getSizeMap() - 1
+        };
+        String mov;
+
+        if (objetivo == diff_ids[0]) {
+            mov = "moveN";
+        } else if (objetivo == diff_ids[1]) {
+            mov = "moveNE";
+        } else if (objetivo == diff_ids[2]) {
+            mov = "moveNW";
+        } else if (objetivo == diff_ids[3]) {
+            mov = "moveE";
+        } else if (objetivo == diff_ids[4]) {
+            mov = "moveW";
+        } else if (objetivo == diff_ids[5]) {
+            mov = "moveSW";
+        } else if (objetivo == diff_ids[6]) {
+            mov = "moveSE";
+        } else {
+            mov = "moveS";
+        }
+        return mov;
+    }
+
 
     /**
      * Recibimos y procesamos la percepción que va obteniendo cada vehiculo.
