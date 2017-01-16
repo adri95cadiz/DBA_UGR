@@ -72,5 +72,6 @@ public class PropiedadesVehicle {
         gps = percepcion.getGps();
         bateria = percepcion.getBateria();
         llegado = percepcion.getLlegado();
+        radar = percepcion.getRadar();
     }    
 }

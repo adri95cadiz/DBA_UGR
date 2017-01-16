@@ -1,5 +1,6 @@
 package practica3;
 
+import com.bubble.utils.ArrayUtils;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
@@ -41,7 +42,8 @@ public class Controlador extends SingleAgent {
     //private double[][] scanner = new double[TAM_MAPA][TAM_MAPA];   
     private boolean objetivoEncontrado;
     private Point puntoObjetivo = new Point();
-    ArrayList<String> vehiculosExploradores = new ArrayList<String>();
+    ArrayList<String> vehiculosExploradores = new ArrayList<String>(); 
+    private int[][] posiblesObjetivos;
     private boolean cont2;
     int cont;
 
@@ -387,20 +389,20 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se obtienen y muestran las propiedades del vehículo
         */
-        System.out.println("======================================================================");
+        System.out.println("\n======================================================================");
         PropiedadesVehicle p = flota.get(vehiculoElegido);
             Rol r = p.getRol();
-            System.out.println("\nPropiedades del vehiculo elegido: ");
+            System.out.println("Propiedades del vehiculo elegido: ");
             System.out.println("\nBateria: " + p.getBateria());
             int[] coord = new int[2];
             coord = p.getGps();
             int[][] radar = p.getRadar();
-            System.out.println("\nRadar: "+ java.util.Arrays.toString(radar));
+            System.out.println("\nRadar: "+ java.util.Arrays.deepToString(radar));
             System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
             System.out.println("\nRol: " + p.getRol());
             int alcance = r.getAlcance();
             System.out.println("\nAlcance: " + alcance);
-            System.out.println("\nConsumno: " + r.getConsumo());
+            System.out.println("\nConsumo: " + r.getConsumo());
         System.out.println("======================================================================");
         
         /*
@@ -410,13 +412,18 @@ public class Controlador extends SingleAgent {
         /*
         ¿Código para ver si existe camino al objetivo?
         */
-        if(exist_path){     //Si existe un camino desde nuestra posición al objetivo
+        if(exist_path == true){     //Si existe un camino desde nuestra posición al objetivo
             
-        } else{
-            int[][] posiblesObjetivos = p.getRadar().clone();
-            posiblesObjetivos = eliminarObjetivosInaccesibles(posiblesObjetivos, radar, alcance);
+        } else {
+            posiblesObjetivos = new int [alcance][alcance];
+            eliminarObjetivosInaccesibles(radar.clone(), alcance);
             System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
-
+            /*for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        System.out.print(posiblesObjetivos[i][j] + "-");
+                    }
+                    System.out.println("\n");
+                }   */ 
             // Se decide la casilla óptima a moverse en la matriz 5x5
             /*
             int[] objetivo_alcanzar = chooseLocalObj();
@@ -486,27 +493,25 @@ public class Controlador extends SingleAgent {
      *
      * @author Adrian Portillo Sanchez
      */
-    private int[][] eliminarObjetivosInaccesibles(int[][] matriz, int[][] radar, int alcance) {
+    private void eliminarObjetivosInaccesibles(int[][] radar, int alcance) {
         int pos_inicial = (int) floor(alcance/2.0);
-        for( int i = 0; i < alcance; i++ )
-            Arrays.fill( matriz[i], 0 );
-        matriz = eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, pos_inicial, pos_inicial);
-        matriz[pos_inicial][pos_inicial] = -1;          //Pone la posicion actual a -1, no se deberia deliberar sobre ella.
+        eliminarObjetivosInaccesiblesRec(radar.clone(), alcance, pos_inicial, pos_inicial);
+        posiblesObjetivos[pos_inicial][pos_inicial] = -1;          //Pone la posicion actual a -1, no se deberia deliberar sobre ella.
         for (int i = 0; i < alcance; i++) {		//Pone los objetivos no alcanzados a -1, tampoco son accesibles.
             for (int j = 0; j < alcance; j++) {
-                if (matriz[i][j] == 0) {
-                    matriz[i][j] = -1;
+                if (posiblesObjetivos[i][j] == 0) {
+                    posiblesObjetivos[i][j] = -1;
                 }
             }
         }
         for (int i = 0; i < alcance; i++) {		//Pone los 1's a 0's dejando finalmente los accesibles a 0 y los inaccesibles a -1.
             for (int j = 0; j < alcance; j++) {
-                if (matriz[i][j] == 1) {
-                    matriz[i][j] = 0;
+                if (posiblesObjetivos[i][j] == 1) {
+                    posiblesObjetivos[i][j] = 0;
                 }
             }
         }
-        return matriz;
+        System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
     }
 
     /**
@@ -514,23 +519,28 @@ public class Controlador extends SingleAgent {
      *
      * @author Adrian Portillo Sanchez
      */
-    private int[][] eliminarObjetivosInaccesiblesRec(int[][] matriz, int[][] radar, int alcance, int row, int col) {
-        if (row < 0 || row > alcance || col < 0 || col > alcance) {             //Se encuentra fuera de los límites
-        } else if (matriz[row][col] == -1 || matriz[row][col] == 1) {           //Aunque dentro de los límites ya ha sido recorrida                    
-        } else if (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4) {
-            matriz[row][col] = -1;                                              //Dentro de los límites y no recorrida pero contiene un muro o vehículo
-        } else if(radar[row][col] == 0 || radar[row][col] == 3){
-            matriz[row][col] = 1;                                               //Es libre, alcanzable, y dentro de los límites
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row - 1, col - 1);	//Superior izquierdo.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row - 1, col);	//Superior centro.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row - 1, col + 1);	//Superior derecho.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row, col - 1);	//Centro izquierdo.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row, col + 1);	//Centro derecho.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row + 1, col - 1);	//Inferior izquierdo.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row + 1, col);	//Inferior centro.
-            eliminarObjetivosInaccesiblesRec(matriz, radar, alcance, row + 1, col + 1);	//Inferior derecho.	
+    private void eliminarObjetivosInaccesiblesRec(int[][] radar, int alcance, int row, int col) {        
+        System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
+        int pos_inicial = (int) floor(alcance/2.0);
+        if (row < 0 || row > alcance || col < 0 || col > alcance) {                             //Se encuentra fuera de los límites
+            System.out.println("1");
+        } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {     //Aunque dentro de los límites ya ha sido recorrida 
+            System.out.println("2");
+        } else if ((row != pos_inicial && col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4)) {
+            posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
+            System.out.println("3");
+        } else {
+            posiblesObjetivos[row][col] = 1;                                                    //Es libre, alcanzable, y dentro de los límites        
+            System.out.println("4");
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col - 1);	//Superior izquierdo.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col);	//Superior centro.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col + 1);	//Superior derecho.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row, col - 1);	//Centro izquierdo.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row, col + 1);	//Centro derecho.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col - 1);	//Inferior izquierdo.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col);	//Inferior centro.
+            eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col + 1);	//Inferior derecho.	
         }
-            return matriz;
     }
 
     /**
