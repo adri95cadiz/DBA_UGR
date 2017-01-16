@@ -34,7 +34,7 @@ public class Controlador extends SingleAgent {
     //private double[][] scanner = new double[TAM_MAPA][TAM_MAPA];   
     private boolean objetivoEncontrado;
     private Cell puntoObjetivo = new Cell();
-    ArrayList<String> vehiculosExploradores = new ArrayList<String>(); 
+    ArrayList<String> vehiculosExploradores = new ArrayList<>(); 
     private int[][] posiblesObjetivos;
     private boolean cont2;
     boolean exist_path = false;
@@ -448,7 +448,6 @@ public class Controlador extends SingleAgent {
 
             // Actualizar el objeto camino con el nuevo radar y la nueva pos final
             camino = new Path(posiblesObjetivos, 12, 12);
-            camino.changeMap(posiblesObjetivos);
             camino.changeObjetive(objetivo_id);
             camino.changeStart((int)floor((alcance*alcance)/2.0));
             //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
