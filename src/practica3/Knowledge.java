@@ -154,27 +154,19 @@ public class Knowledge {
      *  Este método es el encargado de recibir los datos obtenidos por el agente y
      *  añadirlos a su conocimiento
      *
+     * @param agentName Nombre del agente a actualizar
      * @param radar JsonObject que contiene la información del radar
      * @param gps JsonObject que contiene la posición del agente
      * @param vision Rago de vision del agente
      */
-    public void updateStatus(String agentName, JsonObject radar, JsonObject gps, int vision) {
+    public void updateStatus(String agentName, ArrayList<Integer> radar, Cell gps, int vision) {
         try{
             // Guardamos la posición actual del agente
             int position_x, position_y;
-            Cell position = Knowledge.getGPSData(gps);
-            position_x = position.getPosX();
-            position_y = position.getPosY();
+            position_x = gps.getPosX();
+            position_y = gps.getPosY();
 
             this.setAgentPosition(agentName, position_x, position_y);
-
-            //Transformamos el array JSON del radar a un array de int
-            JsonArray radarJson = radar.get("radar").asArray();
-            ArrayList<Integer> radarMatrix = new ArrayList<>();
-
-            for (int i = 0; i < radarJson.size(); i++) {
-                radarMatrix.add(radarJson.get(i).asInt());
-            }
 
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
@@ -183,7 +175,7 @@ public class Knowledge {
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position_x -(vision/2) + j);
                     int pos_y = (position_y -(vision/2) + i);
-                    int radarValue = radarMatrix.get(j*vision + i);
+                    int radarValue = radar.get(j*vision + i);
 
                     if(pos_x >= 0 && pos_y >= 0){
                         String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, contains) VALUES("
@@ -210,6 +202,24 @@ public class Knowledge {
                 System.err.println(e);
             }
         }
+    }
+
+    /**
+     * Este método es el encargado de recibir los datos obtenidos por el agente y
+     * añadirlos a su conocimiento.
+     * Método de retrocompatibilidad con la versión anterior
+     * 
+     * @deprecated
+     * @param agentName Nombre del agente a actualizar
+     * @param radar JsonObject que contiene la información del radar
+     * @param gps JsonObject que contiene la posición del agente
+     * @param vision Rago de vision del agente
+     */
+    public void updateStatus(String agentName, JsonObject radar, JsonObject gps, int vision) {
+        ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
+        Cell gpsCell = Knowledge.getGPSData(gps);
+
+        this.updateStatus(agentName, radarArray, gpsCell, vision);
     }
 
     /**
@@ -443,7 +453,7 @@ public class Knowledge {
 
         for (int i = 0; i < vision; i++) {
             for(int j = 0; j < vision; j++){
-
+                matrix[i][j] = radarArray.get((j*vision)+i);
             }            
         }
         return matrix;

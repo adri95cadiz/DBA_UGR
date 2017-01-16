@@ -10,7 +10,6 @@ import java.util.ArrayList;
  * @version 2017.01.12
  */
 class GugelVehicleMatrix {
-    private int map_id;
     private ArrayList<Vehicle> vehicles;
     private Knowledge db;
 
@@ -114,10 +113,10 @@ class GugelVehicleMatrix {
          * @param radar Objeto radar que contiene la visualización del agente
          * @param gps Objeto gps que contiene las coordenadas del agente
          */
-        public void updateAgent(JsonObject radar, JsonObject gps){
+        public void updateAgent(ArrayList<Integer> radar, Cell gps){
             db.updateStatus(agentName, radar, gps, vision);
             this.turn++;
-            this.position = Knowledge.getGPSData(gps);
+            this.position = gps;
             this.updateLocalMatrix(radar);
         }
 
@@ -126,9 +125,7 @@ class GugelVehicleMatrix {
          *
          * @param radar Objeto radar que contiene los datos a actualizar en la matriz
          */
-        private void updateLocalMatrix(JsonObject radar){
-            ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
-        
+        private void updateLocalMatrix(ArrayList<Integer> radar){        
             if(this.localMatrix.length < db.mapSize()){
                 int[][] tmp = this.localMatrix;
 
@@ -140,12 +137,11 @@ class GugelVehicleMatrix {
                 }
             }
 
-
             for (int i = 0; i < vision; i++) {
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position.getPosX() -(vision/2) + j);
                     int pos_y = (position.getPosY() -(vision/2) + i);
-                    int radarValue = radarArray.get(j*vision + i);
+                    int radarValue = radar.get(j*vision + i);
 
                     if(pos_x >= 0 && pos_y >= 0){
                         this.localMatrix[pos_x][pos_y] = radarValue;
@@ -182,6 +178,15 @@ class GugelVehicleMatrix {
                 }
             }
             return map;
+        }
+
+        /**
+         * Devuelve el turno actual del agente
+         * 
+         * @return Entero positivo correspondiente con el turno actual
+         */
+        public int getTurn(){
+            return turn;
         }
 
         /**
