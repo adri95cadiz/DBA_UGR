@@ -126,7 +126,7 @@ public class JSON {
         
         //Posicion en el mundo
         Cell gps = new Cell();
-        gps.set(resultado.getInt("x", -1), resultado.getInt("y", -1), 0);
+        gps.set(resultado.getInt("x", -1), resultado.getInt("y", -1),  0);
         percepcion.setGps(gps);
         
         // El radar lo recibimos como array pero lo utilizamos como matriz.

@@ -38,8 +38,10 @@ public class Controlador extends SingleAgent {
     ArrayList<String> vehiculosExploradores = new ArrayList<String>(); 
     private int[][] posiblesObjetivos;
     private boolean cont2;
-    //Path camino = new Path(posiblesObjetivos, 12, 12);
+    boolean exist_path = false;
+    Path camino;
     int cont;
+    private ArrayList<Integer> path_local = new ArrayList<>();
     // Valores modificables según que comportamiento del agene deseamos    
     private final int MAPA =11; 
     private boolean check = true;
@@ -383,7 +385,7 @@ public class Controlador extends SingleAgent {
      */
     private void mover() {
         System.out.println("\n\t MOVER()");
-        String decision = "moveE";
+        String decision = " ";
         cont++;
         
         /*
@@ -410,7 +412,6 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se decide el movimiento
         */
-        boolean exist_path = false;
         /*
         ¿Código para ver si existe camino al objetivo?
         */
@@ -430,10 +431,10 @@ public class Controlador extends SingleAgent {
             
             int[] objetivo_alcanzar = chooseLocalObj(pasos, coord, radar);
             int objetivo_id = objetivo_alcanzar[0] * Knowledge.getDB(this.MAPA).mapSize() + objetivo_alcanzar[1];
-            
+            objetivo_id = 17;
             // Se calcula el camino optimo para llegar hasta ella
 
-            System.out.println("RADAR ------------------> ");
+            /*System.out.println("RADAR ------------------> ");
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         System.out.print(radar[i][j] + "-");
@@ -449,23 +450,58 @@ public class Controlador extends SingleAgent {
                     }
                     System.out.println("\n");
                 }
-                System.out.println("");
+            System.out.println("");
 
-                System.out.println("OBJETIVO ID ------------> ");
-                System.out.println(objetivo_id);
+            System.out.println("OBJETIVO ID ------------> ");
+            System.out.println(objetivo_id);*/
 
-                // Actualizar el objeto camino con el nuevo radar y la nueva pos final
-                /*camino.changeMap(posiblesObjetivos);
-                camino.changeObjetive(objetivo_id);
-                camino.chageStarte(12);
-                //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
-                //System.out.println("NUEVO PATH OBTENIDO");
-                path_local = camino.getPath();*/
-            p.darPaso();
+            // Actualizar el objeto camino con el nuevo radar y la nueva pos final
+            camino = new Path(posiblesObjetivos, 12, 12);
+            camino.changeMap(posiblesObjetivos);
+            camino.changeObjetive(objetivo_id);
+            camino.changeStart((int)floor((alcance*alcance)/2.0));
+            //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
+            //System.out.println("NUEVO PATH OBTENIDO");
+            path_local.clear();
+            path_local = camino.getPath();
+            
            
         }
-        
-        if (decision.contains("logout")) { // cuando se produce esto?????????????????????????????????????????????????
+        /**
+        * Si ya existía un path óptimo: -Calcula la posición a la que se
+        * debe de mover según el path -Elimina dicha posición del path -Una
+        * vez que se haya completado el path se vuelve a calcular uno
+        */
+        exist_path = true;
+        System.out.println("CAMINO A SEGUIR:");
+        camino.printPath();
+        // Se transforman las IDs de las casillas a coordenadas para saber
+        // identificar la dirección en la que se debe de mover
+        int primera_casilla = path_local.get(0);
+        int segunda_casilla = path_local.get(1);
+        int obj_prox_mov = primera_casilla - segunda_casilla;
+        //System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
+        //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
+        //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);*/
+
+        // Se obtiene la dirección en la que moverse
+        decision = pathLocalObj(obj_prox_mov);
+
+        path_local.remove(0);
+        // Si el path_local restante contiene solamente una posición, es la 
+        // del propio agente por lo que se borra.
+        if (path_local.size() == 1) {
+            exist_path = false;
+        }
+        /****************
+         * Una vez se sabe en que dirección se quiere mover:
+         * -Actualiza el mapa de la base de datos
+         * -Control sobre número de pasos y batería
+         * -Manda la acción del movimiento
+         * -Espera a recibir la respuesta
+         * */         
+        p.updateMatrix();
+        if (!decision.contains("move")) { 
             System.out.println("No se donde moverme.");
             subEstadoBuscando = Estado.ELECCION_VEHICULO;
             subEstadoEncontrado = Estado.ELECCION_VEHICULO;
@@ -488,7 +524,13 @@ public class Controlador extends SingleAgent {
                 estadoActual = Estado.FINALIZAR;
             }
         }
+        //System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
+        p.darPaso();
+        p.setBateria(p.getBateria()-p.getRol().getConsumo());	
+        System.out.println("\t\tPaso numero: " + p.getPasos());  
+        Knowledge.getDB(this.MAPA).drawMap();   
     }
+  
     
     
     /**
@@ -655,7 +697,7 @@ public class Controlador extends SingleAgent {
      * moverse.
      *
      */
-    /*private String pathLocalObj(int objetivo) {
+    private String pathLocalObj(int objetivo) {
         camino.changeMap(Knowledge.getDB(this.MAPA).getKnowledgeMatrix());
         System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
         int[] diff_ids = {
@@ -687,7 +729,7 @@ public class Controlador extends SingleAgent {
             mov = "moveS";
         }
         return mov;
-    }*/
+    }
 
 
     /**

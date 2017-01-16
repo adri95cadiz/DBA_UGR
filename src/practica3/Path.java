@@ -40,7 +40,7 @@ public class Path {
      *
      * @param node_id ID nuevo
      */
-    public void chageStarte(int node_id) {
+    public void changeStart(int node_id) {
         this.start_id = node_id;
     }
 
