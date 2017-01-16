@@ -45,7 +45,13 @@ public class Controlador extends SingleAgent {
     ArrayList<String> vehiculosExploradores = new ArrayList<String>(); 
     private int[][] posiblesObjetivos;
     private boolean cont2;
+    Path camino = new Path(posiblesObjetivos, 12, 12);
     int cont;
+    // Valores modificables según que comportamiento del agente deseamos
+    private boolean check = true;
+    private final int MAPA =11;
+    private final int LIMITE_PASOS = 1000;
+    private final boolean EXPLORAR = false;
 
     public Controlador(AgentID id, String mundo) throws Exception {
         super(id);
@@ -230,7 +236,7 @@ public class Controlador extends SingleAgent {
                     propiedades = flota.get(nomVehiculo);
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
-                    propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.mundo)));
+                    propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA)));
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
                     if (percepcion.getGps().x == 99) {
@@ -614,10 +620,10 @@ public class Controlador extends SingleAgent {
                     //System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
 
                     // Comrueba que no se esté accediendo a una posición inválida de la matriz de la BD.
-                    if (a >= 0 && b >= 0 && a < Knowledge.getDB(this.mundo).mapSize() && b < Knowledge.getDB(this.mundo).mapSize()) {
+                    if (a >= 0 && b >= 0 && a < Knowledge.getDB(this.MAPA).mapSize() && b < Knowledge.getDB(this.MAPA).mapSize()) {
                         //System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
-                            int casilla = Knowledge.getDB(this.mundo).getContent(a, b);
+                            int casilla = Knowledge.getDB(this.MAPA).getContent(a, b);
                             if (casilla < low_moving_count || (casilla == low_moving_count && datosScanner[i][j] < low_dist2)){//&& datosScanner[i][j] < low_dist2){
                                 //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
                                 System.out.print(i+","+j+": "+casilla+" - ");
@@ -655,6 +661,7 @@ public class Controlador extends SingleAgent {
      *
      */
     private String pathLocalObj(int objetivo) {
+        camino.changeMap(Knowledge.getDB(this.MAPA).getKnowledgeMatrix());
         System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
         int[] diff_ids = {
             camino.getSizeMap(),

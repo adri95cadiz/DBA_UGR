@@ -17,7 +17,7 @@ public class PropiedadesVehicle {
     private int[][] radar;
     private Rol rol;
     private int pasos;
-    private String mundo;
+    private int mundo;
     private String nombre;
     private GugelVehicleMatrix matriz;
     
@@ -58,7 +58,7 @@ public class PropiedadesVehicle {
     }
     
     public void updateMatrix(){
-        matriz.getVehicle(nombre).updateAgent(Json.parse(Arrays.deepToString(radar)).asObject(), Json.parse(this.getGps().toString()).asObject());
+        //matriz.getVehicle(nombre).updateAgent(Lists.newArrayList(Arrays.asList(radar), this.getGps()));
     }
     
     public void setGps(Point gps) {
