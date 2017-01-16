@@ -511,7 +511,6 @@ public class Controlador extends SingleAgent {
                 }
             }
         }
-        System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
     }
 
     /**
@@ -519,27 +518,24 @@ public class Controlador extends SingleAgent {
      *
      * @author Adrian Portillo Sanchez
      */
-    private void eliminarObjetivosInaccesiblesRec(int[][] radar, int alcance, int row, int col) {        
-        System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
-        int pos_inicial = (int) floor(alcance/2.0);
-        if (row < 0 || row > alcance || col < 0 || col > alcance) {                             //Se encuentra fuera de los límites
-            System.out.println("1");
+    private void eliminarObjetivosInaccesiblesRec(int[][] radar, int alcance, int row, int col) {  
+        if (row < 0 || row > alcance-1 || col < 0 || col > alcance-1) {                             //Se encuentra fuera de los límites
         } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {     //Aunque dentro de los límites ya ha sido recorrida 
-            System.out.println("2");
-        } else if ((row != pos_inicial && col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4)) {
-            posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
-            System.out.println("3");
-        } else {
-            posiblesObjetivos[row][col] = 1;                                                    //Es libre, alcanzable, y dentro de los límites        
-            System.out.println("4");
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col - 1);	//Superior izquierdo.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col);	//Superior centro.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col + 1);	//Superior derecho.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row, col - 1);	//Centro izquierdo.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row, col + 1);	//Centro derecho.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col - 1);	//Inferior izquierdo.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col);	//Inferior centro.
-            eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col + 1);	//Inferior derecho.	
+        } else {          
+            int pos_inicial = (int) floor(alcance/2.0);
+            if ((row != pos_inicial || col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4)) {
+                posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
+            } else {
+                posiblesObjetivos[row][col] = 1;                                                    //Es libre, alcanzable, y dentro de los límites    
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col - 1);	//Superior izquierdo.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col);         //Superior centro.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col + 1);	//Superior derecho.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row, col - 1);         //Centro izquierdo.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row, col + 1);         //Centro derecho.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col - 1);	//Inferior izquierdo.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col);     	//Inferior centro.
+                eliminarObjetivosInaccesiblesRec(radar, alcance, row + 1, col + 1);	//Inferior derecho.	
+            }
         }
     }
 
