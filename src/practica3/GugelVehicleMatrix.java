@@ -59,7 +59,7 @@ class GugelVehicleMatrix {
      * @param agentName Nombre del agente a buscar
      * @return Objeto {@link Vehicle} en caso de que exista, {@link null} cuando no existe
      */
-    private Vehicle getVehicle(String agentName){
+    public Vehicle getVehicle(String agentName){
         for(Vehicle v: vehicles){
             if(v.isAgent(agentName)) return  v;
         }

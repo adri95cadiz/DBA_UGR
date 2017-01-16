@@ -45,11 +45,11 @@ public class Controlador extends SingleAgent {
     ArrayList<String> vehiculosExploradores = new ArrayList<String>(); 
     private int[][] posiblesObjetivos;
     private boolean cont2;
-    Path camino = new Path(posiblesObjetivos, 12, 12);
+    //Path camino = new Path(posiblesObjetivos, 12, 12);
     int cont;
-    // Valores modificables según que comportamiento del agente deseamos
+    // Valores modificables según que comportamiento del agente deseamos    
+    private final int MAPA =11; 
     private boolean check = true;
-    private final int MAPA =11;
     private final int LIMITE_PASOS = 1000;
     private final boolean EXPLORAR = false;
 
@@ -436,14 +436,14 @@ public class Controlador extends SingleAgent {
             // Se decide la casilla óptima a moverse en la matriz 5x5
             
             int[] objetivo_alcanzar = chooseLocalObj(pasos, coord, radar);
-            //int objetivo_id = objetivo_alcanzar[0] * camino.getSizeMap() + objetivo_alcanzar[1];
+            int objetivo_id = objetivo_alcanzar[0] * Knowledge.getDB(this.MAPA).mapSize() + objetivo_alcanzar[1];
             
             // Se calcula el camino optimo para llegar hasta ella
-/*
+
             System.out.println("RADAR ------------------> ");
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
-                        System.out.print(datosRadar[i][j] + "-");
+                        System.out.print(radar[i][j] + "-");
                     }
                     System.out.println("\n");
                 }
@@ -460,7 +460,7 @@ public class Controlador extends SingleAgent {
 
                 System.out.println("OBJETIVO ID ------------> ");
                 System.out.println(objetivo_id);
-*/
+
                 // Actualizar el objeto camino con el nuevo radar y la nueva pos final
                 /*camino.changeMap(posiblesObjetivos);
                 camino.changeObjetive(objetivo_id);
@@ -468,6 +468,8 @@ public class Controlador extends SingleAgent {
                 //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
                 //System.out.println("NUEVO PATH OBTENIDO");
                 path_local = camino.getPath();*/
+            p.darPaso();
+           
         }
         
         if (decision.contains("logout")) { // cuando se produce esto?????????????????????????????????????????????????
@@ -563,7 +565,7 @@ public class Controlador extends SingleAgent {
      */
     private int[] chooseLocalObj(int pasos, int[]datosGPS, int[][]datosScanner) {
         int[] objetive = new int[2];
-        if (pasos <= 1) { //cambiar a 1
+        if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
 
             for (int i = 1; i <= 3; i++) {
@@ -619,7 +621,7 @@ public class Controlador extends SingleAgent {
                     //System.out.println("\t\t\tVamos a acceder a: " + a + "," + b);
                     //System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
 
-                    // Comrueba que no se esté accediendo a una posición inválida de la matriz de la BD.
+                    // Comprueba que no se esté accediendo a una posición inválida de la matriz de la BD.
                     if (a >= 0 && b >= 0 && a < Knowledge.getDB(this.MAPA).mapSize() && b < Knowledge.getDB(this.MAPA).mapSize()) {
                         //System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
@@ -660,7 +662,7 @@ public class Controlador extends SingleAgent {
      * moverse.
      *
      */
-    private String pathLocalObj(int objetivo) {
+    /*private String pathLocalObj(int objetivo) {
         camino.changeMap(Knowledge.getDB(this.MAPA).getKnowledgeMatrix());
         System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
         int[] diff_ids = {
@@ -692,7 +694,7 @@ public class Controlador extends SingleAgent {
             mov = "moveS";
         }
         return mov;
-    }
+    }*/
 
 
     /**

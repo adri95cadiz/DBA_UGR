@@ -103,7 +103,7 @@ public class Knowledge {
     /**
      * Devuelve el tamaño del mapa
      *
-     * @return Tamañao del mapa
+     * @return Tamaño del mapa
      * @autor Raúl López Arévalo
      */
     public int mapSize(){

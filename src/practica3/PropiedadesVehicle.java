@@ -3,7 +3,7 @@ package practica3;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import edu.emory.mathcs.backport.java.util.Arrays;
-import java.awt.Point;
+import java.util.ArrayList;
 
 /**
  * Clase que contiene la información que tiene el controlador sobre un vehiculo.
@@ -11,7 +11,7 @@ import java.awt.Point;
  */
 public class PropiedadesVehicle {
     
-    private Point gps;
+    private Cell gps;
     private int bateria;
     private boolean llegado;
     private int[][] radar;
@@ -36,8 +36,8 @@ public class PropiedadesVehicle {
     
     public int[] getGps() {
         int[] gps = new int[2];
-        gps[0]= this.gps.x;
-        gps[1]= this.gps.y;
+        gps[0]= this.gps.getPosX();
+        gps[1]= this.gps.getPosY();
 	return gps;
     }
     
@@ -58,10 +58,10 @@ public class PropiedadesVehicle {
     }
     
     public void updateMatrix(){
-        //matriz.getVehicle(nombre).updateAgent(Lists.newArrayList(Arrays.asList(radar), this.getGps()));
+        matriz.getVehicle(nombre).updateAgent(new ArrayList<>(Arrays.asList(radar)), this.gps);
     }
     
-    public void setGps(Point gps) {
+    public void setGps(Cell gps) {
 	this.gps = gps;
     }
 
