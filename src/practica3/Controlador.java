@@ -593,7 +593,7 @@ public class Controlador extends SingleAgent {
     private int[] chooseLocalObj(int pasos, int[]datosGPS) {       //HACE FALTA SACAR LA DISTANCIA DE ALGUNA FORMA NUEVA ¿CON CLASE NODE?¿
         int[] objetive = new int[2];
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO){
-            
+            //Utilizar gradiente con varios objetivos.
         }
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
@@ -602,7 +602,7 @@ public class Controlador extends SingleAgent {
                 for (int j = 1; j <= 3; j++) {
                     //System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
                     //System.out.println("Distancia menor: " + low_dist + "  datosScanner: " + datosScanner[i][j]);
-                    if (posiblesObjetivos[i][j] == 0) {
+                    if (posiblesObjetivos[i][j] == 0 /*datosScanner[i][j] < low_dist*/) {
                         //low_dist = datosScanner[i][j];
                         objetive[0] = i;
                         objetive[1] = j;
@@ -656,12 +656,13 @@ public class Controlador extends SingleAgent {
                         //System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
                             int casilla = Knowledge.getDB(this.MAPA).getContent(a, b);
-                            if (casilla < low_moving_count || (casilla == low_moving_count)){//&& datosScanner[i][j] < low_dist2){
+                            if (casilla < low_moving_count || (casilla == low_moving_count /*&& datosScanner[i][j] < low_dist2*/)){//&& datosScanner[i][j] < low_dist2){
                                 //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
                                 System.out.print(i+","+j+": "+casilla+" - ");
                                 System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
                                 //if (posiblesObjetivos[i][j] == 0) {
                                 //System.out.println("Entra despues");
+                                //low_dist2 = datosScanner[i][j];
                                 low_moving_count = casilla;
                                 objetive[0] = i;
                                 objetive[1] = j;
