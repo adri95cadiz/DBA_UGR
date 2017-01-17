@@ -35,6 +35,8 @@ public class Controlador extends SingleAgent {
     private boolean objetivoEncontrado;
     private Cell puntoObjetivo = new Cell();
     ArrayList<String> vehiculosExploradores = new ArrayList<>(); 
+    ArrayList<String> vehiculosEsperando = new ArrayList<>();
+    ArrayList<String> vehiculosFinalizados = new ArrayList<>();
     private int[][] posiblesObjetivos;
     private boolean cont2;
     boolean exist_path = false;
@@ -258,22 +260,29 @@ public class Controlador extends SingleAgent {
         if (estadoActual != Estado.FINALIZAR) {
             estadoActual = Estado.BUSCAR;
         }
-        // Cogemos los vehículos que sean coche, que serán los que exploren
+        // Cogemos los vehículos que sean coche, que serán los que exploren.
+        // Los demás están esperando a que los exploradores lleguen al objetivo.
         for (String vehiculo : flota.keySet()) {
             if (flota.get(vehiculo).getRol().getId() == 1) {
                 vehiculosExploradores.add(vehiculo);
+            }else{
+                vehiculosEsperando.add(vehiculo);
             }
         } // Si no hay ningún coche cogeremos los camiones
+        // Los demás están esperando a que los exploradores lleguen al objetivo.
         if (vehiculosExploradores.isEmpty()) {
             for (String vehiculo : flota.keySet()) {
                 if (flota.get(vehiculo).getRol().getId() == 2) {
                     vehiculosExploradores.add(vehiculo);
+                    vehiculosEsperando.remove(vehiculo);
                 }
             }
         } // Si todo son aviones pues los metemos todos en explorar
+        // Los demás están esperando a que los exploradores lleguen al objetivo.
         if (vehiculosExploradores.isEmpty()) {
             for (String vehiculo : flota.keySet()) {
                 vehiculosExploradores.add(vehiculo);
+                vehiculosEsperando.remove(vehiculo);
             }
         }
     }
@@ -330,6 +339,8 @@ public class Controlador extends SingleAgent {
             ¿Utilizar solo los de menor consumo y mayor campo de vision?
              */
             vehiculoElegido = vehiculosExploradores.get(0);
+            
+            /***************** INFORMACION ************************************/
             PropiedadesVehicle p = flota.get(vehiculoElegido);
             Rol r = p.getRol();
             System.out.println("\nPropiedades del vehiculo elegido: ");
@@ -341,12 +352,14 @@ public class Controlador extends SingleAgent {
             System.out.println("\nRol: " + p.getRol());
             System.out.println("\nAlcance: " + r.getAlcance());
             System.out.println("\nConsumno: " + r.getConsumo());
+            /******************************************************************/
 
         } else {
             /*
-            Ya no estamos buscando por lo que conocemos el punto.            
+            Ya no estamos buscando por lo que conocemos el punto.  
+            Movemos el resto de vehiculos que estaban parados sin explorar.
              */
-            vehiculoElegido = "Vehiculo1";
+            vehiculoElegido = vehiculosEsperando.get(0); // Si es que hay alguno porque pueden ser todos coche
         }
 
     }
@@ -356,6 +369,7 @@ public class Controlador extends SingleAgent {
      */
     private void faseMover() {
         System.out.println("\n\tFASE MOVER.");
+        // Utilizar diferentes funciones Mover para el caso buscar.
         if (buscando) {
             // Para el caso en el que aún no sabemos donde esta el punto objetivo.
             mover();
@@ -376,15 +390,11 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero
      */
     private void mover() {
-        System.out.println("\n\t MOVER()");
-        String decision = " ";
-        cont++;
-        
         /*
         Aquí se obtienen y muestran las propiedades del vehículo
         */
         System.out.println("\n======================================================================");
-        PropiedadesVehicle p = flota.get(vehiculoElegido);
+            PropiedadesVehicle p = flota.get(vehiculoElegido);
             Rol r = p.getRol();
             System.out.println("Propiedades del vehiculo elegido: ");
             System.out.println("\nBateria: " + p.getBateria());
@@ -400,6 +410,28 @@ public class Controlador extends SingleAgent {
             int pasos = p.getPasos();
             System.out.println("\nPasos dados: " + pasos);
         System.out.println("======================================================================");
+        /*
+        Control sobre la batería del vehículo elegido para moverse
+        */
+        if( flota.get(vehiculoElegido).getBateria() < 10 ){
+            faseRepostar();
+        }
+        /*
+        1 - Si el objetivo existe y hay camino, de tirón.
+        2 - Si no existe un camino óptimo local, se calcula uno aquí.
+        3 - Si ya existe un camino óptimo local, se van cogiendo los movimientos
+        hasta que llegue a su casilla destino.
+        4 - Actualizar Knowedge
+        5 - Acción de mover
+        */
+        
+        
+        
+        System.out.println("\n\t MOVER()");
+        String decision = " ";
+        cont++;
+        
+        
         
         /*
         Aquí se decide el movimiento
