@@ -863,10 +863,10 @@ public class Controlador extends SingleAgent {
                 estadoActual = Estado.BUSCAR;
                 subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
         }*/
-        if (cont == 5) {
+        /*if (cont == 5) {
             System.out.println("Entra cont == 5.");
             estadoActual = Estado.FINALIZAR;
-        }
+        }*/
     }
 
     /**
