@@ -594,16 +594,40 @@ public class Controlador extends SingleAgent {
     private int[] chooseLocalObj(int pasos, int[]datosGPS) {       //HACE FALTA SACAR LA DISTANCIA DE ALGUNA FORMA NUEVA ¿CON CLASE NODE?¿
         int[] objetive = new int[2];
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO){
-            //Utilizar gradiente con varios objetivos. Falta hacer esto
             
+            int[] posicion_objetivo = new int[2]; 
+            int[][]matrixGrad = flota.get(vehiculoElegido).getRadar();
+            int alcance = flota.get(vehiculoElegido).getRol().getAlcance();
+            int[] gps = flota.get(vehiculoElegido).getGps();
+            
+            //Utilizar gradiente con varios objetivos. Falta hacer esto
+            // Habría que pasarle a esta función un array list o un algo que contenga a los objetivos.
+            // En caso de que no se sepa la localización de un segundo objetivo, sus coordenadas SON -1,-1.
+            // El primer objetivo (objetivos[0]) siempre va a existir si entra en este if.
+            int[][]objetivos = new int[2][2]; // Esto va a tener 2 coordenadas de un objetivo, y otras dos del otro objetivo. Pueden ser null.
+            // Si se han encontrado 2 objetivos:
+            if(objetivos[1][0] != -1){
+                // Calcula el gradiente en la posición del agente para cada objetivo
+                int dist1 = Math.abs(objetivos[0][0]-gps[0]) + Math.abs(objetivos[0][1]-gps[1]);
+                int dist2 = Math.abs(objetivos[1][0]-gps[0]) + Math.abs(objetivos[1][1]-gps[1]);
+                // Si el objetivo 1 está más cerca lo cogemos como destino.
+                if( dist1 < dist2 ){
+                    posicion_objetivo[0] = objetivos[0][0];
+                    posicion_objetivo[1] = objetivos[0][1];
+                }else{ // si no, cogemos el objetivo 2
+                    posicion_objetivo[0] = objetivos[1][0];
+                    posicion_objetivo[1] = objetivos[1][1];
+                }
+            }else{ // Si solo hay un objetivo, tomamos ese como destino
+                posicion_objetivo[0] = objetivos[0][0];
+                posicion_objetivo[1] = objetivos[0][1];
+            }
             /*
             Primer bloque si el objetivo se ha encontrado:
                 - Se construye una matriz que es el campo de visión del agente
             con los gradientes hacia el objetivo.
             */
-            int[] posicion_objetivo = {45,50}; // aquí hay que coger las coordenadas del objetivo
-            int[][]matrixGrad = flota.get(vehiculoElegido).getRadar();
-            int alcance = flota.get(vehiculoElegido).getRol().getAlcance();
+            
             for(int i=0; i<alcance; i++){
                 for(int j=0; j<alcance; j++){
                     matrixGrad[i][j] = Math.abs(posicion_objetivo[0]-i) - Math.abs(posicion_objetivo[1]-j);
@@ -614,7 +638,7 @@ public class Controlador extends SingleAgent {
                 - Se recorre la matriz de los gradientes y se va quedando con la posición 
             que tenga el gradiente menor y sea accesible. Esa es la posición a la que se mueve
             */
-            int dist = 900000000;
+            int dist = 9999999;
             for(int i=0; i<alcance; i++){
                 for(int j=0; j<alcance; j++){
                    if(posiblesObjetivos[i][j] == 0 && matrixGrad[i][j] < dist){
