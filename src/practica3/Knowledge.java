@@ -178,7 +178,7 @@ public class Knowledge {
                     int pos_y = (position_y -(vision/2) + i);
                     int radarValue = radar.get(j*vision + i);
 
-                    if(radarValue == this.STATE_GOAL){
+                    if(radarValue == Knowledge.STATE_GOAL){
                         this.updateObjetive(new Cell(pos_x, pos_y));
                     }
 
@@ -302,7 +302,14 @@ public class Knowledge {
                 // Obtenemos la información almacenada y la volcamos en la matriz
                 rs = statement.executeQuery("SELECT * FROM Mapa_"+this.map_id +";");
                 while(rs.next()){
-                    this.mapMatrix[rs.getInt("pos_x")][rs.getInt("pos_y")] = rs.getInt("state");
+                    int contain = rs.getInt("contains");
+                    int pos_x = rs.getInt("pos_x");
+                    int pos_y = rs.getInt("pos_y");
+
+                    if(contain == Knowledge.STATE_GOAL) {
+                        this.updateObjetive(new Cell(pos_x, pos_y));
+                    }
+                    this.mapMatrix[pos_x][pos_y] = contain;
                 }
             }else{
                 output.concat("Creamos matriz desde cero");
