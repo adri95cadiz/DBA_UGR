@@ -739,7 +739,7 @@ public class Controlador extends SingleAgent {
                         
                         if (posiblesObjetivos[i][j] == 0) {
                             int casilla = matrix[a][b];
-                            System.out.println("\nCasilla en choose : " + casilla);
+                            //System.out.println("\nCasilla en choose : " + casilla);
                             if (casilla >= low_moving_count || ( casilla == 3)){
                                 //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
                                 //System.out.print(i+","+j+": "+casilla+" - ");
@@ -757,8 +757,8 @@ public class Controlador extends SingleAgent {
                 }
                 //System.out.println("\n");
             }
-            System.out.println("\nmatriz combined dentro de choose");
-            flota.get(vehiculoElegido).getMatrix().ImprimirGetCombined();
+            //System.out.println("\nmatriz combined dentro de choose");
+            //flota.get(vehiculoElegido).getMatrix().ImprimirGetCombined();
             ////System.out.println("\n\n\t\tObjetivo experimental para moverse: " + objetive[0] + objetive[1]);
         }
         return objetive;
@@ -907,7 +907,7 @@ public class Controlador extends SingleAgent {
                 estadoActual = Estado.BUSCAR;
                 subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
         }*/
-        if (cont == 200) {
+        if (cont == 10) {
             //System.out.println("Entra cont == 5.");
             estadoActual = Estado.FINALIZAR;
         }
