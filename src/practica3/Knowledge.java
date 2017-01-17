@@ -22,14 +22,14 @@ public class Knowledge {
     private Connection connection = null;
     private ArrayList<AgentPosition> agentsPosition = new ArrayList<AgentPosition>();
 
-    private final int MIN_SIDE = 20;
-    private final String DB_NAME = "knowledge";
-    public final int STATE_FREE = 0;
-    public final int STATE_WALL = 1;
-    public final int STATE_WORLD_END = 2;
-    public final int STATE_GOAL = 3;
-    public final int STATE_VEHICLE = 4;
-    public final int STATE_UNKNOW = 5;
+    private final static int MIN_SIDE = 20;
+    private final static String DB_NAME = "knowledge";
+    public final static int STATE_FREE = 0;
+    public final static int STATE_WALL = 1;
+    public final static int STATE_WORLD_END = 2;
+    public final static int STATE_GOAL = 3;
+    public final static int STATE_VEHICLE = 4;
+    public final static int STATE_UNKNOWN = 5;
 
     /**
      * Método que devuelve la instancia de Knowledge del agente
@@ -372,7 +372,7 @@ public class Knowledge {
      * @return int Que contiene el contenido en las coordenadas pedidas
      */
     public int getContent(int px, int py){
-        return (px < 0 || py < 0 || px > this.mapSize()  || py > this.mapSize()) ? this.STATE_UNKNOW : this.mapMatrix[px][py];
+        return (px < 0 || py < 0 || px > this.mapSize()  || py > this.mapSize()) ? this.STATE_UNKNOWN : this.mapMatrix[px][py];
     }
 
     /**

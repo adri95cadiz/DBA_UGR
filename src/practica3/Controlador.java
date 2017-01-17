@@ -421,8 +421,8 @@ public class Controlador extends SingleAgent {
             // Se decide la casilla óptima a moverse en la matriz 5x5
             
             int[] objetivo_alcanzar = chooseLocalObj(pasos, coord);
-            //int objetivo_id = objetivo_alcanzar[0] * Knowledge.getDB(this.MAPA).mapSize() + objetivo_alcanzar[1];
-            int objetivo_id = 17;
+            int objetivo_id = objetivo_alcanzar[0] * Knowledge.getDB(this.MAPA).mapSize() + objetivo_alcanzar[1];
+            
             // Se calcula el camino optimo para llegar hasta ella
 
             /*System.out.println("RADAR ------------------> ");
@@ -517,7 +517,10 @@ public class Controlador extends SingleAgent {
         p.darPaso();
         p.setBateria(p.getBateria()-p.getRol().getConsumo());	
         System.out.println("\t\tPaso numero: " + p.getPasos());  
-        //Knowledge.getDB(this.MAPA).drawMap();   
+        //Knowledge.getDB(this.MAPA).drawMap(); 
+        if(Knowledge.getDB(this.MAPA).contains(Knowledge.STATE_GOAL)){
+            estadoActual = Estado.OBJETIVO_ENCONTRADO;
+        }
     }
   
     
@@ -589,6 +592,9 @@ public class Controlador extends SingleAgent {
      */
     private int[] chooseLocalObj(int pasos, int[]datosGPS) {       //HACE FALTA SACAR LA DISTANCIA DE ALGUNA FORMA NUEVA ¿CON CLASE NODE?¿
         int[] objetive = new int[2];
+        if (estadoActual == Estado.OBJETIVO_ENCONTRADO){
+            
+        }
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
 
