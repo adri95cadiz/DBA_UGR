@@ -1,5 +1,6 @@
 package practica3;
 
+import static java.lang.Math.floor;
 import java.util.ArrayList;
 
 /**
@@ -184,19 +185,34 @@ class GugelVehicleMatrix {
                     }
                 }
             }
-
-            for (int i = 0; i < vision; i++) {
+            
+            // Creamos un algoritmo para calcular que filas debemos de rellenar
+            int lim_sup_col = 0;
+            int lim_inf_col = vision;
+            int lim_sup_row = 0;
+            int lim_inf_row = vision;
+            
+            // Limites de las columnas
+            if(radar[0][(int) floor(vision / 2)] == 1) lim_sup_col = 1;
+            if(radar[1][(int) floor(vision / 2)] == 1) lim_sup_col = 2;
+            if(radar[4][(int) floor(vision / 2)] == 1) lim_sup_col = 3;
+            if(radar[3][(int) floor(vision / 2)] == 1) lim_sup_col = 2;
+            
+            // Limites de las filas
+            if(radar[(int) floor(vision / 2)][0] == 1) lim_sup_row = 1;
+            if(radar[(int) floor(vision / 2)][1] == 1) lim_sup_row = 2;
+            if(radar[(int) floor(vision / 2)][4] == 1) lim_sup_row = 3;
+            if(radar[(int) floor(vision / 2)][3] == 1) lim_sup_row = 2;
+            
+            for (int i = 0; i < vision; i++) {                
                 for (int j = 0; j < vision; j++) {
-                    int pos_x = (position.getPosX() - (vision / 2) + j);
-                    int pos_y = (position.getPosY() - (vision / 2) + i);
+                    int pos_x = (position.getPosX() -(vision/2) + j);
+                    int pos_y = (position.getPosY() -(vision/2) + i);
                     int radarValue = radar[i][j];
-
-                    if (pos_x >= 0 && pos_y >= 0) {
-                        if (radarValue == 0) {
-                            //this.localMatrix[pos_x][pos_y] = this.turn;
-                        } else {
-                            this.localMatrix[pos_x][pos_y] = radarValue;
-                        }
+                    int state = (radarValue == 0) ? turn*(-1) : radarValue;
+                    
+                    if((radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)) && pos_x >= 0 && pos_y >= 0){
+                        this.localMatrix[pos_x][pos_y] = state;
                     }
                 }
             }
