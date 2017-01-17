@@ -16,9 +16,17 @@ public class Cell {
      *
      */
     public Cell () {
-        pos_x = -1;
-        pos_y = -1;
-        content = -1;
+        this.set(-1, -1, -1);
+    }
+
+    /**
+     * Construye el objeto sin contenido
+     * 
+     * @param pos_x Posición X de la celda
+     * @param pos_y Posición Y de la celda
+     */
+    public Cell(int pos_x, int pos_y){
+        this.set(pos_x, pos_y, -1);
     }
     
     /**
@@ -29,9 +37,7 @@ public class Cell {
      * @param content Contenido de la celda
      */
     public Cell(int pos_x, int pos_y, int content ){
-        this.pos_x = pos_x;
-        this.pos_y = pos_y;
-        this.content = content;
+        this.set(pos_x, pos_y, content);
     }
 
     /**
