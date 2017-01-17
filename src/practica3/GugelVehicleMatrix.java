@@ -64,6 +64,13 @@ class GugelVehicleMatrix {
         getVehicle(agentName).getCombinedKnowledge();
     }
     
+    /**
+     * Actualiza los datos del agente
+     *
+     * @param agentName Nombre del agente a actualizar
+     * @param radar ArrayList correspondiente al radar
+     * @param gps Cell que contiene la posición actual
+     */
     public void updateMatrix(String agentName, ArrayList<Integer> radar, Cell gps){
         this.getVehicle(agentName).updateAgent(radar, gps);
     }
