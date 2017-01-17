@@ -730,7 +730,7 @@ public class Controlador extends SingleAgent {
                         //System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
                             int casilla = matriz.getCombinedKnowledge(nombre)[i][j];
-                            if (casilla >= low_moving_count || (casilla == low_moving_count && matrixGrad[i][j] < low_dist2)){
+                            if (casilla >= low_moving_count || (casilla == low_moving_count && matrixGrad[i][j] < low_dist2) && (casilla <= 0 || casilla == 3)){
                                 //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
                                 System.out.print(i+","+j+": "+casilla+" - ");
                                 System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
