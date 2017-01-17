@@ -176,7 +176,7 @@ public class Knowledge {
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position_x -(vision/2) + j);
                     int pos_y = (position_y -(vision/2) + i);
-                    int radarValue = radar[i][j];
+                    int radarValue = radar[j][i];
 
                     if(radarValue == Knowledge.STATE_GOAL){
                         this.updateObjetive(new Cell(pos_x, pos_y));
