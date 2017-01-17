@@ -23,6 +23,18 @@ class GugelVehicleMatrix {
     }
 
     /**
+     * Añade un nuevo vehiculo
+     *
+     * @param agentName Nombre del agente a añadir
+     * @param vision Rango de visión del agente
+     */
+    public void addVehicle(String agentName, int vision) {
+        if(this.getVehicle(agentName) == null) {
+            vehicles.add(new Vehicle(agentName, vision));
+        }
+    }
+
+    /**
      * Devuelve la matriz de Knowledge
      *
      * @return Matriz de {@link Knowledge}
