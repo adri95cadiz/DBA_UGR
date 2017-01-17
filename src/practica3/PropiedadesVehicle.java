@@ -56,7 +56,7 @@ public class PropiedadesVehicle {
     }
     
     public void updateMatrix(){
-        matriz.updateMatrix(nombre, new ArrayList<>(Arrays.asList(radar)), this.gps);
+        matriz.updateMatrix(radar, gps);
     }
     
     public void setGps(Cell gps) {
