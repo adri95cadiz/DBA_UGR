@@ -335,7 +335,7 @@ public class Controlador extends SingleAgent {
             System.out.println("\nBateria: " + p.getBateria());
             int[] coord = new int[2];
             coord = p.getGps();
-            System.out.println("\nRadar: "+ p.getRadar());
+            System.out.println("\nRadar: "+ java.util.Arrays.deepToString(p.getRadar()));
             System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
             System.out.println("\nRol: " + p.getRol());
             System.out.println("\nAlcance: " + r.getAlcance());
