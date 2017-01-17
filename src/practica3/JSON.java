@@ -29,7 +29,7 @@ public class JSON {
     public static void leerKey(String cadena) {
         JsonObject objeto = Json.parse(cadena).asObject();
         String key = objeto.getString("result", null);
-        System.out.println("Key obtenida: " + key);
+        //System.out.println("Key obtenida: " + key);
         //return key;
     }
        

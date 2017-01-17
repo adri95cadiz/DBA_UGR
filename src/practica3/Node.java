@@ -64,6 +64,6 @@ public class Node {
      * cost Su coste
      */
     public void print(){
-        System.out.println("ID: "+box_id+" Parent ID: "+parent_id+ " Cost: "+cost);
+        //System.out.println("ID: "+box_id+" Parent ID: "+parent_id+ " Cost: "+cost);
     }
 }

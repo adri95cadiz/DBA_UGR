@@ -55,7 +55,7 @@ public class Controlador extends SingleAgent {
     }
 
     public void init() {
-        System.out.println("Iniciandose Controlador " + getName());
+        //System.out.println("Iniciandose Controlador " + getName());
         fin = false;
         buscando = true;
         estadoActual = Estado.INICIAL;
@@ -84,7 +84,7 @@ public class Controlador extends SingleAgent {
             Si al ejecutar veis errores posiblemente sean porque el 
             coche se ha estrellado.
              */
-            System.out.println("Execute fin: " + fin + "\nFase: " + estadoActual);
+            //System.out.println("Execute fin: " + fin + "\nFase: " + estadoActual);
             switch (estadoActual) {
                 case INICIAL:
                     faseInicial();
@@ -96,7 +96,7 @@ public class Controlador extends SingleAgent {
                             if (vehiculoElegido.equals("")) {
                                 estadoActual = Estado.FINALIZAR;
                             } else {
-                                System.out.println("El vehiculo elegido es: " + vehiculoElegido);
+                                //System.out.println("El vehiculo elegido es: " + vehiculoElegido);
                                 subEstadoBuscando = Estado.MOVER;
                             }
                             break;
@@ -121,7 +121,7 @@ public class Controlador extends SingleAgent {
                             if (vehiculoElegido.equals("")) {
                                 estadoActual = Estado.FINALIZAR;
                             } else {
-                                System.out.println("El vehiculo elegido es: " + vehiculoElegido);
+                                //System.out.println("El vehiculo elegido es: " + vehiculoElegido);
                                 subEstadoEncontrado = Estado.MOVER;
                             }
                             break;
@@ -158,14 +158,14 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero.
      */
     private void enviarMensaje(String receptor, int performativa, String contenido) {
-        System.out.println("\nEn el enviar Mensaje del controlador: \n");
+        //System.out.println("\nEn el enviar Mensaje del controlador: \n");
         ACLMessage msjSalida = new ACLMessage();
         msjSalida.setSender(this.getAid());
         msjSalida.setReceiver(new AgentID(receptor));
         msjSalida.setPerformative(performativa);
         msjSalida.setContent(contenido);
         msjSalida.setConversationId(conversationID);
-        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " contenido " + contenido);
+        //System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " contenido " + contenido);
         this.send(msjSalida);
     }
 
@@ -175,7 +175,7 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero.
      */
     private void iniciarConversacion() {
-        System.out.println("\n\tINICIO CONVERSACION");
+        //System.out.println("\n\tINICIO CONVERSACION");
         String contenido = JSON.suscribirse(mundo);
         enviarMensaje(NOMBRE_SERVIDOR, ACLMessage.SUBSCRIBE, contenido);
         ACLMessage mensaje = null;
@@ -195,7 +195,7 @@ public class Controlador extends SingleAgent {
                     if (mensaje != null && mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                         PropiedadesVehicle propiedades = new PropiedadesVehicle();
 
-                        //System.out.println("Esto es lo que deberían de ser las propiedades: " + mensaje.getContent());
+                        ////System.out.println("Esto es lo que deberían de ser las propiedades: " + mensaje.getContent());
                         propiedades.setRol(JSON.getRol(mensaje.getContent()));
                         flota.put(mensaje.getSender().name, propiedades);
                     }
@@ -205,7 +205,7 @@ public class Controlador extends SingleAgent {
             System.err.println(ex.toString());
             estadoActual = Estado.FINALIZAR;
         }
-        System.out.println("\tFIN INICIO CONVERSACION");
+        //System.out.println("\tFIN INICIO CONVERSACION");
     }
 
     /**
@@ -214,7 +214,7 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero.
      */
     private void inicializarPropiedadesVehiculo() { // En realidad las propiedades del vehículo se podrían coger antes, en la inicialización
-        System.out.println("\n\tINICIO PROPIEDADES VEHICULO");
+        //System.out.println("\n\tINICIO PROPIEDADES VEHICULO");
         String contenido, nomVehiculo;
         ACLMessage mensaje = null;
         PropiedadesVehicle propiedades;
@@ -235,17 +235,17 @@ public class Controlador extends SingleAgent {
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA), nomVehiculo, propiedades.getRol().getAlcance()));
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
-                    System.out.println("\nNombre vehiculo: " + nomVehiculo);
-                    System.out.println("\nRol: " + propiedades.getRol());
-                    System.out.println("\nNombre vehiculo" + flota.get(nomVehiculo));
-                    System.out.println(mensaje.getContent());
+                    //System.out.println("\nNombre vehiculo: " + nomVehiculo);
+                    //System.out.println("\nRol: " + propiedades.getRol());
+                    //System.out.println("\nNombre vehiculo" + flota.get(nomVehiculo));
+                    //System.out.println(mensaje.getContent());
                 }
             }
         } catch (InterruptedException ex) {
             System.err.println(ex.toString());
             estadoActual = Estado.FINALIZAR;
         }
-        System.out.println("\tFIN PROPIEDADES VEHICULO");
+        //System.out.println("\tFIN PROPIEDADES VEHICULO");
     }
 
     /**
@@ -312,14 +312,14 @@ public class Controlador extends SingleAgent {
             // Segundo mensaje para recibir la traza. (ADAPATARLA)
             mensaje = receiveACLMessage();
             if (mensaje.getPerformativeInt() == ACLMessage.INFORM) {
-                System.out.println("TRAZA: " + mensaje.getContent());
+                //System.out.println("TRAZA: " + mensaje.getContent());
                 try {
                     resultadoTraza(mensaje);
                 } catch (IOException ex) {
                     Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            System.out.println("Se finaliza la sesión de trabajo.");
+            //System.out.println("Se finaliza la sesión de trabajo.");
         } catch (InterruptedException ex) {
             System.err.println(ex.toString());
         }
@@ -329,7 +329,7 @@ public class Controlador extends SingleAgent {
      * Elegimos el vehículo mas adecuado para la ocasión.
      */
     private void faseEleccionVehiculo() {
-        System.out.println("\n\tFASE ELECCION VEHICULO.");
+        //System.out.println("\n\tFASE ELECCION VEHICULO.");
         if (buscando) {
 
             /*
@@ -342,15 +342,15 @@ public class Controlador extends SingleAgent {
             /***************** INFORMACION ************************************/
             PropiedadesVehicle p = flota.get(vehiculoElegido);
             Rol r = p.getRol();
-            System.out.println("\nPropiedades del vehiculo elegido: ");
-            System.out.println("\nBateria: " + p.getBateria());
+            //System.out.println("\nPropiedades del vehiculo elegido: ");
+            //System.out.println("\nBateria: " + p.getBateria());
             int[] coord = new int[2];
             coord = p.getGps();
-            System.out.println("\nRadar: "+ java.util.Arrays.deepToString(p.getRadar()));
-            System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
-            System.out.println("\nRol: " + p.getRol());
-            System.out.println("\nAlcance: " + r.getAlcance());
-            System.out.println("\nConsumno: " + r.getConsumo());
+            //System.out.println("\nRadar: "+ java.util.Arrays.deepToString(p.getRadar()));
+            //System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
+            //System.out.println("\nRol: " + p.getRol());
+            //System.out.println("\nAlcance: " + r.getAlcance());
+            //System.out.println("\nConsumno: " + r.getConsumo());
             /******************************************************************/
 
         } else {
@@ -367,7 +367,7 @@ public class Controlador extends SingleAgent {
      * Elegimos el movimiento mas optimo para el vehiculo seleccionado.
      */
     private void faseMover() {
-        System.out.println("\n\tFASE MOVER.");
+        //System.out.println("\n\tFASE MOVER.");
         // Utilizar diferentes funciones Mover para el caso buscar.
         if (buscando) {
             // Para el caso en el que aún no sabemos donde esta el punto objetivo.
@@ -392,23 +392,23 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se obtienen y muestran las propiedades del vehículo
         */
-        System.out.println("\n======================================================================");
+        //System.out.println("\n======================================================================");
             PropiedadesVehicle p = flota.get(vehiculoElegido);
             Rol r = p.getRol();
-            System.out.println("Propiedades del vehiculo elegido: ");
-            System.out.println("\nBateria: " + p.getBateria());
+            //System.out.println("Propiedades del vehiculo elegido: ");
+            //System.out.println("\nBateria: " + p.getBateria());
             int[] coord = new int[2];
             coord = p.getGps();
             int[][] radar = p.getRadar();
-            System.out.println("\nRadar: "+ java.util.Arrays.deepToString(radar));
-            System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
-            System.out.println("\nRol: " + p.getRol());
+            //System.out.println("\nRadar: "+ java.util.Arrays.deepToString(radar));
+            //System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
+            //System.out.println("\nRol: " + p.getRol());
             int alcance = r.getAlcance();
-            System.out.println("\nAlcance: " + alcance);
-            System.out.println("\nConsumo: " + r.getConsumo());
+            //System.out.println("\nAlcance: " + alcance);
+            //System.out.println("\nConsumo: " + r.getConsumo());
             int pasos = p.getPasos();
-            System.out.println("\nPasos dados: " + pasos);
-        System.out.println("======================================================================");
+            //System.out.println("\nPasos dados: " + pasos);
+        //System.out.println("======================================================================");
         /*
         Control sobre la batería del vehículo elegido para moverse
         */
@@ -426,9 +426,10 @@ public class Controlador extends SingleAgent {
         
         
         
-        System.out.println("\n\t MOVER()");
+        //System.out.println("\n\t MOVER()");
         String decision = " ";
         cont++;
+        System.out.println("contador: " + cont);
         
         
         
@@ -447,12 +448,12 @@ public class Controlador extends SingleAgent {
         } else if(!exist_path){                                                 //Si no existe un camino establecido pero tampoco se conoce el espacio entre el vehículo y ningún objetivo,
             posiblesObjetivos = new int [alcance][alcance];
             eliminarObjetivosInaccesibles(radar.clone(), alcance);
-            /*System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
+            /*//System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
             for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         System.out.print(posiblesObjetivos[i][j] + "-");
                     }
-                    System.out.println("\n");
+                    //System.out.println("\n");
                 }   */ 
             // Se decide la casilla óptima a moverse en la matriz 5x5
             
@@ -461,33 +462,33 @@ public class Controlador extends SingleAgent {
             
             // Se calcula el camino optimo para llegar hasta ella
 
-            /*System.out.println("RADAR ------------------> ");
+            /*//System.out.println("RADAR ------------------> ");
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         System.out.print(radar[i][j] + "-");
                     }
-                    System.out.println("\n");
+                    //System.out.println("\n");
                 }
-            System.out.println("");
+            //System.out.println("");
 
-            System.out.println("POSIBLES ------------------> ");
+            //System.out.println("POSIBLES ------------------> ");
             for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         System.out.print(posiblesObjetivos[i][j] + "-");
                     }
-                    System.out.println("\n");
+                    //System.out.println("\n");
                 }
-            System.out.println("");
+            //System.out.println("");
 
-            System.out.println("OBJETIVO ID ------------> ");
-            System.out.println(objetivo_id);*/
+            //System.out.println("OBJETIVO ID ------------> ");
+            //System.out.println(objetivo_id);*/
 
             // Actualizar el objeto camino con el nuevo radar y la nueva pos final
             camino = new Path(posiblesObjetivos, 12, 12);
             camino.changeObjetive(objetivo_id);
             camino.changeStart((int)floor((alcance*alcance)/2.0));
-            //System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
-            //System.out.println("NUEVO PATH OBTENIDO");
+            ////System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
+            ////System.out.println("NUEVO PATH OBTENIDO");
             path_local.clear();
             path_local = camino.getPath();
         }   
@@ -498,20 +499,20 @@ public class Controlador extends SingleAgent {
         * vez que se haya completado el path se vuelve a calcular uno
         */
         exist_path = true;
-        System.out.println("CAMINO A SEGUIR:");
+        //System.out.println("CAMINO A SEGUIR:");
         camino.printPath();
         // Se transforman las IDs de las casillas a coordenadas para saber
         // identificar la dirección en la que se debe de mover
         int primera_casilla = path_local.get(0);
         int segunda_casilla = path_local.get(1);
         int obj_prox_mov = primera_casilla - segunda_casilla;
-        //System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
-        //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
-        //System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);*/
+        ////System.out.println("DIFERENCIA ENTRE CASILLAS --------------> " + obj_prox_mov);
+        ////System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH -------------------->  " + path_local.get(1) / 5 + "," + path_local.get(1) % 5);
+        ////System.out.println("COORDENADAS A MOVERSE POR EL PRIMER PATH: " + obj_prox_mov[0] + obj_prox_mov[1]);*/
 
         // Se obtiene la dirección en la que moverse
         decision = pathLocalObj(obj_prox_mov, radar);
-
+        System.out.println("Mueve a "+decision);
         /****************
          * Una vez se sabe en que dirección se quiere mover:
          * -Actualiza el mapa de la base de datos
@@ -520,7 +521,7 @@ public class Controlador extends SingleAgent {
          * -Espera a recibir la respuesta
          * */       
         if (!decision.contains("move")) { 
-            System.out.println("No se donde moverme.");
+            //System.out.println("No se donde moverme.");
             subEstadoBuscando = Estado.ELECCION_VEHICULO;
             subEstadoEncontrado = Estado.ELECCION_VEHICULO;
         } else {
@@ -531,11 +532,11 @@ public class Controlador extends SingleAgent {
                 ACLMessage mensaje = receiveACLMessage();
                 if (mensaje.getPerformativeInt() != ACLMessage.INFORM) {
                     // Si al moverse no nos llega un INFORM posiblemente se haya estrellado. 
-                    System.out.println(mensaje.getPerformative() + ": " + mensaje.getContent());
+                    //System.out.println(mensaje.getPerformative() + ": " + mensaje.getContent());
                     subEstadoBuscando = Estado.ELECCION_VEHICULO;
                     subEstadoEncontrado = Estado.ELECCION_VEHICULO;
                 } else {
-                    System.out.println("Mensaje recibido en mover(): " + mensaje.getContent());
+                    //System.out.println("Mensaje recibido en mover(): " + mensaje.getContent());
                 }
             } catch (InterruptedException ex) {
                 System.err.println(ex.toString());
@@ -548,9 +549,15 @@ public class Controlador extends SingleAgent {
         if (path_local.size() == 1) {
             exist_path = false;
         }
-        //System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
+        ////System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
         p.darPaso();
-        System.out.println("\t\tPaso numero: " + p.getPasos());  
+        System.out.println("\nimprimir matriz local");
+        p.getMatrix().ImprimirLocal();
+        System.out.println("\nImprimir matriz combined");
+        p.getMatrix().ImprimirGetCombined();
+        System.out.println("\nimprimir matriz knowledge");
+        System.out.println(p.getMatrix().ImprimirKnow());
+        //System.out.println("\t\tPaso numero: " + p.getPasos());
     }
   
     /**
@@ -674,80 +681,85 @@ public class Controlador extends SingleAgent {
 
             for (int i = 0; i <= alcance-1; i++) {
                 for (int j = 0; j <= alcance-1; j++) {
-                    //System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
-                    //System.out.println("Distancia menor: " + low_dist + "  datosScanner: " + datosScanner[i][j]);
+                    ////System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
+                    ////System.out.println("Distancia menor: " + low_dist + "  datosScanner: " + datosScanner[i][j]);
                     if (posiblesObjetivos[i][j] == 0 && matrixGrad[i][j] < low_dist) {
                         low_dist = matrixGrad[i][j];
                         objetive[0] = i;
                         objetive[1] = j;
-                        //System.out.println("Encontrado nuevo objetivo mejor para moverse");
+                        ////System.out.println("Encontrado nuevo objetivo mejor para moverse");
                     }
                 }
             }
         }
-        //System.out.println("DATOS GPS :  " + datosGPS[0] + "," + datosGPS[1]);
+        ////System.out.println("DATOS GPS :  " + datosGPS[0] + "," + datosGPS[1]);
 
         /*for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 //System.out.print(posiblesObjetivos[i][j] + "-");
             }
-            //System.out.println("\n");
+            ////System.out.println("\n");
         }*/
-        //System.out.println("");
+        ////System.out.println("");
 
         if (pasos > 0) {
 
             float low_dist2 = (float) Math.pow(10, 10);
             int low_moving_count = -(int) Math.pow(10, 10);
-            //System.out.println("\t\t\tExplorando el mapa");
+            ////System.out.println("\t\t\tExplorando el mapa");
             
-//            System.out.println("Vision del agente");
+//            //System.out.println("Vision del agente");
 //            for (int i = 0; i <= 4; i++) {
 //                for (int j = 0; j <= 4; j++) {
 //                    System.out.print(posiblesObjetivos[i][j]+" ");
-//                }System.out.println("\n");
+//                }//System.out.println("\n");
 //            }
 //            
-//            System.out.println("Vision de matriz");
+//            //System.out.println("Vision de matriz");
 //            for (int i = 0; i <= 4; i++) {
 //                for (int j = 0; j <= 4; j++) {
 //                    int a = datosGPS[0] - 2 + i;
 //                    int b = datosGPS[1] - 2 + j;
 //                    System.out.print(bd.getStatus(a,b)+" ");
-//                }System.out.println("\n");
+//                }//System.out.println("\n");
 //            }
             
             for (int i = 0; i <= alcance-1; i++) {
                 for (int j = 0; j <= alcance-1; j++) {
                     int a = datosGPS[0] - 2 + i;
                     int b = datosGPS[1] - 2 + j;
-                    //System.out.println("\t\t\tDatos del gps: " + datosGPS[0] + "," + datosGPS[1]);
-                    //System.out.println("\t\t\tVamos a acceder a: " + a + "," + b);
-                    //System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
+                    ////System.out.println("\t\t\tDatos del gps: " + datosGPS[0] + "," + datosGPS[1]);
+                    ////System.out.println("\t\t\tVamos a acceder a: " + a + "," + b);
+                    ////System.out.println("\t\t\tPosibles accesibles: " + Arrays.deepToString(posiblesObjetivos));
 
                     // Comprueba que no se esté accediendo a una posición inválida de la matriz de la BD.
                     if (a >= 0 && b >= 0 && a < Knowledge.getDB(this.MAPA).mapSize() && b < Knowledge.getDB(this.MAPA).mapSize()) {
-                        //System.out.println("Entra primero");
+                        ////System.out.println("Entra primero");
                         if (posiblesObjetivos[i][j] == 0) {
+                            
                             int casilla = matriz.getCombinedKnowledge(nombre)[i][j];
-                            if (casilla >= low_moving_count || (casilla == low_moving_count && matrixGrad[i][j] < low_dist2) && (casilla <= 0 || casilla == 3)){
+                            
+                            System.out.println("\nCasilla en choose : " + casilla);
+                            if (casilla >= low_moving_count || ( casilla == 3)){
                                 //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
-                                System.out.print(i+","+j+": "+casilla+" - ");
-                                System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
+                                //System.out.print(i+","+j+": "+casilla+" - ");
+                                //System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
                                 //if (posiblesObjetivos[i][j] == 0) {
-                                //System.out.println("Entra despues");
+                                ////System.out.println("Entra despues");
                                 low_dist2 = matrixGrad[i][j];
                                 low_moving_count = casilla;
                                 objetive[0] = i;
                                 objetive[1] = j;
-                                //System.out.println("NUEVO OBJETIVO EXPERIMENTAL ENCONTRADO ----> " + objetive[0] + "," + objetive[1]);
+                                ////System.out.println("NUEVO OBJETIVO EXPERIMENTAL ENCONTRADO ----> " + objetive[0] + "," + objetive[1]);
                             }
                         }
                     }
                 }
-                System.out.println("\n");
+                //System.out.println("\n");
             }
-            //System.out.println("\n\n\t\tObjetivo experimental para moverse: " + objetive[0] + objetive[1]);
+            System.out.println("\nmatriz combined dentro de choose");
+            flota.get(vehiculoElegido).getMatrix().ImprimirGetCombined();
+            ////System.out.println("\n\n\t\tObjetivo experimental para moverse: " + objetive[0] + objetive[1]);
         }
         return objetive;
     }
@@ -773,7 +785,7 @@ public class Controlador extends SingleAgent {
     */
     private String pathLocalObj(int objetivo, int[][] radar) {
         camino.changeMap(radar);
-        System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
+        //System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
         int[] diff_ids = {
             camino.getSizeMap(),
             camino.getSizeMap() - 1,
@@ -812,11 +824,11 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero
      */
     private void fasePercibir() {
-        System.out.println("\n\tFASE PERCIBIR.");
+        //System.out.println("\n\tFASE PERCIBIR.");
         enviarMensaje(vehiculoElegido, ACLMessage.QUERY_REF, "");
         try {
             ACLMessage mensaje = receiveACLMessage();
-            System.out.println(mensaje.getPerformative() + ": " + mensaje.getContent());
+            //System.out.println(mensaje.getPerformative() + ": " + mensaje.getContent());
             if (mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                 String nombreVehiculo = mensaje.getSender().name;
                 PropiedadesVehicle propiedades = flota.get(nombreVehiculo);
@@ -839,7 +851,7 @@ public class Controlador extends SingleAgent {
                     //objetivoEncontrado();
                     estadoActual = Estado.OBJETIVO_ENCONTRADO;
                 }
-                System.out.println("FIN FASE PERCIBIR.");
+                //System.out.println("FIN FASE PERCIBIR.");
             }
         } catch (InterruptedException ex) {
             System.err.println(ex.toString());
@@ -860,7 +872,7 @@ public class Controlador extends SingleAgent {
         el paso de mensaje de repostar. Habría que hacerle una pequeña
         heuristica de cuando si y cuando no repostar.
          */
-        System.out.println("\n\tFASE REPOSTAR.");
+        //System.out.println("\n\tFASE REPOSTAR.");
         subEstadoBuscando = Estado.MOVER;
         subEstadoEncontrado = Estado.MOVER;
         PropiedadesVehicle propiedades = flota.get(vehiculoElegido);                    //????¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
@@ -874,7 +886,7 @@ public class Controlador extends SingleAgent {
             try {
                 ACLMessage mensaje = receiveACLMessage();
                 if (mensaje.getPerformativeInt() != ACLMessage.INFORM) {
-                    System.out.println(mensaje.getPerformativeInt() + ": " + mensaje.getContent());
+                    //System.out.println(mensaje.getPerformativeInt() + ": " + mensaje.getContent());
                     subEstadoBuscando = Estado.ELECCION_VEHICULO;
                     subEstadoEncontrado = Estado.ELECCION_VEHICULO;
                 }
@@ -887,18 +899,18 @@ public class Controlador extends SingleAgent {
                 subEstadoEncontrado = Estado.MOVER;
             } */
         }
-        System.out.println("FIN FASE REPOSTAR.");
+        //System.out.println("FIN FASE REPOSTAR.");
 
         /*if(cont == 3 && !cont2) {
-                System.out.println("Entra cont == 3.");
+                //System.out.println("Entra cont == 3.");
                 cont2 = true;
                 estadoActual = Estado.BUSCAR;
                 subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
         }*/
-        /*if (cont == 5) {
-            System.out.println("Entra cont == 5.");
+        if (cont == 200) {
+            //System.out.println("Entra cont == 5.");
             estadoActual = Estado.FINALIZAR;
-        }*/
+        }
     }
 
     /**
@@ -907,7 +919,7 @@ public class Controlador extends SingleAgent {
      * @author Luis Gallego Quero
      */
     private void faseObjetivoEncontrado() {
-        System.out.println("\n\tFASE OBJETIVO ENCONTRADO.");
+        //System.out.println("\n\tFASE OBJETIVO ENCONTRADO.");
         if (buscando) {
             buscando = false;
             estadoActual = Estado.OBJETIVO_ENCONTRADO;
@@ -919,11 +931,11 @@ public class Controlador extends SingleAgent {
         subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
     }*/
     private void resultadoTraza(ACLMessage msjEntrada) throws FileNotFoundException, IOException {
-        System.out.println("Recibiendo respuesta traza.");
+        //System.out.println("Recibiendo respuesta traza.");
 
         JsonObject injson = Json.parse(msjEntrada.getContent()).asObject();
 
-        System.out.println("Esto es lo que contiene la traza en json: " + injson);
+        //System.out.println("Esto es lo que contiene la traza en json: " + injson);
 
         JsonArray ja = injson.get("trace").asArray();
         byte data[] = new byte[ja.size()];
@@ -933,7 +945,7 @@ public class Controlador extends SingleAgent {
         FileOutputStream fos = new FileOutputStream("traza_" + this.mundo + ".png");
         fos.write(data);
         fos.close();
-        System.out.println("Traza Guardada");
+        //System.out.println("Traza Guardada");
 
     }
 }

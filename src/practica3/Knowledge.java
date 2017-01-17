@@ -368,11 +368,11 @@ public class Knowledge {
      * Dibuja el mapa en consola
      */
     public void drawMap(){
-        System.out.println("-----------------------------------------------------------------------------------------------------");
-        System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
-        System.out.println("-----------------------------------------------------------------------------------------------------");
-        System.out.println(drawMapToString());
-        System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
+        //System.out.println("-----------------------------------------------------------------------------------------------------");
+        //System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
+        //System.out.println("-----------------------------------------------------------------------------------------------------");
+        //System.out.println(drawMapToString());
+        //System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
     }
 
     /**

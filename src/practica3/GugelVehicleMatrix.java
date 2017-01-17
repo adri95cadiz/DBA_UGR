@@ -3,12 +3,14 @@ package practica3;
 import java.util.ArrayList;
 
 /**
- * Clase que almacena las matrices locales de los agentes e incorpora métodos helpers trabajar con ellas
- * 
+ * Clase que almacena las matrices locales de los agentes e incorpora métodos
+ * helpers trabajar con ellas
+ *
  * @author Samuel Peregrina Morillas
  * @version 2017.01.12
  */
 class GugelVehicleMatrix {
+
     private Vehicle vehicle;
     private Knowledge db;
 
@@ -17,9 +19,16 @@ class GugelVehicleMatrix {
      *
      * @param db Objeto {@link Knowledge} a utilizar
      */
-    public GugelVehicleMatrix (Knowledge db, String name, int alcance) {
+    public GugelVehicleMatrix(Knowledge db, String name, int alcance) {
         this.db = db;
         this.vehicle = new Vehicle(name, alcance);
+    }
+
+    /*
+    imprime knowledge
+     */
+    public String ImprimirKnow() {
+        return this.db.drawMapToString();
     }
 
     /**
@@ -27,7 +36,7 @@ class GugelVehicleMatrix {
      *
      * @return Matriz de {@link Knowledge}
      */
-    public int[][] getKnowledgeMatrix(){
+    public int[][] getKnowledgeMatrix() {
         return this.db.getKnowledgeMatrix();
     }
 
@@ -35,23 +44,52 @@ class GugelVehicleMatrix {
      * Devuelve la matriz local del agente
      *
      * @param agentName Nombre del agente del que se va a pedir su matriz
-     * @return Matriz local del agente; {@link null} en caso de no existir el agente
-     */ 
-    public int[][] getLocalMatrix(String agentName){
+     * @return Matriz local del agente; {@link null} en caso de no existir el
+     * agente
+     */
+    public int[][] getLocalMatrix(String agentName) {
         return getVehicle().getLocalMatrix();
     }
 
+    /*
+    Imprimir matriz local del agente
+    
+     */
+    public void ImprimirLocal() {
+        int[][] m = getVehicle().getLocalMatrix();
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m.length; j++) {
+                System.out.print(m[i][j] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+
     /**
-     * Devuelve una matriz resultante de combinar la matriz de {@link Knowledge} y
-     * la matriz local del agente almacenada en {@link Vehicle}
+     * Devuelve una matriz resultante de combinar la matriz de {@link Knowledge}
+     * y la matriz local del agente almacenada en {@link Vehicle}
      *
      * @param agentName Nombre del agente del que se va a pedir su matriz
-     * @return Matriz combinada del agente; {@link null} en caso de no existir el agente
-     */ 
-    public int[][] getCombinedKnowledge(String agentName){
+     * @return Matriz combinada del agente; {@link null} en caso de no existir
+     * el agente
+     */
+    public int[][] getCombinedKnowledge(String agentName) {
         return getVehicle().getCombinedKnowledge();
     }
-    
+
+    /*
+        imprimir getcombineknowledge
+     */
+    public void ImprimirGetCombined() {
+        int[][] m = getVehicle().getCombinedKnowledge();
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m.length; j++) {
+                System.out.print(m[i][j] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+
     /**
      * Actualiza los datos del agente
      *
@@ -59,7 +97,7 @@ class GugelVehicleMatrix {
      * @param radar ArrayList correspondiente al radar
      * @param gps Cell que contiene la posición actual
      */
-    public void updateMatrix(int[][] radar, Cell gps){
+    public void updateMatrix(int[][] radar, Cell gps) {
         this.getVehicle().updateAgent(radar, gps);
     }
 
@@ -67,18 +105,20 @@ class GugelVehicleMatrix {
      * Devuelve un {@link Vehicle} almacenado en la instancia
      *
      * @param agentName Nombre del agente a buscar
-     * @return Objeto {@link Vehicle} en caso de que exista, {@link null} cuando no existe
+     * @return Objeto {@link Vehicle} en caso de que exista, {@link null} cuando
+     * no existe
      */
-    private Vehicle getVehicle(){
+    private Vehicle getVehicle() {
         return vehicle;
     }
 
     /**
-     * Clase Vehicle utilizada por {@link GugelVehicleMatrix} 
+     * Clase Vehicle utilizada por {@link GugelVehicleMatrix}
      *
      * @author Samuel Peregrina Morillas
      */
     private class Vehicle {
+
         /**
          * Matriz local del agente
          */
@@ -94,11 +134,11 @@ class GugelVehicleMatrix {
          */
         private int vision;
 
-        /** 
+        /**
          * Posición actual del agente
          */
         private Cell position;
-        
+
         /**
          * Nombre del agente
          */
@@ -107,7 +147,7 @@ class GugelVehicleMatrix {
         /**
          * Contructor por defecto de Vehicle
          */
-        public Vehicle(String agentName, int vision){
+        public Vehicle(String agentName, int vision) {
             this.turn = 0;
             this.vision = vision;
             this.agentName = agentName;
@@ -120,7 +160,7 @@ class GugelVehicleMatrix {
          * @param radar Objeto radar que contiene la visualización del agente
          * @param gps Objeto gps que contiene las coordenadas del agente
          */
-        public void updateAgent(int[][] radar, Cell gps){
+        public void updateAgent(int[][] radar, Cell gps) {
             db.updateStatus(agentName, radar, gps, vision);
             this.turn++;
             this.position = gps;
@@ -130,15 +170,16 @@ class GugelVehicleMatrix {
         /**
          * Actualiza las posiciones de la matriz local
          *
-         * @param radar Objeto radar que contiene los datos a actualizar en la matriz
+         * @param radar Objeto radar que contiene los datos a actualizar en la
+         * matriz
          */
-        private void updateLocalMatrix(int[][] radar){        
-            if(this.localMatrix.length < db.mapSize()){
+        private void updateLocalMatrix(int[][] radar) {
+            if (this.localMatrix.length < db.mapSize()) {
                 int[][] tmp = this.localMatrix;
 
                 this.localMatrix = new int[db.mapSize()][db.mapSize()];
-                for(int i = 0; i < tmp.length; i++){
-                    for(int j = 0; j < tmp[i].length; j++){
+                for (int i = 0; i < tmp.length; i++) {
+                    for (int j = 0; j < tmp[i].length; j++) {
                         this.localMatrix[i][j] = tmp[i][j];
                     }
                 }
@@ -146,15 +187,22 @@ class GugelVehicleMatrix {
 
             for (int i = 0; i < vision; i++) {
                 for (int j = 0; j < vision; j++) {
-                    int pos_x = (position.getPosX() -(vision/2) + j);
-                    int pos_y = (position.getPosY() -(vision/2) + i);
+                    int pos_x = (position.getPosX() - (vision / 2) + j);
+                    int pos_y = (position.getPosY() - (vision / 2) + i);
                     int radarValue = radar[i][j];
 
-                    if(pos_x >= 0 && pos_y >= 0){
-                        this.localMatrix[pos_x][pos_y] = radarValue;
+                    if (pos_x >= 0 && pos_y >= 0) {
+                        if (radarValue == 0) {
+                            //this.localMatrix[pos_x][pos_y] = this.turn;
+                        } else {
+                            this.localMatrix[pos_x][pos_y] = radarValue;
+                        }
                     }
                 }
             }
+            int pos_x = (position.getPosX());
+            int pos_y = (position.getPosY());
+            this.localMatrix[pos_x][pos_y] = turn;
         }
 
         /**
@@ -162,24 +210,25 @@ class GugelVehicleMatrix {
          *
          * @return Matriz local del agente
          */
-        public int[][] getLocalMatrix(){
+        public int[][] getLocalMatrix() {
             return this.localMatrix;
         }
 
         /**
-         * Devuelve una combinación de la matriz local del agente y 
-         * de la matriz de Knowledge.
+         * Devuelve una combinación de la matriz local del agente y de la matriz
+         * de Knowledge.
          *
-         * Esta matriz está compuesta por número positivos que hacen referencia a estados del mapa
-         * y datos negativos, que hacen referencia a la última vez que el agente estuvo en la celda
-         * 
+         * Esta matriz está compuesta por número positivos que hacen referencia
+         * a estados del mapa y datos negativos, que hacen referencia a la
+         * última vez que el agente estuvo en la celda
+         *
          * @return matriz combinada
          */
-        public int[][] getCombinedKnowledge(){
+        public int[][] getCombinedKnowledge() {
             int[][] map = db.getKnowledgeMatrix();
-            for(int i= 0; i < db.mapSize(); i++){
-                for(int j = 0; j < db.mapSize(); j++){
-                    if(map[i][j] == db.STATE_FREE && this.localMatrix[i][j] > 0 ){
+            for (int i = 0; i < db.mapSize(); i++) {
+                for (int j = 0; j < db.mapSize(); j++) {
+                    if (map[i][j] == db.STATE_FREE && this.localMatrix[i][j] > 0) {
                         map[i][j] = (-1) * this.localMatrix[i][j];
                     }
                 }
@@ -189,10 +238,10 @@ class GugelVehicleMatrix {
 
         /**
          * Devuelve el turno actual del agente
-         * 
+         *
          * @return Entero positivo correspondiente con el turno actual
          */
-        public int getTurn(){
+        public int getTurn() {
             return turn;
         }
 
@@ -202,14 +251,18 @@ class GugelVehicleMatrix {
          * @param agentName Nombre del agente a comprobar
          * @return Devuelve {@link true} si coincide con el nombre del agente
          */
-        public boolean isAgent(String agentName){
+        public boolean isAgent(String agentName) {
             return agentName == this.agentName;
         }
 
         @Override
-        public boolean equals(Object object){
-            if(object == null) return false;
-            if(!(object instanceof Vehicle)) return false;
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            if (!(object instanceof Vehicle)) {
+                return false;
+            }
             Vehicle vehicle = (Vehicle) object;
             return this.isAgent(vehicle.agentName);
         }

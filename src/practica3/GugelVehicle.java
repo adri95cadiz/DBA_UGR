@@ -26,7 +26,7 @@ public class GugelVehicle extends SingleAgent {
     }
     
     public void init(){
-        System.out.println("Iniciandose vehiculo " + getName());
+        //System.out.println("Iniciandose vehiculo " + getName());
         msjEntrada = null;
         msjSalida = null;
         fin = false;
@@ -44,7 +44,7 @@ public class GugelVehicle extends SingleAgent {
         while(!fin){
             try {
                 msjEntrada = receiveACLMessage();
-                System.out.println("\n"+getName() + " ha recibido: " + msjEntrada.getContent() + " ConvID: " + msjEntrada.getConversationId() + " Reply: " + msjEntrada.getReplyWith());
+                //System.out.println("\n"+getName() + " ha recibido: " + msjEntrada.getContent() + " ConvID: " + msjEntrada.getConversationId() + " Reply: " + msjEntrada.getReplyWith());
                 conversationID = msjEntrada.getConversationId();
                 if(!msjEntrada.getReplyWith().isEmpty()) {
                     reply = msjEntrada.getReplyWith();
@@ -71,7 +71,7 @@ public class GugelVehicle extends SingleAgent {
     }
     
     private void enviar(String receptor, int performativa, String contenido) {
-        System.out.println("\nEn el enviar mensaje del vehiculo \n");
+        //System.out.println("\nEn el enviar mensaje del vehiculo \n");
         msjSalida = new ACLMessage();
         msjSalida.setSender(this.getAid());
         msjSalida.setReceiver(new AgentID(receptor));
@@ -82,7 +82,7 @@ public class GugelVehicle extends SingleAgent {
             msjSalida.setInReplyTo(reply);
             msjSalida.setConversationId(conversationID);
         }        
-        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " Contenido: " + contenido + "ConvID: " + conversationID + "Reply: " + reply);
+        //System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " Contenido: " + contenido + "ConvID: " + conversationID + "Reply: " + reply);
         this.send(msjSalida);
     }      
 }

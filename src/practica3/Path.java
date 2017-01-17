@@ -312,7 +312,7 @@ public class Path {
             coord[0] = path_objetive.get(i)/5;
             coord[1] = path_objetive.get(i)%5;
             path.add(coord);
-            System.out.println("GUARDANDO ---------------------------------------------> id: "+path_objetive.get(i)+ "coordenadas: " + coord[0] + ","+ coord[1]);
+            //System.out.println("GUARDANDO ---------------------------------------------> id: "+path_objetive.get(i)+ "coordenadas: " + coord[0] + ","+ coord[1]);
         }
         return path;
     }*/
@@ -322,9 +322,9 @@ public class Path {
      */
     public void printPath() {
         for (int i = 0; i < path_objetive.size(); i++) {
-            System.out.print(path_objetive.get(i) + "-");
+            //System.out.print(path_objetive.get(i) + "-");
         }
-        System.out.println("\n");
+        //System.out.println("\n");
     }
 
     /**
@@ -335,24 +335,24 @@ public class Path {
      * close_lsit
      */
     private void printData() {
-        System.out.println("Agent ID: " + start_id);
-        System.out.println("Objetive ID: " + objetive_id);
+        //System.out.println("Agent ID: " + start_id);
+        //System.out.println("Objetive ID: " + objetive_id);
         // Impresión del mapa
         for (int i = 0; i < this.map[0].length; i++) {
             for (int j = 0; j < this.map[0].length; j++) {
-                System.out.print(this.map[i][j] + " ");
+                //System.out.print(this.map[i][j] + " ");
             }
-            System.out.println("\n");
+            //System.out.println("\n");
         }
 
         // Impresión de close y open list
-        System.out.println("\nOpen List: \n");
+        //System.out.println("\nOpen List: \n");
         for (Node current_node : open_list) {
-            System.out.println("Nodo id: " + current_node.getId() + " Padre id: " + current_node.getParentId() + " Coste: " + calculateCostNode(current_node.getId()));
+            //System.out.println("Nodo id: " + current_node.getId() + " Padre id: " + current_node.getParentId() + " Coste: " + calculateCostNode(current_node.getId()));
         }
-        System.out.println("\nClose List: ");
+        //System.out.println("\nClose List: ");
         for (Node current_node : close_list) {
-            System.out.println("Nodo id: " + current_node.getId() + " Padre id: " + current_node.getParentId() + " Coste: " + calculateCostNode(current_node.getId()));
+            //System.out.println("Nodo id: " + current_node.getId() + " Padre id: " + current_node.getParentId() + " Coste: " + calculateCostNode(current_node.getId()));
         }
     }
 }
