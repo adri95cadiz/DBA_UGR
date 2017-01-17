@@ -230,14 +230,23 @@ public class Controlador extends SingleAgent {
                 if (mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                     nomVehiculo = mensaje.getSender().name;
                     propiedades = flota.get(nomVehiculo);
+                    
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA), nomVehiculo, propiedades.getRol().getAlcance()));
                     propiedades.actualizarPercepcion(percepcion);
+                    
                     flota.put(nomVehiculo, propiedades);
-                    //System.out.println("\nNombre vehiculo: " + nomVehiculo);
-                    //System.out.println("\nRol: " + propiedades.getRol());
-                    //System.out.println("\nNombre vehiculo" + flota.get(nomVehiculo));
+                    
+                    
+                    System.out.println("\nNombre vehiculo" + propiedades.getNombre());
+                    System.out.println("\nRol: " + propiedades.getRol());
+                    System.out.println("\nRadar: ");propiedades.printRadar();
+                    System.out.println("\nGPS: ");propiedades.printGps();
+                    
+                    
+                    
+                    
                     //System.out.println(mensaje.getContent());
                 }
             }
@@ -309,10 +318,10 @@ public class Controlador extends SingleAgent {
             if (mensaje.getPerformativeInt() == ACLMessage.AGREE) {
                 JSON.leerKey(mensaje.getContent());
             }
-            // Segundo mensaje para recibir la traza. (ADAPATARLA)
+            //Segundo mensaje para recibir la traza. (ADAPATARLA)
             mensaje = receiveACLMessage();
             if (mensaje.getPerformativeInt() == ACLMessage.INFORM) {
-                //System.out.println("TRAZA: " + mensaje.getContent());
+                System.out.println("TRAZA: " + mensaje.getContent());
                 try {
                     resultadoTraza(mensaje);
                 } catch (IOException ex) {
@@ -549,15 +558,26 @@ public class Controlador extends SingleAgent {
         if (path_local.size() == 1) {
             exist_path = false;
         }
+        
+        p.updateMatrix();
+        
         ////System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
         p.darPaso();
+        System.out.println("\n\t\tSENSOR DEL AGENTE");
+        for(int i=0; i < p.getRadar().length; i++){
+            for(int j=0; j< p.getRadar().length; j++){
+                System.out.print(p.getRadar()[i][j] + " ");
+            }
+            System.out.println("");
+        }
         System.out.println("\nimprimir matriz local");
         p.getMatrix().ImprimirLocal();
-        System.out.println("\nImprimir matriz combined");
-        p.getMatrix().ImprimirGetCombined();
-        System.out.println("\nimprimir matriz knowledge");
-        System.out.println(p.getMatrix().ImprimirKnow());
+        //System.out.println("\nImprimir matriz combined");
+        //p.getMatrix().ImprimirGetCombined();
+        //System.out.println("\nimprimir matriz knowledge");
+        //System.out.println(p.getMatrix().ImprimirKnow());
         //System.out.println("\t\tPaso numero: " + p.getPasos());
+        
     }
   
     /**
@@ -627,7 +647,9 @@ public class Controlador extends SingleAgent {
      */
     private int[] chooseLocalObj(int pasos, int[]datosGPS, String nombre, GugelVehicleMatrix matriz) {       
         int[] objetive = new int[2];
-        int[][] matrixGrad = flota.get(vehiculoElegido).getRadar();
+        
+        //int[][] matrixGrad = flota.get(vehiculoElegido).getRadar();
+        
         int alcance = flota.get(vehiculoElegido).getRol().getAlcance(); 
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO){
             
@@ -664,17 +686,17 @@ public class Controlador extends SingleAgent {
             
             for(int i=0; i<alcance; i++){
                 for(int j=0; j<alcance; j++){
-                    matrixGrad[i][j] = Math.abs(posicion_objetivo[0]-i) - Math.abs(posicion_objetivo[1]-j);
+                    //matrixGrad[i][j] = Math.abs(posicion_objetivo[0]-i) - Math.abs(posicion_objetivo[1]-j);
                 }
             }
         } else {
             for(int i=0; i<alcance; i++){
                 for(int j=0; j<alcance; j++){
-                    matrixGrad[i][j] = i+j;
+                   // matrixGrad[i][j] = i+j;
                 }
             }
             int pos_inicial = (int) floor(alcance/2.0);
-            matrixGrad[pos_inicial][pos_inicial] = 100;
+            //matrixGrad[pos_inicial][pos_inicial] = 100;
         }
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
@@ -683,8 +705,8 @@ public class Controlador extends SingleAgent {
                 for (int j = 0; j <= alcance-1; j++) {
                     ////System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
                     ////System.out.println("Distancia menor: " + low_dist + "  datosScanner: " + datosScanner[i][j]);
-                    if (posiblesObjetivos[i][j] == 0 && matrixGrad[i][j] < low_dist) {
-                        low_dist = matrixGrad[i][j];
+                    if (posiblesObjetivos[i][j] == 0) {
+                        //low_dist = matrixGrad[i][j];
                         objetive[0] = i;
                         objetive[1] = j;
                         ////System.out.println("Encontrado nuevo objetivo mejor para moverse");
@@ -746,7 +768,7 @@ public class Controlador extends SingleAgent {
                                 //System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
                                 //if (posiblesObjetivos[i][j] == 0) {
                                 ////System.out.println("Entra despues");
-                                low_dist2 = matrixGrad[i][j];
+                                //low_dist2 = matrixGrad[i][j];
                                 low_moving_count = casilla;
                                 objetive[0] = i;
                                 objetive[1] = j;
@@ -832,16 +854,17 @@ public class Controlador extends SingleAgent {
             if (mensaje.getPerformativeInt() == ACLMessage.INFORM) {
                 String nombreVehiculo = mensaje.getSender().name;
                 PropiedadesVehicle propiedades = flota.get(nombreVehiculo);
+
                 Percepcion percepcion = JSON.getPercepcion(mensaje.getContent());
                 percepcion.setNombreVehicle(nombreVehiculo);
                 propiedades.actualizarPercepcion(percepcion);
                 flota.put(nombreVehiculo, propiedades);
-                propiedades.updateMatrix();
+                
                 /* Entiendo que el "goal" del "result" te indica si está en 
                 el objetivo o nó, si es asi, en ese caso el x e y se corresponde
                 con el punto objetivo. Supongo que será así.
                  */
-                Knowledge.getDB(this.MAPA).drawMap(); 
+                //Knowledge.getDB(this.MAPA).drawMap(); 
                 if(Knowledge.getDB(this.MAPA).contains(Knowledge.STATE_GOAL)){
                     estadoActual = Estado.OBJETIVO_ENCONTRADO;
                 }
