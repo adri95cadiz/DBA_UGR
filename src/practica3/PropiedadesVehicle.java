@@ -15,7 +15,6 @@ public class PropiedadesVehicle {
     private int[][] radar;
     private Rol rol;
     private int pasos;
-    private int mundo;
     private String nombre;
     private GugelVehicleMatrix matriz;
     
