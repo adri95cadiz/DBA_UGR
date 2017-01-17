@@ -44,7 +44,7 @@ public enum Rol {
      */
     public static Rol getRol(int consumo, int alcance, boolean volar) {
        
-        if(consumo==2 && alcance==3 && !volar) 
+        if(consumo==2 && alcance==3 && volar) 
             return AVION;
         else if(consumo==1 && alcance==5 && !volar) 
             return COCHE;

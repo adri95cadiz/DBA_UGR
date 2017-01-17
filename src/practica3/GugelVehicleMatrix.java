@@ -162,6 +162,8 @@ class GugelVehicleMatrix {
          * @param gps Objeto gps que contiene las coordenadas del agente
          */
         public void updateAgent(int[][] radar, Cell gps) {
+            System.out.println("agentName: "+agentName);
+            System.out.println("vision"+ vision);
             db.updateStatus(agentName, radar, gps, vision);
             this.turn++;
             this.position = gps;
@@ -175,6 +177,7 @@ class GugelVehicleMatrix {
          * matriz
          */
         private void updateLocalMatrix(int[][] radar) {
+            // Compara tamaño con el mapa BD y lo pone al mismo tamaño.
             if (this.localMatrix.length < db.mapSize()) {
                 int[][] tmp = this.localMatrix;
 
@@ -185,40 +188,46 @@ class GugelVehicleMatrix {
                     }
                 }
             }
-            
+
             // Creamos un algoritmo para calcular que filas debemos de rellenar
-            int lim_sup_col = 0;
+            /* int lim_sup_col = 0;
             int lim_inf_col = vision;
             int lim_sup_row = 0;
-            int lim_inf_row = vision;
-            
+            int lim_inf_row = vision;*/
             // Limites de las columnas
-            if(radar[0][(int) floor(vision / 2)] == 1) lim_sup_col = 1;
+            /* if(radar[0][(int) floor(vision / 2)] == 1) lim_sup_col = 1;
             if(radar[1][(int) floor(vision / 2)] == 1) lim_sup_col = 2;
             if(radar[4][(int) floor(vision / 2)] == 1) lim_sup_col = 3;
-            if(radar[3][(int) floor(vision / 2)] == 1) lim_sup_col = 2;
-            
+            if(radar[3][(int) floor(vision / 2)] == 1) lim_sup_col = 2;*/
             // Limites de las filas
-            if(radar[(int) floor(vision / 2)][0] == 1) lim_sup_row = 1;
+            /*if(radar[(int) floor(vision / 2)][0] == 1) lim_sup_row = 1;
             if(radar[(int) floor(vision / 2)][1] == 1) lim_sup_row = 2;
             if(radar[(int) floor(vision / 2)][4] == 1) lim_sup_row = 3;
-            if(radar[(int) floor(vision / 2)][3] == 1) lim_sup_row = 2;
-            
-            for (int i = 0; i < vision; i++) {                
+            if(radar[(int) floor(vision / 2)][3] == 1) lim_sup_row = 2;*/
+ /* for (int i = 0; i < vision; i++) {                
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position.getPosX() -(vision/2) + j);
                     int pos_y = (position.getPosY() -(vision/2) + i);
+                    int radarValue = radar[j][i];
+                    //int state = (radarValue == 0) ? turn : radarValue;
+                    this.localMatrix[pos_x][pos_y] = radarValue;
+                   /* if((radarValue != Knowledge.STATE_WALL && radarValue != Knowledge.STATE_WORLD_END && (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)) && pos_x >= 0 && pos_y >= 0){
+                        this.localMatrix[pos_x][pos_y] = radarValue;
+                    }*/
+ /*   }
+            }*/
+            for (int i = 0; i < radar.length; i++) {
+                for (int j = 0; j < radar.length; j++) {
+                    int pos_x = (position.getPosX() -(vision/2) + i);
+                    int pos_y = (position.getPosY() -(vision/2) + j);
                     int radarValue = radar[i][j];
-                    int state = (radarValue == 0) ? turn*(-1) : radarValue;
                     
-                    if((radarValue == 1 || (j >= lim_sup_col && j <= lim_inf_col && i >= lim_sup_row && i <= lim_inf_row)) && pos_x >= 0 && pos_y >= 0){
-                        this.localMatrix[pos_x][pos_y] = state;
+                    if(radarValue != Knowledge.STATE_WALL && radarValue != Knowledge.STATE_WORLD_END)
+                    {
+                        this.localMatrix[pos_x][pos_y] = turn;
                     }
                 }
             }
-            int pos_x = (position.getPosX());
-            int pos_y = (position.getPosY());
-            this.localMatrix[pos_x][pos_y] = turn;
         }
 
         /**

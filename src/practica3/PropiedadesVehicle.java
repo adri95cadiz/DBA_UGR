@@ -26,7 +26,18 @@ public class PropiedadesVehicle {
     public int[][] getRadar(){
         return this.radar;
     }
+    public void printRadar(){
+        for(int i=0; i<radar.length; i++){
+            for(int j=0; j<radar.length; j++){
+                System.out.print(radar[i][j] + " ");
+            }
+            System.out.println("");
+        }
+    }
     
+    public void printGps(){
+        System.out.println("X: "+gps.getPosX()+" Y: "+gps.getPosY());
+    }
     public void setRadar(int[][] radar){
         this.radar = radar;
     }

@@ -341,19 +341,19 @@ public class Knowledge {
                 else{
                     switch (value) {
                         case Knowledge.STATE_FREE:
-                            output += " ⎕ ";
+                            output += " 0 ";
                             break;
                         case Knowledge.STATE_WALL:
-                            output += "▉▉▉";
+                            output += " 1 ";
                             break;
                         case Knowledge.STATE_GOAL:
-                            output += " ╳ ";
+                            output += " 3 ";
                             break;
                         case Knowledge.STATE_WORLD_END:
-                            output += " ❎ ";
+                            output += " 2 ";
                             break;
                         case Knowledge.STATE_UNKNOWN:
-                            output += " ❓ ";
+                            output += " 5 ";
                             break; 
                     }
                 }
