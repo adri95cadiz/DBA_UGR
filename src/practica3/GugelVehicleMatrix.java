@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @version 2017.01.12
  */
 class GugelVehicleMatrix {
-    private ArrayList<Vehicle> vehicles;
+    private Vehicle vehicle;
     private Knowledge db;
 
     /**
@@ -17,21 +17,9 @@ class GugelVehicleMatrix {
      *
      * @param db Objeto {@link Knowledge} a utilizar
      */
-    public GugelVehicleMatrix (Knowledge db) {
+    public GugelVehicleMatrix (Knowledge db, String name, int alcance) {
         this.db = db;
-        this.vehicles = new ArrayList<Vehicle>();
-    }
-
-    /**
-     * Añade un nuevo vehiculo
-     *
-     * @param agentName Nombre del agente a añadir
-     * @param vision Rango de visión del agente
-     */
-    public void addVehicle(String agentName, int vision) {
-        if(this.getVehicle(agentName) == null) {
-            vehicles.add(new Vehicle(agentName, vision));
-        }
+        this.vehicle = new Vehicle(name, alcance);
     }
 
     /**
@@ -50,7 +38,7 @@ class GugelVehicleMatrix {
      * @return Matriz local del agente; {@link null} en caso de no existir el agente
      */ 
     public int[][] getLocalMatrix(String agentName){
-        return getVehicle(agentName).getLocalMatrix();
+        return getVehicle().getLocalMatrix();
     }
 
     /**
@@ -61,7 +49,7 @@ class GugelVehicleMatrix {
      * @return Matriz combinada del agente; {@link null} en caso de no existir el agente
      */ 
     public int[][] getCombinedKnowledge(String agentName){
-        return getVehicle(agentName).getCombinedKnowledge();
+        return getVehicle().getCombinedKnowledge();
     }
     
     /**
@@ -71,8 +59,8 @@ class GugelVehicleMatrix {
      * @param radar ArrayList correspondiente al radar
      * @param gps Cell que contiene la posición actual
      */
-    public void updateMatrix(String agentName, ArrayList<Integer> radar, Cell gps){
-        this.getVehicle(agentName).updateAgent(radar, gps);
+    public void updateMatrix(int[][] radar, Cell gps){
+        this.getVehicle().updateAgent(radar, gps);
     }
 
     /**
@@ -81,11 +69,8 @@ class GugelVehicleMatrix {
      * @param agentName Nombre del agente a buscar
      * @return Objeto {@link Vehicle} en caso de que exista, {@link null} cuando no existe
      */
-    private Vehicle getVehicle(String agentName){
-        for(Vehicle v: vehicles){
-            if(v.isAgent(agentName)) return  v;
-        }
-        return null;
+    private Vehicle getVehicle(){
+        return vehicle;
     }
 
     /**
@@ -135,7 +120,7 @@ class GugelVehicleMatrix {
          * @param radar Objeto radar que contiene la visualización del agente
          * @param gps Objeto gps que contiene las coordenadas del agente
          */
-        public void updateAgent(ArrayList<Integer> radar, Cell gps){
+        public void updateAgent(int[][] radar, Cell gps){
             db.updateStatus(agentName, radar, gps, vision);
             this.turn++;
             this.position = gps;
@@ -147,7 +132,7 @@ class GugelVehicleMatrix {
          *
          * @param radar Objeto radar que contiene los datos a actualizar en la matriz
          */
-        private void updateLocalMatrix(ArrayList<Integer> radar){        
+        private void updateLocalMatrix(int[][] radar){        
             if(this.localMatrix.length < db.mapSize()){
                 int[][] tmp = this.localMatrix;
 
@@ -163,7 +148,7 @@ class GugelVehicleMatrix {
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position.getPosX() -(vision/2) + j);
                     int pos_y = (position.getPosY() -(vision/2) + i);
-                    int radarValue = radar.get(j*vision + i);
+                    int radarValue = radar[i][j];
 
                     if(pos_x >= 0 && pos_y >= 0){
                         this.localMatrix[pos_x][pos_y] = radarValue;

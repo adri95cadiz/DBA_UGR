@@ -160,7 +160,7 @@ public class Knowledge {
      * @param gps JsonObject que contiene la posición del agente
      * @param vision Rago de vision del agente
      */
-    public void updateStatus(String agentName, ArrayList<Integer> radar, Cell gps, int vision) {
+    public void updateStatus(String agentName, int[][] radar, Cell gps, int vision) {
         try{
             // Guardamos la posición actual del agente
             int position_x, position_y;
@@ -176,7 +176,7 @@ public class Knowledge {
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position_x -(vision/2) + j);
                     int pos_y = (position_y -(vision/2) + i);
-                    int radarValue = radar.get(j*vision + i);
+                    int radarValue = radar[i][j];
 
                     if(radarValue == Knowledge.STATE_GOAL){
                         this.updateObjetive(new Cell(pos_x, pos_y));
@@ -221,7 +221,7 @@ public class Knowledge {
      * @param vision Rago de vision del agente
      */
     public void updateStatus(String agentName, JsonObject radar, JsonObject gps, int vision) {
-        ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
+        int[][] radarArray = Knowledge.getRadarMatrix(radar, vision);
         Cell gpsCell = Knowledge.getGPSData(gps);
 
         this.updateStatus(agentName, radarArray, gpsCell, vision);

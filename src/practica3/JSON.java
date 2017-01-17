@@ -83,7 +83,7 @@ public class JSON {
      * @author Luis Gallego Quero
      * @return Matriz de enteros correspondiente al radar.
      */
-    private static int[][] parseSensor(JsonArray vector) {
+    public static int[][] parseSensor(JsonArray vector) {
         final int TAM = (int) Math.sqrt(vector.size());
         int[][] matriz = new int[TAM][TAM];
         int i=0, j=0;

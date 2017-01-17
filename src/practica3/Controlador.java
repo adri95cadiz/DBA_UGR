@@ -230,8 +230,7 @@ public class Controlador extends SingleAgent {
                     propiedades = flota.get(nomVehiculo);
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
-                    propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA)));
-                    propiedades.getMatrix().addVehicle(nomVehiculo, propiedades.getRol().getAlcance());
+                    propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA), nomVehiculo, propiedades.getRol().getAlcance()));
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
                     System.out.println("\nNombre vehiculo: " + nomVehiculo);
@@ -641,12 +640,12 @@ public class Controlador extends SingleAgent {
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
 
-            for (int i = 1; i <= 3; i++) {
-                for (int j = 1; j <= 3; j++) {
+            for (int i = 0; i <= alcance-1; i++) {
+                for (int j = 0; j <= alcance-1; j++) {
                     //System.out.println("Posible objetivo: " + posiblesObjetivos[i][j]);
                     //System.out.println("Distancia menor: " + low_dist + "  datosScanner: " + datosScanner[i][j]);
                     if (posiblesObjetivos[i][j] == 0 && matrixGrad[i][j] < low_dist) {
-                        //low_dist = datosScanner[i][j];
+                        low_dist = matrixGrad[i][j];
                         objetive[0] = i;
                         objetive[1] = j;
                         //System.out.println("Encontrado nuevo objetivo mejor para moverse");
@@ -686,8 +685,8 @@ public class Controlador extends SingleAgent {
 //                }System.out.println("\n");
 //            }
             
-            for (int i = 0; i <= 4; i++) {
-                for (int j = 0; j <= 4; j++) {
+            for (int i = 0; i <= alcance-1; i++) {
+                for (int j = 0; j <= alcance-1; j++) {
                     int a = datosGPS[0] - 2 + i;
                     int b = datosGPS[1] - 2 + j;
                     //System.out.println("\t\t\tDatos del gps: " + datosGPS[0] + "," + datosGPS[1]);
@@ -705,7 +704,7 @@ public class Controlador extends SingleAgent {
                                 System.out.print(i+","+j+": "+posiblesObjetivos[i][j]+" | ");
                                 //if (posiblesObjetivos[i][j] == 0) {
                                 //System.out.println("Entra despues");
-                                //low_dist2 = datosScanner[i][j];
+                                low_dist2 = matrixGrad[i][j];
                                 low_moving_count = casilla;
                                 objetive[0] = i;
                                 objetive[1] = j;
