@@ -734,11 +734,10 @@ public class Controlador extends SingleAgent {
 
                     // Comprueba que no se esté accediendo a una posición inválida de la matriz de la BD.
                     if (a >= 0 && b >= 0 && a < Knowledge.getDB(this.MAPA).mapSize() && b < Knowledge.getDB(this.MAPA).mapSize()) {
-                        ////System.out.println("Entra primero");
+                        ////System.out.println("Entra primero");                            
+                        int[][]matrix = matriz.getCombinedKnowledge();
                         if (posiblesObjetivos[i][j] == 0) {
-                            
-                            int casilla = matriz.getCombinedKnowledge(nombre)[i][j];
-                            
+                            int casilla = matrix[i][j];
                             System.out.println("\nCasilla en choose : " + casilla);
                             if (casilla >= low_moving_count || ( casilla == 3)){
                                 //|| (bd.getStatus(a, b) == low_moving_count && datosScanner[i][j] < low_dist2)) {
