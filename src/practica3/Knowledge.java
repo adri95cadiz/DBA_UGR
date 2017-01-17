@@ -333,33 +333,33 @@ public class Knowledge {
      */
     public String drawMapToString(){
         String output = "";
-        for(int i = 0; i < this.mapSize();i++) output.concat(" ▉▉▉");
-        output.concat("");
+        for(int i = 0; i < this.mapSize();i++) output += " ▉▉▉" ;
+        output += "";
         for(int i = 0; i < this.mapMatrix.length; i++){
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
-                if(j == 0) output.concat("▉▉▉");
-                if(isAnyAgentInPosition(i, j)) output.concat(" ● ");
+                if(j == 0) output += "▉▉▉";
+                if(isAnyAgentInPosition(i, j)) output += " ● ";
                 else{
                     switch (value) {
                         case 0:
-                            output.concat(" ⎕ ");
+                            output += " ⎕ ";
                             break;
                         case -1:
-                            output.concat("▉▉▉");
+                            output += "▉▉▉";
                             break;
                         case -2:
-                            output.concat(" ╳ ");
+                            output += " ╳ ";
                             break;
                         default:
-                            if(value < 10) output.concat(" " + value+ " ");
-                            else if(value < 100) output.concat(" " + value);
-                            else output.concat(value+"");
+                            if(value < 10) output += " " + value+ " ";
+                            else if(value < 100) output += " " + value;
+                            else output += value+"";
                             break;
                     }
                 }
             }
-            output.concat("\n");
+            output += "\n";
         }
         return output;
     }
@@ -368,11 +368,11 @@ public class Knowledge {
      * Dibuja el mapa en consola
      */
     public void drawMap(){
-        //System.out.println("-----------------------------------------------------------------------------------------------------");
-        //System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
-        //System.out.println("-----------------------------------------------------------------------------------------------------");
-        //System.out.println(drawMapToString());
-        //System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
+        System.out.println("-----------------------------------------------------------------------------------------------------");
+        System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
+        System.out.println("-----------------------------------------------------------------------------------------------------");
+        System.out.println(drawMapToString());
+        System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
     }
 
     /**
