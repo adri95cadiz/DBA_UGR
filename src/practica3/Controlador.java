@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.io.FileNotFoundException;
 import static java.lang.Math.floor;
+import java.lang.Math;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -593,7 +594,36 @@ public class Controlador extends SingleAgent {
     private int[] chooseLocalObj(int pasos, int[]datosGPS) {       //HACE FALTA SACAR LA DISTANCIA DE ALGUNA FORMA NUEVA ¿CON CLASE NODE?¿
         int[] objetive = new int[2];
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO){
-            //Utilizar gradiente con varios objetivos.
+            //Utilizar gradiente con varios objetivos. Falta hacer esto
+            
+            /*
+            Primer bloque si el objetivo se ha encontrado:
+                - Se construye una matriz que es el campo de visión del agente
+            con los gradientes hacia el objetivo.
+            */
+            int[] posicion_objetivo = {45,50}; // aquí hay que coger las coordenadas del objetivo
+            int[][]matrixGrad = flota.get(vehiculoElegido).getRadar();
+            int alcance = flota.get(vehiculoElegido).getRol().getAlcance();
+            for(int i=0; i<alcance; i++){
+                for(int j=0; j<alcance; j++){
+                    matrixGrad[i][j] = Math.abs(posicion_objetivo[0]-i) - Math.abs(posicion_objetivo[1]-j);
+                }
+            }
+            /*
+            Segundo bloque si el objetivo se ha encontrado:
+                - Se recorre la matriz de los gradientes y se va quedando con la posición 
+            que tenga el gradiente menor y sea accesible. Esa es la posición a la que se mueve
+            */
+            int dist = 900000000;
+            for(int i=0; i<alcance; i++){
+                for(int j=0; j<alcance; j++){
+                   if(posiblesObjetivos[i][j] == 0 && matrixGrad[i][j] < dist){
+                       objetive[0] = i;
+                       objetive[1] = j;
+                       dist = matrixGrad[i][j];
+                   }
+                }
+            }
         }
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
@@ -691,6 +721,12 @@ public class Controlador extends SingleAgent {
      * moverse.
      *
      */
+    
+    /*
+    De esta función no hay que cambiar nada, funcionaría para cualquier tipo de matriz ya que
+    lo que hace es desde la posición del agente y la siguiente casilla ID a moverse, calcular
+    que dirección es. Trabaja con Id´s da igual el tamaño de la matriz.
+    */
     private String pathLocalObj(int objetivo, int[][] radar) {
         camino.changeMap(radar);
         System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
