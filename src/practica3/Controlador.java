@@ -593,11 +593,11 @@ public class Controlador extends SingleAgent {
      */
     private int[] chooseLocalObj(int pasos, int[]datosGPS, String nombre, GugelVehicleMatrix matriz) {       
         int[] objetive = new int[2];
-        int[][] matrixGrad = flota.get(vehiculoElegido).getRadar();; 
+        int[][] matrixGrad = flota.get(vehiculoElegido).getRadar();
+        int alcance = flota.get(vehiculoElegido).getRol().getAlcance(); 
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO){
             
             int[] posicion_objetivo = new int[2]; 
-            int alcance = flota.get(vehiculoElegido).getRol().getAlcance();
             int[] gps = flota.get(vehiculoElegido).getGps();
             
             //Utilizar gradiente con varios objetivos. Falta hacer esto
@@ -633,6 +633,14 @@ public class Controlador extends SingleAgent {
                     matrixGrad[i][j] = Math.abs(posicion_objetivo[0]-i) - Math.abs(posicion_objetivo[1]-j);
                 }
             }
+        } else {
+            for(int i=0; i<alcance; i++){
+                for(int j=0; j<alcance; j++){
+                    matrixGrad[i][j] = i+j;
+                }
+            }
+            int pos_inicial = (int) floor(alcance/2.0);
+            matrixGrad[pos_inicial][pos_inicial] = 100;
         }
         if (pasos <= 1) { 
             float low_dist = (float) Math.pow(10, 10);
