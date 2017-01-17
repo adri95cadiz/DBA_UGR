@@ -454,7 +454,6 @@ public class Controlador extends SingleAgent {
             //System.out.println("NUEVO PATH OBTENIDO");
             path_local.clear();
             path_local = camino.getPath();  
-            camino.printPath();
         }   
         
         /**
@@ -477,12 +476,6 @@ public class Controlador extends SingleAgent {
         // Se obtiene la dirección en la que moverse
         decision = pathLocalObj(obj_prox_mov, radar);
 
-        path_local.remove(0);
-        // Si el path_local restante contiene solamente una posición, es la 
-        // del propio agente por lo que se borra.
-        if (path_local.size() == 1) {
-            exist_path = false;
-        }
         /****************
          * Una vez se sabe en que dirección se quiere mover:
          * -Actualiza el mapa de la base de datos
@@ -513,6 +506,12 @@ public class Controlador extends SingleAgent {
                 System.err.println(ex.toString());
                 estadoActual = Estado.FINALIZAR;
             }
+        }
+        path_local.remove(0);
+        // Si el path_local restante contiene solamente una posición, es la 
+        // del propio agente por lo que se borra.
+        if (path_local.size() == 1) {
+            exist_path = false;
         }
         //System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
         p.darPaso();
