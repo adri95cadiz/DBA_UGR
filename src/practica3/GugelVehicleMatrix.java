@@ -49,8 +49,8 @@ class GugelVehicleMatrix {
      * @param agentName Nombre del agente del que se va a pedir su matriz
      * @return Matriz local del agente; {@link null} en caso de no existir el agente
      */ 
-    public void getLocalMatrix(String agentName){
-        getVehicle(agentName).getLocalMatrix();
+    public int[][] getLocalMatrix(String agentName){
+        return getVehicle(agentName).getLocalMatrix();
     }
 
     /**
@@ -60,8 +60,8 @@ class GugelVehicleMatrix {
      * @param agentName Nombre del agente del que se va a pedir su matriz
      * @return Matriz combinada del agente; {@link null} en caso de no existir el agente
      */ 
-    public void getCombinedKnowledge(String agentName){
-        getVehicle(agentName).getCombinedKnowledge();
+    public int[][] getCombinedKnowledge(String agentName){
+        return getVehicle(agentName).getCombinedKnowledge();
     }
     
     /**
