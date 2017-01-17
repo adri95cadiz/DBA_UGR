@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.io.FileNotFoundException;
 import static java.lang.Math.floor;
-import java.lang.Math;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -232,6 +231,7 @@ public class Controlador extends SingleAgent {
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA)));
+                    propiedades.getMatrix().addVehicle(nomVehiculo, propiedades.getRol().getAlcance());
                     propiedades.actualizarPercepcion(percepcion);
                     flota.put(nomVehiculo, propiedades);
                     System.out.println("\nNombre vehiculo: " + nomVehiculo);
@@ -484,7 +484,7 @@ public class Controlador extends SingleAgent {
          * -Manda la acción del movimiento
          * -Espera a recibir la respuesta
          * */         
-        //p.updateMatrix();
+        p.updateMatrix();
         if (!decision.contains("move")) { 
             System.out.println("No se donde moverme.");
             subEstadoBuscando = Estado.ELECCION_VEHICULO;
@@ -518,7 +518,7 @@ public class Controlador extends SingleAgent {
         p.darPaso();
         p.setBateria(p.getBateria()-p.getRol().getConsumo());	
         System.out.println("\t\tPaso numero: " + p.getPasos());  
-        //Knowledge.getDB(this.MAPA).drawMap(); 
+        Knowledge.getDB(this.MAPA).drawMap(); 
         if(Knowledge.getDB(this.MAPA).contains(Knowledge.STATE_GOAL)){
             estadoActual = Estado.OBJETIVO_ENCONTRADO;
         }
