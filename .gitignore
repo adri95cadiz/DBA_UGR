@@ -3,5 +3,7 @@ build/
 nbproject/
 dist/
 .vscode/
-mapas.db
+*.db
+*.db-journal
 traza_*.png
+
