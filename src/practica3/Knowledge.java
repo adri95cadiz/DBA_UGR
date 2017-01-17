@@ -333,8 +333,6 @@ public class Knowledge {
      */
     public String drawMapToString(){
         String output = "";
-        for(int i = 0; i < this.mapSize();i++) output += " ▉▉▉" ;
-        output += "";
         for(int i = 0; i < this.mapMatrix.length; i++){
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
@@ -342,20 +340,21 @@ public class Knowledge {
                 if(isAnyAgentInPosition(i, j)) output += " ● ";
                 else{
                     switch (value) {
-                        case 0:
+                        case Knowledge.STATE_FREE:
                             output += " ⎕ ";
                             break;
-                        case -1:
+                        case Knowledge.STATE_WALL:
                             output += "▉▉▉";
                             break;
-                        case -2:
+                        case Knowledge.STATE_GOAL:
                             output += " ╳ ";
                             break;
-                        default:
-                            if(value < 10) output += " " + value+ " ";
-                            else if(value < 100) output += " " + value;
-                            else output += value+"";
+                        case Knowledge.STATE_WORLD_END:
+                            output += " ❎ ";
                             break;
+                        case Knowledge.STATE_UNKNOWN:
+                            output += " ❓ ";
+                            break; 
                     }
                 }
             }
