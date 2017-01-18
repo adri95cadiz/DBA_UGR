@@ -64,9 +64,7 @@ public class Knowledge {
         } catch (SQLException error) {
             System.err.println("Error en la creación de la conexión");
             System.err.println(error);
-        } finally {
-            return statement;
-        }
+        } 
         return statement;
     }
 
@@ -254,6 +252,13 @@ public class Knowledge {
         if (maxWidth > this.mapSize()) {
             int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[maxWidth][maxWidth];
+
+            for(int i = 0; i < maxWidth; i++){
+                for(int j = 0; j < this.mapSize(); j++){
+                    this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN;
+                }
+            }
+
             for (int i = 0; i < tmp.length; i++) {
                 for (int j = 0; j < tmp[i].length; j++) {
                     this.mapMatrix[i][j] = tmp[i][j];
@@ -312,11 +317,10 @@ public class Knowledge {
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
-                    for(int i = 0; i < this.mapSize(); i++){ 
-                    /*for(int j = 0; j < this.mapSize(); j++){ 
+                for(int i = 0; i < this.mapSize(); i++){ 
+                    for(int j = 0; j < this.mapSize(); j++){ 
                         this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN; 
-                    }*/ 
-                    Arrays.fill(this.mapMatrix[i], Knowledge.STATE_UNKNOWN); 
+                    }
                 } 
                 // Obtenemos la información almacenada y la volcamos en la matriz
                 rs = statement.executeQuery("SELECT * FROM Mapa_" + this.map_id + ";");
@@ -363,32 +367,28 @@ public class Knowledge {
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];  
                 if(j == 0) output += "▉▉▉";
-                if(isAnyAgentInPosition(i, j)) output += "A";
-                else{
-                    switch (value) {
-                        case Knowledge.STATE_FREE:
-                            output += "·";
-                            break;
-                        case Knowledge.STATE_WALL:
-                            output += "#";
-                            break;
-                        case Knowledge.STATE_GOAL:
-                            output += "X";
-                            break;
-                        case Knowledge.STATE_WORLD_END:
-                            output += "#";
-                            break;
-                        case Knowledge.STATE_UNKNOWN:
-                            output += "?";
-                            break; 
-                        case Knowledge.STATE_VEHICLE:
-                            output += "A";
-                            break; 
-                    }
+                switch (value) {
+                    case Knowledge.STATE_FREE:
+                        output += "·";
+                        break;
+                    case Knowledge.STATE_WALL:
+                        output += "#";
+                        break;
+                    case Knowledge.STATE_GOAL:
+                        output += "X";
+                        break;
+                    case Knowledge.STATE_WORLD_END:
+                        output += "#";
+                        break;
+                    case Knowledge.STATE_UNKNOWN:
+                        output += "?";
+                        break; 
+                    case Knowledge.STATE_VEHICLE:
+                        output += "A";
+                        break;                     
                 }
-                //System.out.print(value+" ");
             }
-            System.out.println("");
+            output += "\n";
         }
         return output;
     }
