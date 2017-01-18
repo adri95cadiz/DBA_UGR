@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import static java.lang.Math.floor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Interface.Ventana;
 
 /**
  *
@@ -48,6 +49,8 @@ public class Controlador extends SingleAgent {
     private boolean check = true;
     private final int LIMITE_PASOS = 1000;
     private final boolean EXPLORAR = false;
+    private Ventana miVentana;
+
 
     public Controlador(AgentID id, String mundo) throws Exception {
         super(id);
@@ -57,7 +60,9 @@ public class Controlador extends SingleAgent {
     public void init() {
         //System.out.println("Iniciandose Controlador " + getName());
         fin = false;
-        buscando = true;
+        buscando = true;                
+        miVentana = new Ventana();
+        miVentana.setVisible(true);
         estadoActual = Estado.INICIAL;
         subEstadoBuscando = Estado.ELECCION_VEHICULO;
         subEstadoEncontrado = Estado.ELECCION_VEHICULO;
@@ -577,7 +582,9 @@ public class Controlador extends SingleAgent {
         //System.out.println("\nimprimir matriz knowledge");
         //System.out.println(p.getMatrix().ImprimirKnow());
         //System.out.println("\t\tPaso numero: " + p.getPasos());
-        
+        monitorizarVehiculos();
+        miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
+
     }
   
     /**
@@ -971,4 +978,64 @@ public class Controlador extends SingleAgent {
         //System.out.println("Traza Guardada");
 
     }
+    
+    
+    /**
+     * Recopilamos los datos de los vehiculos para mandarlo a la interfaz.
+     *
+     * @author German Valdearenas Jimenez, Regina Lucia Alguacil Camarero
+     */
+    private void monitorizarVehiculos(){
+        
+        ArrayList<String> valores = new ArrayList();
+        int[] coord = new int[2];
+        
+        /*Lectura del vehiculo0*/
+        valores.add("Vehiculo0");
+        PropiedadesVehicle p = flota.get("Vehiculo0");
+        valores.add(String.valueOf(p.getBateria()));
+        coord = p.getGps();
+        valores.add("X["+coord[0] + "].Y[" + coord[1]+"]");
+        valores.add(p.getRol().name());
+        valores.add(String.valueOf(p.getRol().getAlcance()));
+        valores.add(String.valueOf(p.getRol().getConsumo()));
+        valores.add(String.valueOf(p.getPasos()));
+                
+        /*Lectura del vehiculo1*/
+        valores.add("Vehiculo1");
+        p = flota.get("Vehiculo1");
+        valores.add(String.valueOf(p.getBateria()));
+        coord = p.getGps();
+        valores.add("X["+coord[0] + "].Y[" + coord[1]+"]");
+        valores.add(p.getRol().name());
+        valores.add(String.valueOf(p.getRol().getAlcance()));
+        valores.add(String.valueOf(p.getRol().getConsumo()));
+        valores.add(String.valueOf(p.getPasos()));
+        
+        /*Lectura del vehiculo2*/
+        valores.add("Vehiculo2");
+        p = flota.get("Vehiculo2");
+        valores.add(String.valueOf(p.getBateria()));
+        coord = p.getGps();
+        valores.add("X["+coord[0] + "].Y[" + coord[1]+"]");
+        valores.add(p.getRol().name());
+        valores.add(String.valueOf(p.getRol().getAlcance()));
+        valores.add(String.valueOf(p.getRol().getConsumo()));
+        valores.add(String.valueOf(p.getPasos()));
+        
+        /*Lectura del vehiculo3*/
+        valores.add("Vehiculo3");
+        p = flota.get("Vehiculo3");
+        valores.add(String.valueOf(p.getBateria()));
+        coord = p.getGps();
+        valores.add("X["+coord[0] + "].Y[" + coord[1]+"]");
+        valores.add(p.getRol().name());
+        valores.add(String.valueOf(p.getRol().getAlcance()));
+        valores.add(String.valueOf(p.getRol().getConsumo()));
+        valores.add(String.valueOf(p.getPasos()));
+        
+        miVentana.setDatosVehiculos(valores);
+        
+    }
+
 }
