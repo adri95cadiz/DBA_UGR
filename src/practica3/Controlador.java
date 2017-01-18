@@ -240,7 +240,8 @@ public class Controlador extends SingleAgent {
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA), nomVehiculo, propiedades.getRol().getAlcance()));
-                    propiedades.actualizarPercepcion(percepcion);           
+                    propiedades.actualizarPercepcion(percepcion); 
+                    propiedades.updateMatrix();
                     flota.put(nomVehiculo, propiedades);                    
                     System.out.println("\nNombre: " + propiedades.getNombre());
                     System.out.println("\nRol: " + propiedades.getRol());
@@ -560,10 +561,11 @@ public class Controlador extends SingleAgent {
             exist_path = false;
         }
         
-        p.updateMatrix();
-        
         ////System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
         p.darPaso();
+        
+        p.updateMatrix();
+        
         System.out.println("\n\t\tSENSOR DEL AGENTE");
         for(int i=0; i < p.getRadar().length; i++){
             for(int j=0; j< p.getRadar().length; j++){
