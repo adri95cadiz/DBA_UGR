@@ -23,8 +23,8 @@ public class Knowledge {
     private int map_id;
     private int[][] mapMatrix;
     private Connection connection = null;
-    private ArrayList<AgentPosition> agentsPosition = new ArrayList<AgentPosition>();
-    private ArrayList<Cell> objetives = new ArrayList<Cell>();
+    private ArrayList<AgentPosition> agentsPosition = new ArrayList<>();
+    private ArrayList<Cell> objetives = new ArrayList<>();
 
     private final static int MIN_SIDE = 100;
     private final static String DB_NAME = "knowledge";
@@ -67,6 +67,7 @@ public class Knowledge {
         } finally {
             return statement;
         }
+        return statement;
     }
 
     /**
@@ -246,6 +247,9 @@ public class Knowledge {
      */
     private void updateMatrix(int posx, int posy, int value) {
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
+        
+        System.out.println("Máximo actual anterior: " + this.mapSize());
+        System.out.println("Valor X: " + posx + " | Valor Y: " + posy);
 
         if (maxWidth > this.mapSize()) {
             int[][] tmp = this.mapMatrix;
@@ -256,7 +260,7 @@ public class Knowledge {
                 }
             }
         }
-
+        System.out.println("Máximo actual posterior: " + this.mapSize());
         this.mapMatrix[posx][posy] = value;
     }
 
@@ -283,7 +287,7 @@ public class Knowledge {
                 matrix_size = rs.getInt("count");
             }
 
-            output.concat("\nCantidad de celdas conocidas: " + matrix_size);
+            System.out.println("\nCantidad de celdas conocidas: " + matrix_size);
 
             if (matrix_size > 0) {
                 matrix_size = 0;
@@ -304,7 +308,7 @@ public class Knowledge {
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
-                output.concat("El máximo de la matriz es: " + matrix_size);
+                System.out.println("El máximo de la matriz es: " + matrix_size);
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
@@ -357,19 +361,30 @@ public class Knowledge {
         String output = "";
         for (int i = 0; i < this.mapMatrix.length; i++) {
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
-                int value = this.mapMatrix[i][j];
-                if( value == 5 ){
-                    System.out.print("?");
-                }else if( value == 4 ){
-                    System.out.print("A");
-                }else if( value == 3 ){
-                    System.out.print("X");
-                }else if( value == 2 ){
-                    System.out.print("#");
-                }else if( value == 1 ){
-                    System.out.print("#");
-                }else if( value == 0 ){
-                    System.out.print(".");
+                int value = this.mapMatrix[i][j];  
+                if(j == 0) output += "▉▉▉";
+                if(isAnyAgentInPosition(i, j)) output += "A";
+                else{
+                    switch (value) {
+                        case Knowledge.STATE_FREE:
+                            output += "·";
+                            break;
+                        case Knowledge.STATE_WALL:
+                            output += "#";
+                            break;
+                        case Knowledge.STATE_GOAL:
+                            output += "X";
+                            break;
+                        case Knowledge.STATE_WORLD_END:
+                            output += "#";
+                            break;
+                        case Knowledge.STATE_UNKNOWN:
+                            output += "?";
+                            break; 
+                        case Knowledge.STATE_VEHICLE:
+                            output += "A";
+                            break; 
+                    }
                 }
                 //System.out.print(value+" ");
             }
