@@ -240,8 +240,7 @@ public class Controlador extends SingleAgent {
                     percepcion = JSON.getPercepcion(mensaje.getContent());
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA), nomVehiculo, propiedades.getRol().getAlcance()));
-                    propiedades.actualizarPercepcion(percepcion);
-                    propiedades.updateMatrix();                    
+                    propiedades.actualizarPercepcion(percepcion);           
                     flota.put(nomVehiculo, propiedades);                    
                     System.out.println("\nNombre: " + propiedades.getNombre());
                     System.out.println("\nRol: " + propiedades.getRol());
@@ -620,7 +619,7 @@ public class Controlador extends SingleAgent {
         } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {     //Aunque dentro de los límites ya ha sido recorrida 
         } else {          
             int pos_inicial = (int) floor(alcance/2.0);
-            if ((row != pos_inicial || col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4)) {
+            if ((row != pos_inicial || col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4 || (radar[row][col] == 3 && Knowledge.getDB(MAPA).isAnyAgentInPosition(row, col)))) {
                 posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
             } else {
                 posiblesObjetivos[row][col] = 1;                                                    //Es libre, alcanzable, y dentro de los límites    
