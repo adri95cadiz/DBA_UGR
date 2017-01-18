@@ -109,6 +109,13 @@ public class JSON {
         return matriz;
     }
     
+    public static Cell getPosInicial( String cadena ){
+        JsonObject objeto = parseToJson(cadena);
+        JsonObject resultado = objeto.get("result").asObject();
+        Cell posInicial = new Cell();
+        posInicial.set(resultado.getInt("y", -1), resultado.getInt("x", -1),  0);
+        return posInicial;
+    }
     
     /**
      * Convierte una cadena Json en un objeto Percepcion
