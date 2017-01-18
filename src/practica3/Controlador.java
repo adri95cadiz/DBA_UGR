@@ -313,7 +313,7 @@ public class Controlador extends SingleAgent {
             enviarMensaje(vehiculo, ACLMessage.CANCEL, "");
         }
         enviarMensaje(NOMBRE_SERVIDOR, ACLMessage.CANCEL, "");
-        ACLMessage mensaje = null;
+        ACLMessage mensaje;
         try {
             mensaje = receiveACLMessage();
             if (mensaje.getPerformativeInt() == ACLMessage.AGREE) {

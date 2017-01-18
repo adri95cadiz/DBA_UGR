@@ -88,7 +88,7 @@ class GugelVehicleMatrix {
                             output += " > ";
                             break;
                         case Knowledge.STATE_WORLD_END:
-                            output += " % ";
+                            output += " $ ";
                             break;
                         case Knowledge.STATE_UNKNOWN:
                             output += " ? ";
