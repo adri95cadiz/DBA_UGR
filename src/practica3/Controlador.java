@@ -363,7 +363,7 @@ public class Controlador extends SingleAgent {
      */
     private void faseEleccionVehiculo() {
         System.out.println("\n\tFASE ELECCION VEHICULO.");
-        if (buscando) {
+        if (estadoActual == Estado.BUSCAR) {
 
             /*
             Caso en el cual aún no sabemos donde esta el punto objetivo,
@@ -427,19 +427,15 @@ public class Controlador extends SingleAgent {
                 }*/
 
             } else {
-                //Aquí elegiríamos el vehículo siguiente.
-                
-                
-                
-                
-                //AQUII
-                
-                
-                
-                
-                
-                
+                //Aquí elegiríamos el vehículo siguiente.                 
                 vehiculoElegido = vehiculosExploradores.get(0);
+                //Elegiremos el que tenga mayor rango de vision
+                for(int i = 1 ; i < vehiculosExploradores.size() ; i++){
+                    PropiedadesVehicle p1 = flota.get(vehiculosExploradores.get(i));                    
+                    PropiedadesVehicle p2 = flota.get(vehiculoElegido);
+                    if(p1.getRol().getAlcance() > p2.getRol().getAlcance())
+                        vehiculoElegido = vehiculosExploradores.get(i);
+                }                
                 vehiculoSeleccionado = true;
             }
             //vehiculoElegido = vehiculosExploradores.get(0);
