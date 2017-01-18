@@ -10,7 +10,7 @@ import java.util.HashMap;
  * @author Luis Gallego Quero
  */
 public class GugelVehicle extends SingleAgent {
-    
+
     private final String NOMBRE_CONTROLADOR = "Controlador_";
     private final String NOMBRE_SERVIDOR = "Haldus";
     private ACLMessage msjEntrada, msjSalida;
@@ -20,12 +20,12 @@ public class GugelVehicle extends SingleAgent {
     //boolean primero;
     String reply;
     //private HashMap<String, String> reply;
-    
-    public GugelVehicle(AgentID id) throws Exception{
+
+    public GugelVehicle(AgentID id) throws Exception {
         super(id);
     }
-    
-    public void init(){
+
+    public void init() {
         //System.out.println("Iniciandose vehiculo " + getName());
         msjEntrada = null;
         msjSalida = null;
@@ -38,38 +38,45 @@ public class GugelVehicle extends SingleAgent {
         reply.put("Vehiculo1", null);
         reply.put("Vehiculo2", null);
         reply.put("Vehiculo3", null); */
-    }   
-    
-    public void execute(){
-        while(!fin){
+    }
+
+    public void execute() {
+        while (!fin) {
             try {
                 msjEntrada = receiveACLMessage();
-                //System.out.println("\n"+getName() + " ha recibido: " + msjEntrada.getContent() + " ConvID: " + msjEntrada.getConversationId() + " Reply: " + msjEntrada.getReplyWith());
-                conversationID = msjEntrada.getConversationId();
-                if(!msjEntrada.getReplyWith().isEmpty()) {
-                    reply = msjEntrada.getReplyWith();
-                    //reply.put(getName(), msjEntrada.getReplyWith());   
-                }                             
-                if(msjEntrada.getPerformativeInt() == ACLMessage.CANCEL){
-                    fin = true; 
-                } else {
-                    if(msjEntrada.getSender().name.equals(NOMBRE_SERVIDOR)){
-                        receptor = NOMBRE_CONTROLADOR;
-                    } else {
-                        receptor = NOMBRE_SERVIDOR;
+                //if (!msjEntrada.getContent().isEmpty()) {
+                    System.out.println("\n" + getName() + " ha recibido: " + msjEntrada.getContent() + " ConvID: " + msjEntrada.getConversationId() + " Reply: " + msjEntrada.getReplyWith());
+                    conversationID = msjEntrada.getConversationId();
+                    System.out.println("coge el conversation id");
+                    if (!msjEntrada.getReplyWith().isEmpty()) {
+                        System.out.println("se mete en el reply");
+                        reply = msjEntrada.getReplyWith();
+                        //reply.put(getName(), msjEntrada.getReplyWith());   
                     }
-                    enviar(receptor, msjEntrada.getPerformativeInt(), msjEntrada.getContent());
-                }
+                    if (msjEntrada.getPerformativeInt() == ACLMessage.CANCEL) {
+                        fin = true;
+                    } else {
+                        if (msjEntrada.getSender().name.equals(NOMBRE_SERVIDOR)) {
+                            receptor = NOMBRE_CONTROLADOR;
+                            System.out.println("le envia al controlador");
+                        } else {
+                            receptor = NOMBRE_SERVIDOR;
+                            System.out.println("le envia al servidor");
+                        }
+                        System.out.println("antes de enviar");
+                        enviar(receptor, msjEntrada.getPerformativeInt(), msjEntrada.getContent());
+                    }
+               // }
             } catch (InterruptedException ex) {
                 System.err.println("Agente, error de comunicación");
             }
-        }        
+        }
     }
-    
-    public void finalize(){
+
+    public void finalize() {
         super.finalize();
     }
-    
+
     private void enviar(String receptor, int performativa, String contenido) {
         //System.out.println("\nEn el enviar mensaje del vehiculo \n");
         msjSalida = new ACLMessage();
@@ -77,12 +84,12 @@ public class GugelVehicle extends SingleAgent {
         msjSalida.setReceiver(new AgentID(receptor));
         msjSalida.setPerformative(performativa);
         msjSalida.setContent(contenido);
-        
-        if(receptor == NOMBRE_SERVIDOR) {
+
+        if (receptor == NOMBRE_SERVIDOR) {
             msjSalida.setInReplyTo(reply);
             msjSalida.setConversationId(conversationID);
-        }        
-        //System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " Contenido: " + contenido + "ConvID: " + conversationID + "Reply: " + reply);
+        }
+        System.out.println(getName() + " enviando mensaje a " + receptor + " del tipo " + msjSalida.getPerformative() + " Contenido: " + contenido + "ConvID: " + conversationID + "Reply: " + reply);
         this.send(msjSalida);
-    }      
+    }
 }

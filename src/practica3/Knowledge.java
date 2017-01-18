@@ -2,6 +2,8 @@ package practica3;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import edu.emory.mathcs.backport.java.util.Arrays;
+import jason.functions.Min;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
  * @version 3.0
  */
 public class Knowledge {
+
     private static Knowledge instance = null;
     private int map_id;
     private int[][] mapMatrix;
@@ -23,7 +26,7 @@ public class Knowledge {
     private ArrayList<AgentPosition> agentsPosition = new ArrayList<AgentPosition>();
     private ArrayList<Cell> objetives = new ArrayList<Cell>();
 
-    private final static int MIN_SIDE = 20;
+    private final static int MIN_SIDE = 100;
     private final static String DB_NAME = "knowledge";
     public final static int STATE_FREE = 0;
     public final static int STATE_WALL = 1;
@@ -38,46 +41,47 @@ public class Knowledge {
      * @param map_id El identificador del número de mapa que vamos a usar
      * @return La instancia de la BD
      */
-    public static Knowledge getDB(int map_id){
-        if(instance == null){
+    public static Knowledge getDB(int map_id) {
+        if (instance == null) {
             instance = new Knowledge(map_id);
-        }else{ instance.setMapID(map_id); }
+        } else {
+            instance.setMapID(map_id);
+        }
         return instance;
     }
 
     /**
      * Método que devuelve un Statement para realizar una acción en la BDG
-     * 
+     *
      * @return statement Un objeto Statement para realizar la consulta
      */
-    private Statement getStatement(){
+    private Statement getStatement() {
         Statement statement = null;
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:"+ DB_NAME +".db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + DB_NAME + ".db");
             statement = connection.createStatement();
             statement.setQueryTimeout(30);
-        }catch(SQLException error){
+        } catch (SQLException error) {
             System.err.println("Error en la creación de la conexión");
             System.err.println(error);
-        }finally{
+        } finally {
             return statement;
         }
     }
 
     /**
-     * Método para ejecutar una consulta en la BD
-     * Este método debe de usarse cuando es una consulta única.
-     * Nunca debe de usarse dentro de un bucle ya que una vez ejecuta la consulta 
-     * cierra la conexión con la BD.
+     * Método para ejecutar una consulta en la BD Este método debe de usarse
+     * cuando es una consulta única. Nunca debe de usarse dentro de un bucle ya
+     * que una vez ejecuta la consulta cierra la conexión con la BD.
      *
      * @param query Consulta SQL a ejecutar
      */
-    private void executeUpdate(String query){
-        try{
+    private void executeUpdate(String query) {
+        try {
             Statement st = getStatement();
             st.executeUpdate(query);
             this.connection.close();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error en la ejecución de la consulta");
             System.err.println(e);
         }
@@ -85,15 +89,16 @@ public class Knowledge {
 
     /**
      * Comprueba si un valor está contenido en la matriz
+     *
      * @param value Valor a comprobar
      * @return true si está
      * @autor Raúl López Arévalo
      */
-    public boolean contains( int value ){
+    public boolean contains(int value) {
         boolean exist_value = false;
-        for( int i = 0; i < this.mapMatrix.length && !exist_value; i++){
-            for ( int j = 0; j < this.mapMatrix.length && !exist_value; j++){
-                if( this.mapMatrix[i][j] == value ){
+        for (int i = 0; i < this.mapMatrix.length && !exist_value; i++) {
+            for (int j = 0; j < this.mapMatrix.length && !exist_value; j++) {
+                if (this.mapMatrix[i][j] == value) {
                     exist_value = true;
                 }
             }
@@ -107,7 +112,7 @@ public class Knowledge {
      * @return Tamaño del mapa
      * @autor Raúl López Arévalo
      */
-    public int mapSize(){
+    public int mapSize() {
         return this.mapMatrix.length;
     }
 
@@ -116,7 +121,7 @@ public class Knowledge {
      *
      * @param id ID correspondiente al mapa a usar
      */
-    private void setMapID(int id){
+    private void setMapID(int id) {
         this.map_id = id;
     }
 
@@ -129,12 +134,12 @@ public class Knowledge {
         Connection connection = null;
         this.setMapID(map_id);
         try {
-            String creteTableSQL = "CREATE TABLE IF NOT EXISTS Mapa_" + this.map_id + " ("+
-                "pos_x INTEGER NOT NULL,"+
-                "pos_y INTEGER NOT NULL,"+
-                "contains INTEGER DEFAULT 0,"+
-                "CONSTRAINT pk_posicion PRIMARY KEY (pos_x, pos_y)"+
-            ")";
+            String creteTableSQL = "CREATE TABLE IF NOT EXISTS Mapa_" + this.map_id + " ("
+                    + "pos_x INTEGER NOT NULL,"
+                    + "pos_y INTEGER NOT NULL,"
+                    + "contains INTEGER DEFAULT 0,"
+                    + "CONSTRAINT pk_posicion PRIMARY KEY (pos_x, pos_y)"
+                    + ")";
 
             this.executeUpdate(creteTableSQL);
             this.createMatrix();
@@ -143,8 +148,10 @@ public class Knowledge {
             System.err.println(e);
         } finally {
             try {
-                if(connection != null) connection.close();
-            } catch(SQLException e) {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
                 // connection close failed.
                 System.err.println(e);
             }
@@ -152,8 +159,8 @@ public class Knowledge {
     }
 
     /**
-     *  Este método es el encargado de recibir los datos obtenidos por el agente y
-     *  añadirlos a su conocimiento
+     * Este método es el encargado de recibir los datos obtenidos por el agente
+     * y añadirlos a su conocimiento
      *
      * @param agentName Nombre del agente a actualizar
      * @param radar JsonObject que contiene la información del radar
@@ -161,7 +168,7 @@ public class Knowledge {
      * @param vision Rago de vision del agente
      */
     public void updateStatus(String agentName, int[][] radar, Cell gps, int vision) {
-        try{
+        try {
             // Guardamos la posición actual del agente
             int position_x, position_y;
             position_x = gps.getPosX();
@@ -174,20 +181,20 @@ public class Knowledge {
 
             for (int i = 0; i < vision; i++) {
                 for (int j = 0; j < vision; j++) {
-                    int pos_x = (position_x -(vision/2) + j);
-                    int pos_y = (position_y -(vision/2) + i);
+                    int pos_x = (position_x - (vision / 2) + j);
+                    int pos_y = (position_y - (vision / 2) + i);
                     int radarValue = radar[j][i];
 
-                    if(radarValue == Knowledge.STATE_GOAL){
+                    if (radarValue == Knowledge.STATE_GOAL) {
                         this.updateObjetive(new Cell(pos_x, pos_y));
                     }
 
-                    if(pos_x >= 0 && pos_y >= 0){
-                        String querySQL = "INSERT OR REPLACE INTO Mapa_"+this.map_id+"(pos_x, pos_y, contains) VALUES("
+                    if (pos_x >= 0 && pos_y >= 0) {
+                        String querySQL = "INSERT OR REPLACE INTO Mapa_" + this.map_id + "(pos_x, pos_y, contains) VALUES("
                                 + pos_x + ", "
                                 + pos_y + ", "
                                 + radarValue
-                            +");";
+                                + ");";
                         //Ejecutamos la consulta
                         statement.executeUpdate(querySQL);
 
@@ -196,13 +203,15 @@ public class Knowledge {
                     }
                 }
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error en la actualización");
             System.err.println(e);
         } finally {
             try {
-                if(connection != null) this.connection.close();
-            } catch(SQLException e) {
+                if (connection != null) {
+                    this.connection.close();
+                }
+            } catch (SQLException e) {
                 // connection close failed.
                 System.err.println(e);
             }
@@ -210,10 +219,10 @@ public class Knowledge {
     }
 
     /**
-     * Este método es el encargado de recibir los datos obtenidos por el agente y
-     * añadirlos a su conocimiento.
-     * Método de retrocompatibilidad con la versión anterior
-     * 
+     * Este método es el encargado de recibir los datos obtenidos por el agente
+     * y añadirlos a su conocimiento. Método de retrocompatibilidad con la
+     * versión anterior
+     *
      * @deprecated
      * @param agentName Nombre del agente a actualizar
      * @param radar JsonObject que contiene la información del radar
@@ -228,21 +237,21 @@ public class Knowledge {
     }
 
     /**
-     * Este método actualiza un valor de estado de una coordenada.
-     * En caso necesario redimensiona la matriz.
+     * Este método actualiza un valor de estado de una coordenada. En caso
+     * necesario redimensiona la matriz.
      *
      * @param posx int Posición x de la coordenada
      * @param posy int Posición y de la coordenada
      * @param value int Valor a actualizar
      */
-    private void updateMatrix(int posx, int posy, int value){
+    private void updateMatrix(int posx, int posy, int value) {
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
 
-        if(maxWidth > this.mapSize()){
+        if (maxWidth > this.mapSize()) {
             int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[maxWidth][maxWidth];
-            for(int i = 0; i < tmp.length; i++){
-                for(int j = 0; j < tmp[i].length; j++){
+            for (int i = 0; i < tmp.length; i++) {
+                for (int j = 0; j < tmp[i].length; j++) {
                     this.mapMatrix[i][j] = tmp[i][j];
                 }
             }
@@ -252,8 +261,9 @@ public class Knowledge {
     }
 
     /**
-     * Este método se encarga de crear la matriz, si tiene datos carga los datos.
-     * En el caso de que todavía no hubiese datos inicializa la matriz con valores por defecto.
+     * Este método se encarga de crear la matriz, si tiene datos carga los
+     * datos. En el caso de que todavía no hubiese datos inicializa la matriz
+     * con valores por defecto.
      */
     private void createMatrix() {
         try {
@@ -269,20 +279,20 @@ public class Knowledge {
             sqlCount = "SELECT COUNT(*) AS count FROM Mapa_" + this.map_id + ";";
 
             rs = statement.executeQuery(sqlCount);
-            while(rs.next()){
+            while (rs.next()) {
                 matrix_size = rs.getInt("count");
             }
 
             output.concat("\nCantidad de celdas conocidas: " + matrix_size);
 
-            if(matrix_size > 0) {
+            if (matrix_size > 0) {
                 matrix_size = 0;
                 // Calculamos el tamaño máximo de la matriz
                 // Por posición X
                 sqlCount = "SELECT MAX(pos_x) AS count FROM Mapa_" + this.map_id + ";";
 
                 rs = statement.executeQuery(sqlCount);
-                while(rs.next()){
+                while (rs.next()) {
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
@@ -290,7 +300,7 @@ public class Knowledge {
                 sqlCount = "SELECT MAX(pos_y) AS count FROM Mapa_" + this.map_id + ";";
 
                 rs = statement.executeQuery(sqlCount);
-                while(rs.next()){
+                while (rs.next()) {
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
@@ -298,30 +308,42 @@ public class Knowledge {
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
-
+                    for(int i = 0; i < this.mapSize(); i++){ 
+                    /*for(int j = 0; j < this.mapSize(); j++){ 
+                        this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN; 
+                    }*/ 
+                    Arrays.fill(this.mapMatrix[i], Knowledge.STATE_UNKNOWN); 
+                } 
                 // Obtenemos la información almacenada y la volcamos en la matriz
-                rs = statement.executeQuery("SELECT * FROM Mapa_"+this.map_id +";");
-                while(rs.next()){
+                rs = statement.executeQuery("SELECT * FROM Mapa_" + this.map_id + ";");
+                while (rs.next()) {
                     int contain = rs.getInt("contains");
                     int pos_x = rs.getInt("pos_x");
                     int pos_y = rs.getInt("pos_y");
 
-                    if(contain == Knowledge.STATE_GOAL) {
+                    if (contain == Knowledge.STATE_GOAL) {
                         this.updateObjetive(new Cell(pos_x, pos_y));
                     }
                     this.mapMatrix[pos_x][pos_y] = contain;
                 }
-            }else{
+            } else {
                 output.concat("Creamos matriz desde cero");
 
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
+                for(int i=0; i < MIN_SIDE; i++){
+                    for(int j=0; j < MIN_SIDE; j++){
+                        this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN;
+                    }
+                }
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println(e);
         } finally {
             try {
-                if(connection != null) connection.close();
-            } catch(SQLException e) {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
                 // connection close failed.
                 System.err.println(e);
             }
@@ -331,34 +353,27 @@ public class Knowledge {
     /**
      * Genera el mapa conocido por el agente
      */
-    public String drawMapToString(){
+    public String drawMapToString() {
         String output = "";
-        for(int i = 0; i < this.mapMatrix.length; i++){
+        for (int i = 0; i < this.mapMatrix.length; i++) {
             for (int j = 0; j < this.mapMatrix[i].length; j++) {
                 int value = this.mapMatrix[i][j];
-                if(j == 0) output += "▉▉▉";
-                if(isAnyAgentInPosition(i, j)) output += " ● ";
-                else{
-                    switch (value) {
-                        case Knowledge.STATE_FREE:
-                            output += " 0 ";
-                            break;
-                        case Knowledge.STATE_WALL:
-                            output += " 1 ";
-                            break;
-                        case Knowledge.STATE_GOAL:
-                            output += " 3 ";
-                            break;
-                        case Knowledge.STATE_WORLD_END:
-                            output += " 2 ";
-                            break;
-                        case Knowledge.STATE_UNKNOWN:
-                            output += " 5 ";
-                            break; 
-                    }
+                if( value == 5 ){
+                    System.out.print("?");
+                }else if( value == 4 ){
+                    System.out.print("A");
+                }else if( value == 3 ){
+                    System.out.print("X");
+                }else if( value == 2 ){
+                    System.out.print("#");
+                }else if( value == 1 ){
+                    System.out.print("#");
+                }else if( value == 0 ){
+                    System.out.print(".");
                 }
+                //System.out.print(value+" ");
             }
-            output += "\n";
+            System.out.println("");
         }
         return output;
     }
@@ -366,7 +381,7 @@ public class Knowledge {
     /**
      * Dibuja el mapa en consola
      */
-    public void drawMap(){
+    public void drawMap() {
         System.out.println("-----------------------------------------------------------------------------------------------------");
         System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
         System.out.println("-----------------------------------------------------------------------------------------------------");
@@ -375,48 +390,48 @@ public class Knowledge {
     }
 
     /**
-     * Devuelve el contenido en el mapa conocido del agente.
-     * En caso de que la posición pedida esté fuera del conocimiento devuelve STATE_WALL
+     * Devuelve el contenido en el mapa conocido del agente. En caso de que la
+     * posición pedida esté fuera del conocimiento devuelve STATE_WALL
      *
      * @param px Posición X a obtener
      * @param py Posición Y a obtener
      * @return int Que contiene el contenido en las coordenadas pedidas
      */
-    public int getContent(int px, int py){
-        return (px < 0 || py < 0 || px > this.mapSize()  || py > this.mapSize()) ? this.STATE_UNKNOWN : this.mapMatrix[px][py];
+    public int getContent(int px, int py) {
+        return (px < 0 || py < 0 || px > this.mapSize() || py > this.mapSize()) ? this.STATE_UNKNOWN : this.mapMatrix[px][py];
     }
 
     /**
-     * Devuelve una copia de la matriz de Knowledge incluyendo los todos los vehículos
-     * 
+     * Devuelve una copia de la matriz de Knowledge incluyendo los todos los
+     * vehículos
+     *
      * @return Matriz copia de la matriz almacenada en Knowledge
      */
-    public int[][] getKnowledgeMatrix(){
+    public int[][] getKnowledgeMatrix() {
         int[][] cloneMatrix = mapMatrix.clone();
-        for(AgentPosition ap: this.agentsPosition){
+        for (AgentPosition ap : this.agentsPosition) {
             cloneMatrix[ap.getPosition().getPosX()][ap.getPosition().getPosY()] = STATE_VEHICLE;
         }
         return cloneMatrix;
     }
 
-
     /**
-     * Método que actualiza la posición de un agente. 
-     * En el caso de que ese agente no esté en la lista de agentes lo incluye
+     * Método que actualiza la posición de un agente. En el caso de que ese
+     * agente no esté en la lista de agentes lo incluye
      *
      * @param agentName Nombre del agente a actualizar/añadir
      * @param posx Posición X a actualizar
      * @param posy Posición Y a actualizar
      */
-    private void setAgentPosition(String agentName, int posx, int posy){
+    private void setAgentPosition(String agentName, int posx, int posy) {
         AgentPosition aPos = new AgentPosition(agentName, posx, posy);
         int index = agentsPosition.indexOf(aPos);
 
-        if(index != -1){
+        if (index != -1) {
             agentsPosition.get(index).changePosition(posx, posy);
-        }else{
+        } else {
             agentsPosition.add(aPos);
-        }        
+        }
     }
 
     /**
@@ -426,11 +441,11 @@ public class Knowledge {
      * @param posy Posición Y a comprobar
      * @return Devuelve true en caso de que en la posición dada exista un agente
      */
-    public boolean isAnyAgentInPosition(int posx, int posy){
+    public boolean isAnyAgentInPosition(int posx, int posy) {
         boolean isInPosition = false;
 
-        for(AgentPosition aPos: agentsPosition){
-            if(aPos.isIn(posx, posy)){
+        for (AgentPosition aPos : agentsPosition) {
+            if (aPos.isIn(posx, posy)) {
                 isInPosition = true;
                 break;
             }
@@ -443,8 +458,8 @@ public class Knowledge {
      *
      * @param objetive Celda en la que se encuentra el objetivo
      */
-    private void updateObjetive(Cell objetive){
-        if(!objetives.contains(objetive)){
+    private void updateObjetive(Cell objetive) {
+        if (!objetives.contains(objetive)) {
             objetives.add(objetive);
         }
     }
@@ -454,7 +469,7 @@ public class Knowledge {
      *
      * @return Un {@link ArrayList} con los objetivos
      */
-    public ArrayList<Cell> getObjetives(){
+    public ArrayList<Cell> getObjetives() {
         return objetives;
     }
 
@@ -463,7 +478,7 @@ public class Knowledge {
      *
      * @param gps JsonObject que contiene los datos del gps
      */
-    public static Cell getGPSData(JsonObject gps){
+    public static Cell getGPSData(JsonObject gps) {
         Cell position = new Cell();
 
         JsonObject gpsObject = gps.get("gps").asObject();
@@ -477,7 +492,7 @@ public class Knowledge {
      *
      * @param gps JsonObject que contiene los datos del radar
      */
-    public static ArrayList<Integer> getRadarData(JsonObject radar){
+    public static ArrayList<Integer> getRadarData(JsonObject radar) {
         JsonArray radarJson = radar.get("radar").asArray();
         ArrayList<Integer> radarMatrix = new ArrayList<>();
 
@@ -493,24 +508,26 @@ public class Knowledge {
      *
      * @param gps JsonObject que contiene los datos del radar
      */
-    public static int[][] getRadarMatrix(JsonObject radar, int vision){
+    public static int[][] getRadarMatrix(JsonObject radar, int vision) {
         ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
         int[][] matrix = new int[vision][vision];
 
         for (int i = 0; i < vision; i++) {
-            for(int j = 0; j < vision; j++){
-                matrix[i][j] = radarArray.get((j*vision)+i);
-            }            
+            for (int j = 0; j < vision; j++) {
+                matrix[i][j] = radarArray.get((j * vision) + i);
+            }
         }
         return matrix;
     }
 
     /**
-     * Clase envoltorio para poder guardar todas las posiciones de los agentes actuales
+     * Clase envoltorio para poder guardar todas las posiciones de los agentes
+     * actuales
      *
      * @author Samuel Peregrina Morillas
      */
     class AgentPosition {
+
         private String agentName;
         private Cell position;
 
@@ -520,7 +537,7 @@ public class Knowledge {
          * @param name Nombre único del agente para identificarlo
          * @param position Posición del agente actualmente
          */
-        public AgentPosition(String name, Cell position){
+        public AgentPosition(String name, Cell position) {
             this.agentName = name;
             this.position = position;
         }
@@ -532,7 +549,7 @@ public class Knowledge {
          * @param posx Posición X que ocupa el agente
          * @param posy Posición Y que ocupa el agente
          */
-        public AgentPosition(String name, int posx, int posy){
+        public AgentPosition(String name, int posx, int posy) {
             this.agentName = name;
             this.position = new Cell(posx, posy, STATE_VEHICLE);
         }
@@ -542,36 +559,37 @@ public class Knowledge {
          *
          * @return El nombre del agente
          */
-        public String getAgentName(){
+        public String getAgentName() {
             return this.agentName;
         }
 
         /**
          * Devuelve la posición del Agente
+         *
          * @return Cell correspondiente a la posición del agente
          */
-        public Cell getPosition(){
+        public Cell getPosition() {
             return position;
         }
 
         /**
          * Comprueba si un agente ocupa una posición específica
-         * 
+         *
          * @param posx Posición X a comprobar
          * @param posy Posición Y a comprobar
          * @return true en caso de que ocupe la posición
          */
-        public boolean isIn(int posx, int posy){
+        public boolean isIn(int posx, int posy) {
             return this.position.isPosition(posx, posy);
         }
 
         /**
-        * Comprueba si es un agente concreto
-        *
-        * @param name Nombre a comprobar
-        * @return True si es el agente a comprobar
-        */
-        public boolean isAgent(String name){
+         * Comprueba si es un agente concreto
+         *
+         * @param name Nombre a comprobar
+         * @return True si es el agente a comprobar
+         */
+        public boolean isAgent(String name) {
             return this.agentName == name;
         }
 
@@ -581,14 +599,18 @@ public class Knowledge {
          * @param posx Nueva posición X a ocupar
          * @param posy Nueva posición Y a ocupar
          */
-        public void changePosition(int posy, int posx){
+        public void changePosition(int posy, int posx) {
             this.position.set(posx, posy, STATE_VEHICLE);
         }
 
         @Override
-        public boolean equals(Object object){
-            if(object == null) return false;
-            if(!(object instanceof AgentPosition)) return false;
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            if (!(object instanceof AgentPosition)) {
+                return false;
+            }
             AgentPosition aPos = (AgentPosition) object;
             return this.isAgent(aPos.getAgentName());
         }

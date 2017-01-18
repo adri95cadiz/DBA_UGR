@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class PropiedadesVehicle {
     
     private Cell gps;
+    private int [] posInicial = new int [2];
     private int bateria;
     private boolean llegado;
     private int[][] radar;
@@ -118,4 +119,9 @@ public class PropiedadesVehicle {
         llegado = percepcion.getLlegado();
         radar = percepcion.getRadar();
     }    
+
+    public void setPosInicial(Cell posInicial) {
+        this.posInicial[0] = posInicial.getPosX();
+        this.posInicial[1] = posInicial.getPosY();
+    }
 }

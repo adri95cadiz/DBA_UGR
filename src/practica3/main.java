@@ -13,11 +13,11 @@ import es.upv.dsic.gti_ia.core.AgentsConnection;
 public class main {
   private static final String SERVERPATH = "isg2.ugr.es";
   private static final int PORT = 6000;
-
+  public static final int MAPA = 1;
   public static void main(String[] args){
     Controlador control = null;
     GugelVehicle[] vehiculos = new GugelVehicle[4];
-    String mundo = "map1";
+    String mundo = "map"+MAPA;
     
     AgentsConnection.connect(SERVERPATH,PORT, "Haldus", "Esquivel", "Pegaso", false);
     try {
