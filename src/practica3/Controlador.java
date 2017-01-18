@@ -464,7 +464,10 @@ public class Controlador extends SingleAgent {
             Ya no estamos buscando por lo que conocemos el punto.  
             Movemos el resto de vehiculos que estaban parados sin explorar.
              */
-            vehiculoElegido = vehiculosEsperando.get(0); // Si es que hay alguno porque pueden ser todos coche
+            if(vehiculosEsperando.size() > 0)
+                vehiculoElegido = vehiculosEsperando.get(0); // Si es que hay alguno porque pueden ser todos coche
+            else
+                vehiculoElegido = vehiculosExploradores.get(0);
         }
         System.out.println("termina eleccion vehiculo");
 
