@@ -2,6 +2,7 @@ package practica3;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,10 +21,10 @@ public class Knowledge {
     private int map_id;
     private int[][] mapMatrix;
     private Connection connection = null;
-    private ArrayList<AgentPosition> agentsPosition = new ArrayList<AgentPosition>();
-    private ArrayList<Cell> objetives = new ArrayList<Cell>();
+    private ArrayList<AgentPosition> agentsPosition = new ArrayList<>();
+    private ArrayList<Cell> objetives = new ArrayList<>();
 
-    private final static int MIN_SIDE = 20;
+    private final static int MIN_SIDE = 100;
     private final static String DB_NAME = "knowledge";
     public final static int STATE_FREE = 0;
     public final static int STATE_WALL = 1;
@@ -55,13 +56,11 @@ public class Knowledge {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:"+ DB_NAME +".db");
             statement = connection.createStatement();
-            statement.setQueryTimeout(30);
         }catch(SQLException error){
             System.err.println("Error en la creación de la conexión");
             System.err.println(error);
-        }finally{
-            return statement;
         }
+        return statement;
     }
 
     /**
@@ -237,17 +236,23 @@ public class Knowledge {
      */
     private void updateMatrix(int posx, int posy, int value){
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
+        
+        System.out.println("Máximo actual anterior: " + this.mapSize());
+        System.out.println("Valor X: " + posx + " | Valor Y: " + posy);
 
-        if(maxWidth > this.mapSize()){
+        if(maxWidth >= this.mapSize()){
             int[][] tmp = this.mapMatrix;
-            this.mapMatrix = new int[maxWidth][maxWidth];
+            this.mapMatrix = new int[maxWidth+1][maxWidth+1];
+            for(int i = 0; i < maxWidth; i++){
+                Arrays.fill(this.mapMatrix[i], Knowledge.STATE_UNKNOWN);
+            }
             for(int i = 0; i < tmp.length; i++){
                 for(int j = 0; j < tmp[i].length; j++){
                     this.mapMatrix[i][j] = tmp[i][j];
                 }
             }
         }
-
+        System.out.println("Máximo actual posterior: " + this.mapSize());
         this.mapMatrix[posx][posy] = value;
     }
 
@@ -273,7 +278,7 @@ public class Knowledge {
                 matrix_size = rs.getInt("count");
             }
 
-            output.concat("\nCantidad de celdas conocidas: " + matrix_size);
+            System.out.println("\nCantidad de celdas conocidas: " + matrix_size);
 
             if(matrix_size > 0) {
                 matrix_size = 0;
@@ -294,7 +299,7 @@ public class Knowledge {
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
-                output.concat("El máximo de la matriz es: " + matrix_size);
+                System.out.println("El máximo de la matriz es: " + matrix_size);
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
@@ -312,9 +317,16 @@ public class Knowledge {
                     this.mapMatrix[pos_x][pos_y] = contain;
                 }
             }else{
-                output.concat("Creamos matriz desde cero");
+                System.out.println("Creamos matriz desde cero");
 
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
+                for(int i = 0; i < this.mapSize(); i++){
+                    /*for(int j = 0; j < this.mapSize(); j++){
+                        this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN;
+                    }*/
+                    Arrays.fill(this.mapMatrix[i], Knowledge.STATE_UNKNOWN);
+                }
+                
             }
         } catch(SQLException e){
             System.err.println(e);
