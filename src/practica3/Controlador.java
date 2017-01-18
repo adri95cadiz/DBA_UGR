@@ -597,32 +597,32 @@ public class Controlador extends SingleAgent {
             //System.out.println("OBJETIVO ID ------------> ");
             //System.out.println(objetivo_id);*/
             // Actualizar el objeto camino con el nuevo radar y la nueva pos final
-            System.out.println("\n\t\tSENSOR DEL AGENTE");
+            /*System.out.println("\n\t\tSENSOR DEL AGENTE");
             for (int i = 0; i < p.getRadar().length; i++) {
                 for (int j = 0; j < p.getRadar().length; j++) {
                     System.out.print(p.getRadar()[i][j] + " ");
                 }
                 System.out.println("");
-            }
+            }*/
             //eliminarObjetivosInaccesibles(p.getRadar().clone(), alcance);
-            System.out.println("POSIBLES OBJETIVOS");
+            /*.out.println("POSIBLES OBJETIVOS");
             for (int i = 0; i < p.getRadar().length; i++) {
                 for (int j = 0; j < p.getRadar().length; j++) {
                     System.out.print(posiblesObjetivos[i][j]);
                 }
                 System.out.println("");
-            }
-            System.out.println("\n\t\tSENSOR DEL AGENTE");
+            }*/
+            /*System.out.println("\n\t\tSENSOR DEL AGENTE");
             for (int i = 0; i < p.getRadar().length; i++) {
                 for (int j = 0; j < p.getRadar().length; j++) {
                     System.out.print(p.getRadar()[i][j] + " ");
                 }
                 System.out.println("");
-            }
+            }*/
 
-            System.out.println("antes de calcular el nuevo camino");
+            //System.out.println("antes de calcular el nuevo camino");
             camino = new Path(posiblesObjetivos, (int) floor((alcance * alcance) / 2.0), objetivo_id);
-            System.out.println("despues de calcular el nuevo camino");
+            //System.out.println("despues de calcular el nuevo camino");
             // camino.changeObjetive(objetivo_id);
             // camino.changeStart((int) floor((alcance * alcance) / 2.0));
             ////System.out.println("CAMBIOS REALIZADOS, OBJETIVO Y MATRIZ");
@@ -638,15 +638,15 @@ public class Controlador extends SingleAgent {
          * se haya completado el path se vuelve a calcular uno
          */
         exist_path = true;
-        System.out.println("CAMINO A SEGUIR:");
+        //System.out.println("CAMINO A SEGUIR:");
         camino.printPath();
         //if(camino.getPath().size() > 1){
-        System.out.println("se mete en camino");
-        System.out.println("primro");
+        //System.out.println("se mete en camino");
+        //System.out.println("primro");
         int primera_casilla = path_local.get(0);
-        System.out.println("segundo");
+        //System.out.println("segundo");
         int segunda_casilla = path_local.get(1);
-        System.out.println("calcula mov");
+        //System.out.println("calcula mov");
         int obj_prox_mov = primera_casilla - segunda_casilla;
         decision = pathLocalObj(obj_prox_mov, radar);
         System.out.println("Mueve a " + decision);
@@ -701,10 +701,12 @@ public class Controlador extends SingleAgent {
             exist_path = false;
             System.out.println("pathlocal == 1");
         }
-        System.out.println("updateando matrix");
+        p.getMatrix().ImprimirLocal();
+        System.out.println("Updateando matrix");
         p.updateMatrix(); 
         ////System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
-        System.out.println("incrementar paso");
+        System.out.println("Fin update");        
+        //System.out.println("incrementar paso");
         p.darPaso();
         /*System.out.println("\n\t\tSENSOR DEL AGENTE");
         for(int i=0; i < p.getRadar().length; i++){
@@ -713,12 +715,12 @@ public class Controlador extends SingleAgent {
             }
             System.out.println("");
         }*/
-        System.out.println("\nimprimir matriz local");
-        p.getMatrix().ImprimirLocal();
+        /*System.out.println("\nimprimir matriz local");
+        p.getMatrix().ImprimirLocal();*/
         //System.out.println("\nImprimir matriz combined");
         //p.getMatrix().ImprimirGetCombined();
-        System.out.println("\nimprimir matriz knowledge");
-        System.out.println(p.getMatrix().ImprimirKnow());
+        /*System.out.println("\nimprimir matriz knowledge");
+        System.out.println(p.getMatrix().ImprimirKnow());*/
         //System.out.println("\t\tPaso numero: " + p.getPasos());
 
         /*
@@ -729,7 +731,7 @@ public class Controlador extends SingleAgent {
             //  estadoActual = Estado.FINALIZAR;
             faseFinalizar();
         }*/
-        System.out.println("fin fase mover");
+        //System.out.println("fin fase mover");
         monitorizarVehiculos();
         miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
         miVentana.setMapaVehiculo(p.getNombre(), p.getMatrix().drawMapToString());
@@ -767,18 +769,18 @@ public class Controlador extends SingleAgent {
      * @author Adrian Portillo Sanchez
      */
     private void eliminarObjetivosInaccesiblesRec(int[][] radar, int alcance, int row, int col) {
-        System.out.print("eliminar inaccesibles: "+row+col);
+        //System.out.print("eliminar inaccesibles: "+row+col);
         if (row < 0 || row > alcance - 1 || col < 0 || col > alcance - 1) {                             //Se encuentra fuera de los límites
-            System.out.println("fuera de limites "+row+col);
+            //System.out.println("fuera de limites "+row+col);
         } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {     //Aunque dentro de los límites ya ha sido recorrida
         
         } else {
             int pos_inicial = (int) floor(alcance / 2.0);
             if ((row != pos_inicial || col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4 || (radar[row][col] == 3 && Knowledge.getDB(MAPA).isAnyAgentInPosition(row, col)))) {
                 posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
-                System.out.println("inaccesible "+row+col);
+                //System.out.println("inaccesible "+row+col);
             } else {
-                System.out.println("accesible "+row+col);
+                //System.out.println("accesible "+row+col);
                 posiblesObjetivos[row][col] = 1;                                                    //Es libre, alcanzable, y dentro de los límites    
                 eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col - 1);	//Superior izquierdo.
                 eliminarObjetivosInaccesiblesRec(radar, alcance, row - 1, col);         //Superior centro.
