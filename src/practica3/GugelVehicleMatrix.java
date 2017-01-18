@@ -200,8 +200,6 @@ class GugelVehicleMatrix {
          * @param gps Objeto gps que contiene las coordenadas del agente
          */
         public void updateAgent(int[][] radar, Cell gps) {
-            System.out.println("agentName: "+agentName);
-            System.out.println("vision"+ vision);
             db.updateStatus(agentName, radar, gps, vision);
             this.turn++;
             this.position = gps;
