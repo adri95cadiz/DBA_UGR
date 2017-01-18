@@ -67,7 +67,6 @@ public class Knowledge {
         } finally {
             return statement;
         }
-        return statement;
     }
 
     /**
@@ -248,8 +247,8 @@ public class Knowledge {
     private void updateMatrix(int posx, int posy, int value) {
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
         
-        System.out.println("Máximo actual anterior: " + this.mapSize());
-        System.out.println("Valor X: " + posx + " | Valor Y: " + posy);
+        /*System.out.println("Máximo actual anterior: " + this.mapSize());
+        System.out.println("Valor X: " + posx + " | Valor Y: " + posy);*/
 
         if (maxWidth > this.mapSize()) {
             int[][] tmp = this.mapMatrix;
@@ -260,8 +259,8 @@ public class Knowledge {
                 }
             }
         }
-        System.out.println("Máximo actual posterior: " + this.mapSize());
-        this.mapMatrix[posx][posy] = value;
+        /*System.out.println("Máximo actual posterior: " + this.mapSize());
+        this.mapMatrix[posx][posy] = value;*/
     }
 
     /**
@@ -359,36 +358,40 @@ public class Knowledge {
      */
     public String drawMapToString() {
         String output = "";
-        for (int i = 0; i < this.mapMatrix.length; i++) {
-            for (int j = 0; j < this.mapMatrix[i].length; j++) {
-                int value = this.mapMatrix[i][j];  
-                if(j == 0) output += "▉▉▉";
-                if(isAnyAgentInPosition(i, j)) output += "A";
-                else{
-                    switch (value) {
-                        case Knowledge.STATE_FREE:
-                            output += "·";
-                            break;
-                        case Knowledge.STATE_WALL:
-                            output += "#";
-                            break;
-                        case Knowledge.STATE_GOAL:
-                            output += "X";
-                            break;
-                        case Knowledge.STATE_WORLD_END:
-                            output += "#";
-                            break;
-                        case Knowledge.STATE_UNKNOWN:
-                            output += "?";
-                            break; 
-                        case Knowledge.STATE_VEHICLE:
-                            output += "A";
-                            break; 
+        try{ 
+            for (int i = 0; i < this.mapMatrix.length; i++) {
+                for (int j = 0; j < this.mapMatrix[i].length; j++) {
+                    int value = this.mapMatrix[i][j];  
+                    if(j == 0) output += "▉▉▉";
+                    if(isAnyAgentInPosition(i, j)) output += "A";
+                    else{
+                        switch (value) {
+                            case Knowledge.STATE_FREE:
+                                output += "0";
+                                break;
+                            case Knowledge.STATE_WALL:
+                                output += "#";
+                                break;
+                            case Knowledge.STATE_GOAL:
+                                output += "X";
+                                break;
+                            case Knowledge.STATE_WORLD_END:
+                                output += "#";
+                                break;
+                            case Knowledge.STATE_UNKNOWN:
+                                output += "?";
+                                break; 
+                            case Knowledge.STATE_VEHICLE:
+                                output += "A";
+                                break; 
+                        }
                     }
+                    //System.out.print(value+" ");
                 }
-                //System.out.print(value+" ");
+                System.out.println("");
             }
-            System.out.println("");
+        } catch (Exception ex) {
+            System.out.println("Error de la matriz" + ex);
         }
         return output;
     }

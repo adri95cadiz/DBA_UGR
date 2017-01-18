@@ -94,7 +94,7 @@ class GugelVehicleMatrix {
                             output += " ? ";
                             break; 
                         default:
-                            output += value+" ";
+                            output += -value+" ";
                             break; 
                     }
                 }
@@ -242,7 +242,7 @@ class GugelVehicleMatrix {
             if(radar[(int) floor(vision / 2)][1] == 1) lim_sup_row = 2;
             if(radar[(int) floor(vision / 2)][4] == 1) lim_sup_row = 3;
             if(radar[(int) floor(vision / 2)][3] == 1) lim_sup_row = 2;*/
- /* for (int i = 0; i < vision; i++) {                
+            /* for (int i = 0; i < vision; i++) {                
                 for (int j = 0; j < vision; j++) {
                     int pos_x = (position.getPosX() -(vision/2) + j);
                     int pos_y = (position.getPosY() -(vision/2) + i);
@@ -253,7 +253,8 @@ class GugelVehicleMatrix {
                         this.localMatrix[pos_x][pos_y] = radarValue;
                     }*/
  /*   }
-            }*/int lim = ((int)Math.sqrt(radar.length)-1)/2;
+            }*/
+            int lim = ((int)Math.sqrt(radar.length)-1)/2;
             int max = radar.length-1;
             for (int i = 0; i < radar.length; i++) {
                 for (int j = 0; j < radar.length; j++) {
@@ -295,8 +296,8 @@ class GugelVehicleMatrix {
             int[][] map = db.getKnowledgeMatrix();
             for (int i = 0; i < db.mapSize(); i++) {
                 for (int j = 0; j < db.mapSize(); j++) {
-                    if (map[i][j] == db.STATE_FREE && this.localMatrix[i][j] > 0) {
-                        map[i][j] = (-1) * this.localMatrix[i][j];
+                    if (map[i][j] == db.STATE_FREE && this.localMatrix[i][j] < 0) {
+                        map[i][j] = this.localMatrix[i][j];
                     }
                 }
             }
