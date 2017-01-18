@@ -140,12 +140,14 @@ public class Controlador extends SingleAgent {
                             break;
                         case MOVER:
                             faseMover();
+                            subEstadoEncontrado = Estado.PERCIBIR;
                             break;
                         case REPOSTAR:
                             faseRepostar();
                             break;
                         case PERCIBIR:
                             fasePercibir();
+                            subEstadoEncontrado = Estado.ELECCION_VEHICULO;
                             break;
                     }
                     break;
@@ -701,7 +703,8 @@ public class Controlador extends SingleAgent {
             exist_path = false;
             System.out.println("pathlocal == 1");
         }
-        p.getMatrix().ImprimirLocal();
+        //p.getMatrix().ImprimirLocal();        
+        //System.out.println("GPS X: " + p.getGps()[0] + " Y: " + p.getGps()[1]);
         System.out.println("Updateando matrix");
         p.updateMatrix(); 
         ////System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
@@ -980,6 +983,7 @@ public class Controlador extends SingleAgent {
 
                 Percepcion percepcion = JSON.getPercepcion(mensaje.getContent());
                 percepcion.setNombreVehicle(nombreVehiculo);
+                //System.out.println("GPS X: " + percepcion.getGps().getPosX() + " Y: " + percepcion.getGps().getPosY());
                 propiedades.actualizarPercepcion(percepcion);
                 flota.put(nombreVehiculo, propiedades);
                 

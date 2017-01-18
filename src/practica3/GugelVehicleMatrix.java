@@ -256,8 +256,8 @@ class GugelVehicleMatrix {
             int max = radar.length-1;
             for (int i = 0; i < radar.length; i++) {
                 for (int j = 0; j < radar.length; j++) {
-                    int pos_x = (position.getPosX() -(vision/2) + i);
-                    int pos_y = (position.getPosY() -(vision/2) + j);
+                    int pos_x = (position.getPosX() - ((vision - 1) / 2) + i);
+                    int pos_y = (position.getPosY() - ((vision - 1) / 2) + j);
                     int radarValue = radar[i][j];
                     
                     if( (i == 0 && j == 0) || (i==max && j==max) || (j == 0 && i == max) || (j==max && i==0) ){
