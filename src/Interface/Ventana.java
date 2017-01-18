@@ -94,6 +94,14 @@ public class Ventana extends javax.swing.JFrame {
         jLabelAlcance3 = new javax.swing.JLabel();
         jLabelConsumos3 = new javax.swing.JLabel();
         jLabelPasos3 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        mapa1 = new javax.swing.JTextPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        mapa2 = new javax.swing.JTextPane();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        mapa3 = new javax.swing.JTextPane();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        mapa4 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -171,11 +179,11 @@ public class Ventana extends javax.swing.JFrame {
                             .addComponent(jLabel6)
                             .addComponent(jLabel7)
                             .addComponent(jLabel2))
-                        .addGap(8, 8, 8)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelRol, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                            .addComponent(jLabelCoordenadas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabelAlcance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabelCoordenadas, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                            .addComponent(jLabelRol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabelAlcance, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
@@ -271,7 +279,7 @@ public class Ventana extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
                             .addComponent(jLabel9))
-                        .addGap(8, 8, 8)
+                        .addGap(16, 16, 16)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelCoordenadas1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabelBateria1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -559,6 +567,26 @@ public class Ventana extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Coches", jPanel2);
 
+        mapa1.setBackground(new java.awt.Color(204, 255, 255));
+        jScrollPane2.setViewportView(mapa1);
+
+        jTabbedPane1.addTab("MapaVehículo1", jScrollPane2);
+
+        mapa2.setBackground(new java.awt.Color(204, 255, 255));
+        jScrollPane3.setViewportView(mapa2);
+
+        jTabbedPane1.addTab("MapaVehículo2", jScrollPane3);
+
+        mapa3.setBackground(new java.awt.Color(204, 255, 255));
+        jScrollPane4.setViewportView(mapa3);
+
+        jTabbedPane1.addTab("MapaVehículo3", jScrollPane4);
+
+        mapa4.setBackground(new java.awt.Color(204, 255, 255));
+        jScrollPane5.setViewportView(mapa4);
+
+        jTabbedPane1.addTab("MapaVehículo4", jScrollPane5);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -667,6 +695,25 @@ public class Ventana extends javax.swing.JFrame {
         //jTextPane1.setText("prueba");
         jTextPane1.setText(text);
     }
+    
+    public void setMapaVehiculo(String vehiculo, String text){
+        //jTextPane1.setText("prueba");
+        switch (vehiculo){
+            case "Vehiculo0":
+                mapa1.setText(text);
+                break;
+            case "Vehiculo1":
+                mapa2.setText(text);
+                break;
+            case "Vehiculo2":
+                mapa3.setText(text);
+                break;
+            case "Vehiculo3":    
+                mapa4.setText(text);
+                break;
+            default:
+        }                
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel10;
@@ -732,8 +779,16 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JTextPane mapa1;
+    private javax.swing.JTextPane mapa2;
+    private javax.swing.JTextPane mapa3;
+    private javax.swing.JTextPane mapa4;
     // End of variables declaration//GEN-END:variables
 }
 

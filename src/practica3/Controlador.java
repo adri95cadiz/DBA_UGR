@@ -74,7 +74,7 @@ public class Controlador extends SingleAgent {
         conversationID = null;
         objetivoEncontrado = false;
         puntoObjetivo = null;
-
+        miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
         cont = 0;
         cont2 = false;
     }
@@ -93,6 +93,7 @@ public class Controlador extends SingleAgent {
             switch (estadoActual) {
                 case INICIAL:
                     faseInicial();
+                    monitorizarVehiculos();
                     break;
                 case BUSCAR:
                     switch (subEstadoBuscando) {
@@ -183,7 +184,7 @@ public class Controlador extends SingleAgent {
         //System.out.println("\n\tINICIO CONVERSACION");
         String contenido = JSON.suscribirse(mundo);
         enviarMensaje(NOMBRE_SERVIDOR, ACLMessage.SUBSCRIBE, contenido);
-        ACLMessage mensaje = null;
+        ACLMessage mensaje;
         try {
             mensaje = receiveACLMessage();
 
@@ -240,19 +241,14 @@ public class Controlador extends SingleAgent {
                     percepcion.setNombreVehicle(nomVehiculo);
                     propiedades.setMatrix(new GugelVehicleMatrix(Knowledge.getDB(this.MAPA), nomVehiculo, propiedades.getRol().getAlcance()));
                     propiedades.actualizarPercepcion(percepcion);
-                    
-                    flota.put(nomVehiculo, propiedades);
-                    
-                    
-                    System.out.println("\nNombre vehiculo" + propiedades.getNombre());
+                    propiedades.updateMatrix();                    
+                    flota.put(nomVehiculo, propiedades);                    
+                    System.out.println("\nNombre: " + propiedades.getNombre());
                     System.out.println("\nRol: " + propiedades.getRol());
                     System.out.println("\nRadar: ");propiedades.printRadar();
-                    System.out.println("\nGPS: ");propiedades.printGps();
-                    
-                    
-                    
-                    
-                    //System.out.println(mensaje.getContent());
+                    System.out.println("\nGPS: ");propiedades.printGps();                    
+                    miVentana.setMapaVehiculo(propiedades.getNombre(), propiedades.getMatrix().drawMapToString());   
+                    System.out.println(mensaje.getContent());
                 }
             }
         } catch (InterruptedException ex) {
@@ -354,17 +350,17 @@ public class Controlador extends SingleAgent {
             vehiculoElegido = vehiculosExploradores.get(0);
             
             /***************** INFORMACION ************************************/
-            PropiedadesVehicle p = flota.get(vehiculoElegido);
+            /*/PropiedadesVehicle p = flota.get(vehiculoElegido);
             Rol r = p.getRol();
-            //System.out.println("\nPropiedades del vehiculo elegido: ");
-            //System.out.println("\nBateria: " + p.getBateria());
+            System.out.println("\nPropiedades del vehiculo elegido: ");
+            System.out.println("\nBateria: " + p.getBateria());
             int[] coord = new int[2];
             coord = p.getGps();
-            //System.out.println("\nRadar: "+ java.util.Arrays.deepToString(p.getRadar()));
-            //System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
-            //System.out.println("\nRol: " + p.getRol());
-            //System.out.println("\nAlcance: " + r.getAlcance());
-            //System.out.println("\nConsumno: " + r.getConsumo());
+            System.out.println("\nRadar: "+ java.util.Arrays.deepToString(p.getRadar()));
+            System.out.println("\ncoordenadas: " + coord[0] + "." + coord[1]);
+            System.out.println("\nRol: " + p.getRol());
+            System.out.println("\nAlcance: " + r.getAlcance());
+            System.out.println("\nConsumno: " + r.getConsumo());*/
             /******************************************************************/
 
         } else {
@@ -380,14 +376,15 @@ public class Controlador extends SingleAgent {
     /**
      * Elegimos el movimiento mas optimo para el vehiculo seleccionado.
      */
-    private void faseMover() {
-        //System.out.println("\n\tFASE MOVER.");
-        // Utilizar diferentes funciones Mover para el caso buscar.
+    /** 
+     * private void faseMover() {
+     *  //System.out.println("\n\tFASE MOVER.");
+     *  // Utilizar diferentes funciones Mover para el caso buscar.
         if (buscando) {
-            // Para el caso en el que aún no sabemos donde esta el punto objetivo.
+             Para el caso en el que aún no sabemos donde esta el punto objetivo.
             mover();
         } else {
-            // Ya sabemos el objetivo.
+             Ya sabemos el objetivo.
             mover();
         }
 
@@ -395,14 +392,14 @@ public class Controlador extends SingleAgent {
         movimiento, podría ser declarado aqui ya que es donde 
         se decide y pasarse en la función.
          */
-    }
+    //}
 
     /**
      * Ejecutamos el movimiento elegido para el vehiculo elegido.
      *
      * @author Luis Gallego Quero
      */
-    private void mover() {
+    private void faseMover() {
         /*
         Aquí se obtienen y muestran las propiedades del vehículo
         */
@@ -411,7 +408,7 @@ public class Controlador extends SingleAgent {
             Rol r = p.getRol();
             //System.out.println("Propiedades del vehiculo elegido: ");
             //System.out.println("\nBateria: " + p.getBateria());
-            int[] coord = new int[2];
+            int[] coord;
             coord = p.getGps();
             int[][] radar = p.getRadar();
             //System.out.println("\nRadar: "+ java.util.Arrays.deepToString(radar));
@@ -441,7 +438,7 @@ public class Controlador extends SingleAgent {
         
         
         //System.out.println("\n\t MOVER()");
-        String decision = " ";
+        String decision;
         cont++;
         System.out.println("contador: " + cont);
         
@@ -584,7 +581,7 @@ public class Controlador extends SingleAgent {
         //System.out.println("\t\tPaso numero: " + p.getPasos());
         monitorizarVehiculos();
         miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
-
+        miVentana.setMapaVehiculo(p.getNombre(), p.getMatrix().drawMapToString());
     }
   
     /**
@@ -957,7 +954,7 @@ public class Controlador extends SingleAgent {
         }
     }
 
-    /*private void objetivoEncontrado() {
+    /**private void objetivoEncontrado() {
         subEstadoBuscando = Estado.OBJETIVO_ENCONTRADO;
     }*/
     private void resultadoTraza(ACLMessage msjEntrada) throws FileNotFoundException, IOException {
@@ -978,7 +975,6 @@ public class Controlador extends SingleAgent {
         //System.out.println("Traza Guardada");
 
     }
-    
     
     /**
      * Recopilamos los datos de los vehiculos para mandarlo a la interfaz.

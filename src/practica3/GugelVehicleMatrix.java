@@ -65,7 +65,45 @@ class GugelVehicleMatrix {
             System.out.print("\n");
         }
     }
-
+    
+    public String drawMapToString(){
+        String output = "";
+        int[][] m = getVehicle().getCombinedKnowledge();
+        for(int i = 0; i < m.length; i++){
+            for (int j = 0; j < m.length; j++) {
+                int value = m[i][j];
+                if(j == 0) output += "▉▉▉";
+                else{
+                    switch (value) {
+                        case Knowledge.STATE_FREE:
+                            output += " 0 ";
+                            break;
+                        case Knowledge.STATE_VEHICLE:
+                            output += " A ";
+                            break;
+                        case Knowledge.STATE_WALL:
+                            output += " # ";
+                            break;
+                        case Knowledge.STATE_GOAL:
+                            output += " > ";
+                            break;
+                        case Knowledge.STATE_WORLD_END:
+                            output += " % ";
+                            break;
+                        case Knowledge.STATE_UNKNOWN:
+                            output += " ? ";
+                            break; 
+                        default:
+                            output += value+" ";
+                            break; 
+                    }
+                }
+            }
+            output += "\n";
+        }
+        return output;
+    }
+    
     /**
      * Devuelve una matriz resultante de combinar la matriz de {@link Knowledge}
      * y la matriz local del agente almacenada en {@link Vehicle}

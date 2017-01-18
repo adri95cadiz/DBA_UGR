@@ -356,16 +356,16 @@ public class Knowledge {
                             output += " 0 ";
                             break;
                         case Knowledge.STATE_WALL:
-                            output += " 1 ";
+                            output += " # ";
                             break;
                         case Knowledge.STATE_GOAL:
-                            output += " 3 ";
+                            output += " > ";
                             break;
                         case Knowledge.STATE_WORLD_END:
-                            output += " 2 ";
+                            output += " $ ";
                             break;
                         case Knowledge.STATE_UNKNOWN:
-                            output += " 5 ";
+                            output += " ? ";
                             break; 
                     }
                 }
