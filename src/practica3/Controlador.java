@@ -391,6 +391,8 @@ public class Controlador extends SingleAgent {
                     if (index == vehiculosExploradores.size())
                         index = 0;
                     vehiculoElegido = vehiculosExploradores.get(index);
+                    exist_path = false;
+                    triedPath = false;
                 }
                 int[][] radar = flota.get(vehiculoElegido).getRadar();
                 System.out.println("Es un: " + flota.get(vehiculoElegido).getRol());
