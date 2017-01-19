@@ -547,12 +547,18 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se decide el movimiento
          */
-        if(false && !triedPath && objetivos.size()>0 && !p.getRol().getVolar()){            
+        if(!triedPath && objetivos.size()>0 && !p.getRol().getVolar()){            
             int[] posicion_objetivo = new int[2];
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps); 
-            int[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
-            camino = new Path(p.getMatrix().getKnowledgeMatrix(), p.getGps()[0] * pathMatrix.length + p.getGps()[1], posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1]);
+            int [][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
+            /*for(int i=0; i < pathMatrix.length; i++){
+                for(int j=0; j< pathMatrix[i].length; j++){
+                    System.out.print(pathMatrix[i][j] + " ");
+                }
+                System.out.println("");
+            }*/
+            camino = new Path(pathMatrix, p.getGps()[0] * pathMatrix.length + p.getGps()[1], posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1]);
             path_local.clear();
             path_local = camino.getPath();
             triedPath= true;
@@ -748,13 +754,6 @@ public class Controlador extends SingleAgent {
         monitorizarVehiculos();
         miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
         miVentana.setMapaVehiculo(p.getNombre(), p.getMatrix().drawMapToString());
-        /*[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
-        for(int i=0; i < pathMatrix.length; i++){
-            for(int j=0; j< pathMatrix[i].length; j++){
-                System.out.print(pathMatrix[i][j] + " ");
-            }
-            System.out.println("");
-        }*/
     }
 
     /**
