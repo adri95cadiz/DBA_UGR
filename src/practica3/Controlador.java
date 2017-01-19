@@ -274,7 +274,7 @@ public class Controlador extends SingleAgent {
                         max_Pos = propiedades.getGps()[1];
                     }
                     
-                    Knowledge.getDB(this.MAPA).setAgentPosition(propiedades.getNombre(), propiedades.getGps()[1], propiedades.getGps()[0]);
+                    Knowledge.getDB(this.MAPA).setAgentPosition(propiedades.getNombre(), propiedades.getGps()[0], propiedades.getGps()[1]);
 
                     //System.out.println(mensaje.getContent());
 
@@ -547,18 +547,20 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se decide el movimiento
          */
-        if(!triedPath && objetivos.size()>0 && !p.getRol().getVolar()){            
+        if(!triedPath && objetivos.size()> 0 && !p.getRol().getVolar()){            
             int[] posicion_objetivo = new int[2];
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps); 
             int [][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
-            /*for(int i=0; i < pathMatrix.length; i++){
+            for(int i=0; i < pathMatrix.length; i++){
                 for(int j=0; j< pathMatrix[i].length; j++){
                     System.out.print(pathMatrix[i][j] + " ");
                 }
                 System.out.println("");
-            }*/
-            camino = new Path(pathMatrix, p.getGps()[0] * pathMatrix.length + p.getGps()[1], posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1]);
+            }
+            int id_vehiculo = p.getGps()[0] * pathMatrix.length + p.getGps()[1];
+            int id_objetivo = posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1];
+            camino = new Path(pathMatrix, id_vehiculo, id_objetivo);
             path_local.clear();
             path_local = camino.getPath();
             triedPath= true;
@@ -581,11 +583,7 @@ public class Controlador extends SingleAgent {
             // Se decide la casilla óptima a moverse en la matriz 5x5
 
             int[] objetivo_alcanzar = chooseLocalObj(pasos, coord, p.getNombre(), p.getMatrix());
-            System.out.println("imprimiendo objetivo a alcanzar");
-            System.out.println("el objativo a alcanzar es el siguiente: " + objetivo_alcanzar[0] + "-" + objetivo_alcanzar[1]);
-            System.out.println("sale de chooselocalobj antes de objetivo_id");
             int objetivo_id = objetivo_alcanzar[0] * alcance + objetivo_alcanzar[1];
-            System.out.println("calcula el objetivo_id");
             // Se calcula el camino optimo para llegar hasta ella
 
             /*//System.out.println("RADAR ------------------> ");
@@ -641,7 +639,6 @@ public class Controlador extends SingleAgent {
             ////System.out.println("NUEVO PATH OBTENIDO");
             path_local.clear();
             path_local = camino.getPath();
-
         }
         cambio_de_vehiculo = false;
         /**
@@ -660,7 +657,7 @@ public class Controlador extends SingleAgent {
         int segunda_casilla = path_local.get(1);
         //System.out.println("calcula mov");
         int obj_prox_mov = primera_casilla - segunda_casilla;
-        decision = pathLocalObj(obj_prox_mov, radar);
+        decision = pathLocalObj(obj_prox_mov);
         System.out.println("Mueve a " + decision);
         //}
         // Se transforman las IDs de las casillas a coordenadas para saber
@@ -889,9 +886,7 @@ public class Controlador extends SingleAgent {
                 //System.out.print(matrixGrad[i][j] + ",");
             }
             //System.out.println("");
-        }
-        
-        System.out.println("termina de dar valora los gradientes");
+        }      
         int[] objetive = {-1, -1};
         float low_dist = (float) Math.pow(10, 10);
         int low_moving_count = -flota.get(vehiculoElegido).getPasos();
@@ -973,8 +968,7 @@ public class Controlador extends SingleAgent {
     lo que hace es desde la posición del agente y la siguiente casilla ID a moverse, calcular
     que dirección es. Trabaja con Id´s da igual el tamaño de la matriz.
      */
-    private String pathLocalObj(int objetivo, int[][] radar) {
-        camino.changeMap(radar);
+    private String pathLocalObj(int objetivo) {
         //System.out.println("TAMAÑO DEL MAPA > " + camino.getSizeMap());
         int[] diff_ids = {
             camino.getSizeMap(),

@@ -401,7 +401,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
                           output += "#"; 
                           break; 
                       case Knowledge.STATE_GOAL: 
-                          output += "X"; 
+                          output += ">"; 
                           break; 
                       case Knowledge.STATE_WORLD_END: 
                           output += "#"; 
@@ -535,7 +535,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
             for (int j = 0; j < cloneMatrix[i].length; j++){
                 if(cloneMatrix[i][j] == STATE_FREE || cloneMatrix[i][j] == STATE_GOAL)
                     cloneMatrix[i][j] = 0;
-                else
+                if(cloneMatrix[i][j] == STATE_UNKNOWN || cloneMatrix[i][j] == STATE_VEHICLE || cloneMatrix[i][j] == STATE_WORLD_END  || cloneMatrix[i][j] == STATE_WALL)
                     cloneMatrix[i][j] = -1;
             }
         }
