@@ -556,14 +556,17 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      */
     public void setAgentPosition(String agentName, int posx, int posy) {
         AgentPosition aPos = new AgentPosition(agentName, posx, posy);
-        int index = agentsPosition.indexOf(aPos);
-
-        if (index != -1) {
-            System.out.println("Cambia posicion agente");
-            agentsPosition.get(index).changePosition(posx, posy);
-        } else {
-            System.out.println("Añade posicion agente");
-            agentsPosition.add(aPos);
+        boolean encontrado = false;
+        for (AgentPosition ap : this.agentsPosition) {
+            if(ap.getAgentName().equals(agentName)){                
+                ap.changePosition(posx, posy);
+                System.out.println("Cambia posicion agente");
+                encontrado = true;
+            } 
+        }
+        if(encontrado == false){
+            System.out.println("Crea nueva posicion");
+            agentsPosition.add(new AgentPosition(agentName, new Cell(posx,posy,4)));
         }
     }
 
@@ -610,6 +613,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * Convierte el el objeto json gps a un objeto Cell
      *
      * @param gps JsonObject que contiene los datos del gps
+     * @return 
      */
     public static Cell getGPSData(JsonObject gps) {
         Cell position = new Cell();
@@ -623,7 +627,8 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
     /**
      * Convierte el el objeto json radar en un {@link ArrayList} de enteros
      *
-     * @param gps JsonObject que contiene los datos del radar
+     * @param radar
+     * @return 
      */
     public static ArrayList<Integer> getRadarData(JsonObject radar) {
         JsonArray radarJson = radar.get("radar").asArray();
@@ -639,7 +644,9 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
     /**
      * Convierte el el objeto json radar en una matriz de enteros
      *
-     * @param gps JsonObject que contiene los datos del radar
+     * @param radar
+     * @param vision
+     * @return 
      */
     public static int[][] getRadarMatrix(JsonObject radar, int vision) {
         ArrayList<Integer> radarArray = Knowledge.getRadarData(radar);
