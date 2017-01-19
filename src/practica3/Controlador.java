@@ -385,6 +385,13 @@ public class Controlador extends SingleAgent {
 
             // Si ya existe un vehiculo seleccionado:
             if (vehiculoSeleccionado) {
+                if(estadoActual == Estado.BUSCAR){
+                    int index = vehiculosExploradores.indexOf(vehiculoElegido);
+                    index++;
+                    if (index == vehiculosExploradores.size())
+                        index = 0;
+                    vehiculoElegido = vehiculosExploradores.get(index);
+                }
                 int[][] radar = flota.get(vehiculoElegido).getRadar();
                 System.out.println("Es un: " + flota.get(vehiculoElegido).getRol());
                 /*System.out.println("raiz: " + (int) Math.sqrt(radar.length));
