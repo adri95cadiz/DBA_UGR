@@ -16,6 +16,7 @@ import static java.lang.Math.floor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Interface.Ventana;
+import jason.stdlib.intend;
 
 /**
  *
@@ -36,6 +37,7 @@ public class Controlador extends SingleAgent {
     //private Celda[][] mapa = new Celda[TAM_MAPA][TAM_MAPA];
     //private double[][] scanner = new double[TAM_MAPA][TAM_MAPA];   
     private boolean objetivoEncontrado;
+    private boolean triedPath = false;
     //private Cell puntoObjetivo = new Cell();
     ArrayList<int[]> objetivos = new ArrayList<>();
     ArrayList<String> vehiculosExploradores = new ArrayList<>();
@@ -400,6 +402,7 @@ public class Controlador extends SingleAgent {
                         vehiculosExploradores.remove(vehiculoElegido);
                         vehiculoElegido = vehiculosExploradores.get(0);
                         exist_path = false;
+                        triedPath = false;
                     } else if (vehiculosExploradores.size() == 1) {
                         System.out.println("se ha llamado a finalizar");
                         faseFinalizar();
@@ -441,10 +444,12 @@ public class Controlador extends SingleAgent {
                 for(int i = 1 ; i < vehiculosExploradores.size() ; i++){
                     PropiedadesVehicle p1 = flota.get(vehiculosExploradores.get(i));                    
                     PropiedadesVehicle p2 = flota.get(vehiculoElegido);
-                    if(p1.getRol().getAlcance() > p2.getRol().getAlcance())
+                    if(p1.getRol().getConsumo() < p2.getRol().getConsumo())
                         vehiculoElegido = vehiculosExploradores.get(i);
                 }                
+                exist_path = false;
                 vehiculoSeleccionado = true;
+                triedPath = false;
             }
             //vehiculoElegido = vehiculosExploradores.get(0);
 
@@ -467,7 +472,6 @@ public class Controlador extends SingleAgent {
              * ***************************************************************
              */
 
-        
         System.out.println("termina eleccion vehiculo");
 
     }
@@ -531,7 +535,7 @@ public class Controlador extends SingleAgent {
         2 - Si no existe un camino óptimo local, se calcula uno aquí.
         3 - Si ya existe un camino óptimo local, se van cogiendo los movimientos
         hasta que llegue a su casilla destino.
-        4 - Actualizar Knowedge
+        4 - Actualizar Knowledge
         5 - Acción de mover
          */
 
@@ -543,15 +547,17 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se decide el movimiento
          */
- /*
-        ¿Código para ver si existe camino al objetivo?
-         */
-        if (/*Existe camino entre vehículo y un objetivo*/false && !exist_path) {       //Si no existe un camino establecido y es posible encontrar un camino explorado entre el vehículo y un objetivo
-            camino = new Path(p.getMatrix().getKnowledgeMatrix(), p.getGps()[0] * alcance + p.getGps()[1], 12);
-            //camino.changeObjetive(/*Objetivo que está accesible más cercano*/);            
+        if(!triedPath && objetivos.size()>0){            
+            int[] posicion_objetivo = new int[2];
+            int[] gps = flota.get(vehiculoElegido).getGps();
+            posicion_objetivo = calcularObjetivoCercano(gps); 
+            int[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
+            camino = new Path(p.getMatrix().getKnowledgeMatrix(), p.getGps()[0] * pathMatrix.length + p.getGps()[1], posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1]);
             path_local.clear();
             path_local = camino.getPath();
-            exist_path = true;
+            triedPath= true;
+            
+                exist_path = true;
         } else if (!exist_path) {                                                 //Si no existe un camino establecido pero tampoco se conoce el espacio entre el vehículo y ningún objetivo,
             System.out.println("Calculando nuevo camino");
             //cambio_de_vehiculo = false;
@@ -738,17 +744,17 @@ public class Controlador extends SingleAgent {
             faseFinalizar();
         }*/
         //System.out.println("fin fase mover");
-        Knowledge.getDB(this.MAPA).setAgentPosition(p.getNombre(), p.getGps()[0], p.getGps()[1]);
+        Knowledge.getDB(this.MAPA).setAgentPosition(p.getNombre(), p.getGps()[1], p.getGps()[0]);
         monitorizarVehiculos();
         miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
         miVentana.setMapaVehiculo(p.getNombre(), p.getMatrix().drawMapToString());
-        int[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
+        /*[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
         for(int i=0; i < pathMatrix.length; i++){
             for(int j=0; j< pathMatrix[i].length; j++){
                 System.out.print(pathMatrix[i][j] + " ");
             }
             System.out.println("");
-        }
+        }*/
     }
 
     /**
