@@ -2,8 +2,6 @@ package practica3;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import edu.emory.mathcs.backport.java.util.Arrays;
-import jason.functions.Min;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -183,6 +181,10 @@ public class Knowledge {
                     int pos_x = (position_x - (vision / 2) + j);
                     int pos_y = (position_y - (vision / 2) + i);
                     int radarValue = radar[j][i];
+                    
+                    if(radarValue == STATE_VEHICLE){
+                        radarValue = STATE_FREE;
+                    }
 
                     if (radarValue == Knowledge.STATE_GOAL) {
                         this.updateObjetive(new Cell(pos_x, pos_y));
@@ -198,7 +200,7 @@ public class Knowledge {
                         statement.executeUpdate(querySQL);
 
                         //Actualizamos la fila y de la matriz
-                       // updateMatrix(pos_x, pos_y, radarValue);
+                        //updateMatrix(pos_x, pos_y, radarValue);
                     }
                 }
             }
@@ -303,7 +305,6 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      */
     private void createMatrix() {
         try {
-            String output = "";
             int matrix_size = 0;
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
@@ -362,8 +363,6 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
                     this.mapMatrix[pos_x][pos_y] = contain;
                 }
             } else {
-                output.concat("Creamos matriz desde cero");
-
                 this.mapMatrix = new int[MIN_SIDE][MIN_SIDE];
                 for(int i=0; i < MIN_SIDE; i++){
                     for(int j=0; j < MIN_SIDE; j++){
@@ -389,11 +388,12 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * Genera el mapa conocido por el agente
      */
     public String drawMapToString() {
+        int[][] matrix = getKnowledgeMatrix();
         String output = "";        
-        for (int i = 0; i < this.mapMatrix.length; i++) {
-            for (int j = 0; j < this.mapMatrix[i].length; j++) { 
-                  int value = this.mapMatrix[i][j];   
-                  //if(j == 0) output += "▉▉▉"; 
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) { 
+                  int value = matrix[i][j];   
+                  if(j == 0) output += "▉▉▉"; 
                   switch (value) { 
                       case Knowledge.STATE_FREE: 
                           output += "0"; 
@@ -458,6 +458,28 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
         }
         return cloneMatrix;
     }
+    
+    /**
+     * Devuelve una copia de la matriz de Knowledge poniendo los obstáculos a -1 y los caminos a 0
+     *
+     * @return Matriz copia de la matriz almacenada en Knowledge
+     */
+    public int[][] getPathMatrix() {
+        int[][] cloneMatrix = mapMatrix.clone();
+        for (int i = 0; i < cloneMatrix.length; i++){
+            for (int j = 0; j < cloneMatrix[i].length; j++){
+                if(cloneMatrix[i][j] == STATE_FREE || cloneMatrix[i][j] == STATE_GOAL)
+                    cloneMatrix[i][j] = 0;
+                else
+                    cloneMatrix[i][j] = -1;
+            }
+        }
+        for (AgentPosition ap : this.agentsPosition) {
+            cloneMatrix[ap.getPosition().getPosX()][ap.getPosition().getPosY()] = -1;
+        }
+        return cloneMatrix;
+    }
+    
 
     /**
      * Método que actualiza la posición de un agente. En el caso de que ese
@@ -467,7 +489,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * @param posx Posición X a actualizar
      * @param posy Posición Y a actualizar
      */
-    private void setAgentPosition(String agentName, int posx, int posy) {
+    public void setAgentPosition(String agentName, int posx, int posy) {
         AgentPosition aPos = new AgentPosition(agentName, posx, posy);
         int index = agentsPosition.indexOf(aPos);
 

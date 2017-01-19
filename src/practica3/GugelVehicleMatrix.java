@@ -66,6 +66,11 @@ class GugelVehicleMatrix {
         }
     }
     
+    /**
+     * *************************************************************************
+     * Dibuja la matriz de mapa y la devuelve como String.
+     * 
+     */
     public String drawMapToString(){
         String output = "";
         int[][] m = getVehicle().getCombinedKnowledge();
@@ -94,7 +99,12 @@ class GugelVehicleMatrix {
                             if(value > 0 )
                                 output += " ? ";
                             else
-                                output += -value+" ";
+                                if(-value < 10)
+                                    output += " "+(-value)+" ";
+                                else if(-value < 100)
+                                    output += -value+" ";
+                                else
+                                    output += -value;
                             break; 
                         default:
                             output += -value+" ";

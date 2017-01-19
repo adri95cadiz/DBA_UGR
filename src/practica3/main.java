@@ -18,7 +18,7 @@ public class main {
     Controlador control = null;
     GugelVehicle[] vehiculos = new GugelVehicle[4];
     String mundo = "map"+MAPA;
-    
+    System.out.println("Iniciado Programa.");
     AgentsConnection.connect(SERVERPATH,PORT, "Haldus", "Esquivel", "Pegaso", false);
     try {
         //El agentID ahora es Controlador, no GugelCar.

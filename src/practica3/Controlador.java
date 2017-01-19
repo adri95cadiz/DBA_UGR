@@ -271,6 +271,8 @@ public class Controlador extends SingleAgent {
                     if (propiedades.getGps()[1] > max_Pos) {
                         max_Pos = propiedades.getGps()[1];
                     }
+                    
+                    Knowledge.getDB(this.MAPA).setAgentPosition(propiedades.getNombre(), propiedades.getGps()[0], propiedades.getGps()[1]);
 
                     //System.out.println(mensaje.getContent());
 
@@ -736,6 +738,7 @@ public class Controlador extends SingleAgent {
             faseFinalizar();
         }*/
         //System.out.println("fin fase mover");
+        Knowledge.getDB(this.MAPA).setAgentPosition(p.getNombre(), p.getGps()[0], p.getGps()[1]);
         monitorizarVehiculos();
         miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
         miVentana.setMapaVehiculo(p.getNombre(), p.getMatrix().drawMapToString());
@@ -774,13 +777,13 @@ public class Controlador extends SingleAgent {
      */
     private void eliminarObjetivosInaccesiblesRec(int[][] radar, int alcance, int row, int col) {
         //System.out.print("eliminar inaccesibles: "+row+col);
-        if (row < 0 || row > alcance - 1 || col < 0 || col > alcance - 1) {                             //Se encuentra fuera de los límites
+        if (row < 0 || row > alcance - 1 || col < 0 || col > alcance - 1) {                         //Se encuentra fuera de los límites
             //System.out.println("fuera de limites "+row+col);
-        } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {     //Aunque dentro de los límites ya ha sido recorrida
+        } else if (posiblesObjetivos[row][col] == -1 || posiblesObjetivos[row][col] == 1) {         //Aunque dentro de los límites ya ha sido recorrida
         
         } else {
             int pos_inicial = (int) floor(alcance / 2.0);
-            if ((row != pos_inicial || col != pos_inicial) && (radar[row][col] == 1 || radar[row][col] == 2 || radar[row][col] == 4 || (radar[row][col] == 3 && Knowledge.getDB(MAPA).isAnyAgentInPosition(row, col)))) {
+            if ((row != pos_inicial || col != pos_inicial) && ((radar[row][col] == 1 && alcance != 3) || radar[row][col] == 2 || radar[row][col] == 4 || (radar[row][col] == 3 && Knowledge.getDB(MAPA).isAnyAgentInPosition(row, col)))) {
                 posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
                 //System.out.println("inaccesible "+row+col);
             } else {
@@ -797,7 +800,33 @@ public class Controlador extends SingleAgent {
             }
         }
     }
-
+    
+    /**
+     * *************************************************************************
+     * @author Raúl López Arévalo, Adrián Portillo Sánchez
+     *
+     * Elige el objetivo conocido más cercano a una posición dada y lo devuelve.
+     *
+     * @return objetivo Devuelve las coordenadas del objetivo más cercano como int[].
+     */
+    private int[] calcularObjetivoCercano(int[] gps){
+        int[] posicion_objetivo = new int[2];
+        int[] minimo_objetivo = {100000,100000};
+        // Si se han encontrado 2 objetivos:
+        for(int i = 0 ; i < objetivos.size() ; i++){ 
+            //System.out.println("\nObjetivo: " +objetivos.get(i)[0] +","+objetivos.get(i)[1]);
+            // Calcula el gradiente en la posición del agente para cada objetivo               
+            int dist1 = Math.abs(objetivos.get(i)[0] - gps[0]) + Math.abs(objetivos.get(i)[1] - gps[1]);
+            int dist2 = Math.abs(minimo_objetivo[0]- gps[0]) + Math.abs(minimo_objetivo[1] - gps[1]);                
+            // Si el objetivo nuevo es menor que el mínimo actual lo cogemos como destino
+            if (dist1 < dist2) 
+                minimo_objetivo[0] = objetivos.get(i)[0];
+                minimo_objetivo[1] = objetivos.get(i)[1];                
+        }           
+        posicion_objetivo[0] = minimo_objetivo[0];
+        posicion_objetivo[1] = minimo_objetivo[1];
+        return posicion_objetivo;
+    }
     /**
      * *************************************************************************
      * @author Raúl López Arévalo, Adrián Portillo Sánchez
@@ -822,23 +851,8 @@ public class Controlador extends SingleAgent {
         int[][] global = matriz.getKnowledgeMatrix();
 
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size()>0) {
-
             int[] gps = flota.get(vehiculoElegido).getGps();
-            int[] minimo_objetivo = {100000,100000};
-            // Si se han encontrado 2 objetivos:
-            for(int i = 0 ; i < objetivos.size() ; i++){ 
-                //System.out.println("\nObjetivo: " +objetivos.get(i)[0] +","+objetivos.get(i)[1]);
-                // Calcula el gradiente en la posición del agente para cada objetivo               
-                int dist1 = Math.abs(objetivos.get(i)[0] - gps[0]) + Math.abs(objetivos.get(i)[1] - gps[1]);
-                int dist2 = Math.abs(minimo_objetivo[0]- gps[0]) + Math.abs(minimo_objetivo[1] - gps[1]);                
-                // Si el objetivo nuevo es menor que el mínimo actual lo cogemos como destino
-                if (dist1 < dist2) 
-                    minimo_objetivo[0] = objetivos.get(i)[0];
-                    minimo_objetivo[1] = objetivos.get(i)[1];                
-            }           
-            posicion_objetivo[0] = minimo_objetivo[0];
-            posicion_objetivo[1] = minimo_objetivo[1];
-
+            posicion_objetivo = calcularObjetivoCercano(gps);  
         } else {
             //System.out.println("\nSe mete en objetivo fantasma");
             posicion_objetivo[0] = max_Pos / 2;
@@ -1011,6 +1025,8 @@ public class Controlador extends SingleAgent {
                         }
                     }
                 }
+                
+                Knowledge.getDB(this.MAPA).setAgentPosition(nombreVehiculo, gps[0], gps[1]);
                         
                 /* Entiendo que el "goal" del "result" te indica si está en 
                 el objetivo o nó, si es asi, en ese caso el x e y se corresponde
