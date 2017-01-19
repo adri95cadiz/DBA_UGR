@@ -720,7 +720,13 @@ public class Controlador extends SingleAgent {
         /*System.out.println("\nimprimir matriz knowledge");*/
         System.out.println(p.getMatrix().ImprimirKnow());
         System.out.println("\t\tPaso numero: " + p.getPasos());
-
+        
+        // devuelve la matriz de la base de datos. 
+        /*bd. imprimirMatriz();
+        devuelve una matriz, que contiene -1 cuando sea borde del mapa, muro, agente, o inexplorado.
+        Y lo que sea explorado y libre o objetivo
+        bd.getMatrizAEstrella();*/
+        
         /*
         CONTROL PARA DEJAR DE EJECUTAR
         */
@@ -821,7 +827,7 @@ public class Controlador extends SingleAgent {
             int[] minimo_objetivo = {100000,100000};
             // Si se han encontrado 2 objetivos:
             for(int i = 0 ; i < objetivos.size() ; i++){ 
-                System.out.println("\nObjetivo: " +objetivos.get(i)[0] +","+objetivos.get(i)[1]);
+                //System.out.println("\nObjetivo: " +objetivos.get(i)[0] +","+objetivos.get(i)[1]);
                 // Calcula el gradiente en la posición del agente para cada objetivo               
                 int dist1 = Math.abs(objetivos.get(i)[0] - gps[0]) + Math.abs(objetivos.get(i)[1] - gps[1]);
                 int dist2 = Math.abs(minimo_objetivo[0]- gps[0]) + Math.abs(minimo_objetivo[1] - gps[1]);                

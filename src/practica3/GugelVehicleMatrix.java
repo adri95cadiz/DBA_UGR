@@ -91,7 +91,10 @@ class GugelVehicleMatrix {
                             output += " $ ";
                             break;
                         case Knowledge.STATE_UNKNOWN:
-                            output += " ? ";
+                            if(value > 0 )
+                                output += " ? ";
+                            else
+                                output += -value+" ";
                             break; 
                         default:
                             output += -value+" ";

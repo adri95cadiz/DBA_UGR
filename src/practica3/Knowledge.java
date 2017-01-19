@@ -198,7 +198,7 @@ public class Knowledge {
                         statement.executeUpdate(querySQL);
 
                         //Actualizamos la fila y de la matriz
-                        updateMatrix(pos_x, pos_y, radarValue);
+                       // updateMatrix(pos_x, pos_y, radarValue);
                     }
                 }
             }
