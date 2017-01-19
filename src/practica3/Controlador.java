@@ -562,8 +562,10 @@ public class Controlador extends SingleAgent {
             path_local.clear();
             path_local = camino.getPath();
             triedPath= true;
-            exist_path = true;
-        } else if (!exist_path) {                                                 //Si no existe un camino establecido pero tampoco se conoce el espacio entre el vehículo y ningún objetivo,
+            if(path_local.get(0) != -1)
+                exist_path = true;
+        }
+        if (!exist_path) {                                                 //Si no existe un camino establecido pero tampoco se conoce el espacio entre el vehículo y ningún objetivo,
             System.out.println("Calculando nuevo camino");
             //cambio_de_vehiculo = false;
             System.out.println("Alcance: " + alcance);
