@@ -559,8 +559,10 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
         int index = agentsPosition.indexOf(aPos);
 
         if (index != -1) {
+            System.out.println("Cambia posicion agente");
             agentsPosition.get(index).changePosition(posx, posy);
         } else {
+            System.out.println("Añade posicion agente");
             agentsPosition.add(aPos);
         }
     }

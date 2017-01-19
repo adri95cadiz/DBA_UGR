@@ -274,7 +274,7 @@ public class Controlador extends SingleAgent {
                         max_Pos = propiedades.getGps()[1];
                     }
                     
-                    Knowledge.getDB(this.MAPA).setAgentPosition(propiedades.getNombre(), propiedades.getGps()[0], propiedades.getGps()[1]);
+                    Knowledge.getDB(this.MAPA).setAgentPosition(propiedades.getNombre(), propiedades.getGps()[1], propiedades.getGps()[0]);
 
                     //System.out.println(mensaje.getContent());
 
@@ -547,7 +547,7 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se decide el movimiento
          */
-        if(!triedPath && objetivos.size()>0){            
+        if(false && !triedPath && objetivos.size()>0 && !p.getRol().getVolar()){            
             int[] posicion_objetivo = new int[2];
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps); 
@@ -556,8 +556,7 @@ public class Controlador extends SingleAgent {
             path_local.clear();
             path_local = camino.getPath();
             triedPath= true;
-            
-                exist_path = true;
+            exist_path = true;
         } else if (!exist_path) {                                                 //Si no existe un camino establecido pero tampoco se conoce el espacio entre el vehículo y ningún objetivo,
             System.out.println("Calculando nuevo camino");
             //cambio_de_vehiculo = false;
@@ -675,6 +674,9 @@ public class Controlador extends SingleAgent {
             // subEstadoBuscando = Estado.ELECCION_VEHICULO;
             // subEstadoEncontrado = Estado.ELECCION_VEHICULO;
         } else {
+            System.out.println("Updateando matrix");
+            p.updateMatrix(); 
+            System.out.println("Fin update");   
             System.out.println("enviando mensaje a vehiculoElegido");
             enviarMensaje(vehiculoElegido, ACLMessage.REQUEST, JSON.mover(decision));
             System.out.println("mensaje enviado");
@@ -708,10 +710,8 @@ public class Controlador extends SingleAgent {
         }
         //p.getMatrix().ImprimirLocal();        
         //System.out.println("GPS X: " + p.getGps()[0] + " Y: " + p.getGps()[1]);
-        System.out.println("Updateando matrix");
-        p.updateMatrix(); 
         ////System.out.println("Datos del GPS bien puestos: " + datosGPS[0] + datosGPS[1] + "\n\t\tPaso numero: " + this.contadorPasos + "\n");
-        System.out.println("Fin update");        
+             
         //System.out.println("incrementar paso");
         p.darPaso();
         /*System.out.println("\n\t\tSENSOR DEL AGENTE");
@@ -721,12 +721,12 @@ public class Controlador extends SingleAgent {
             }
             System.out.println("");
         }*/
-        System.out.println("\nimprimir matriz local");
+        /*System.out.println("\nimprimir matriz local");
         p.getMatrix().ImprimirLocal();
-        /*//System.out.println("\nImprimir matriz combined");
+        //System.out.println("\nImprimir matriz combined");
         //p.getMatrix().ImprimirGetCombined();
-        /*System.out.println("\nimprimir matriz knowledge");*/
-        System.out.println(p.getMatrix().ImprimirKnow());
+        //System.out.println("\nimprimir matriz knowledge");
+        System.out.println(p.getMatrix().ImprimirKnow());*/
         System.out.println("\t\tPaso numero: " + p.getPasos());
         
         // devuelve la matriz de la base de datos. 
@@ -862,7 +862,7 @@ public class Controlador extends SingleAgent {
         int[][] matrixGrad = new int[alcance][alcance];
         int[] posicion_objetivo = new int[2];
         int[][] global = matriz.getKnowledgeMatrix();
-        System.out.println("Objetivos: "+ objetivos.toString());
+        //System.out.println("Objetivos: "+ objetivos.toString());
         if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size() > 0) {
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps);  
@@ -881,15 +881,16 @@ public class Controlador extends SingleAgent {
             con los gradientes hacia el objetivo.
          */
         //System.out.println("\nSe le da valor a la matriz de gradientes");
-        /*System.out.println("matriz de gradiente");
+        //System.out.println("matriz de gradiente");
         for (int i = 0; i < alcance; i++) {
             for (int j = 0; j < alcance; j++) {
                 matrixGrad[i][j] = Math.abs(posicion_objetivo[0] - (datosGPS[0] - ((alcance - 1) / 2) + i)) + Math.abs(posicion_objetivo[1] - (datosGPS[1] - ((alcance - 1) / 2) + j));
-                System.out.print(matrixGrad[i][j] + ",");
+                //System.out.print(matrixGrad[i][j] + ",");
             }
-            System.out.println("");
-        }*/
-        //System.out.println("termina de dar valora los gradientes");
+            //System.out.println("");
+        }
+        
+        System.out.println("termina de dar valora los gradientes");
         int[] objetive = {-1, -1};
         float low_dist = (float) Math.pow(10, 10);
         int low_moving_count = -flota.get(vehiculoElegido).getPasos();
