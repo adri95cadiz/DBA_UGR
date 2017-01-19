@@ -385,10 +385,9 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
     }
 
     /**
-     * Genera el mapa conocido por el agente
+     * Genera el mapa contenido en la matriz
      */
-    public String drawMapToString() {
-        int[][] matrix = getKnowledgeMatrix();
+    public static String drawMapToString(int[][] matrix) {
         String output = "";        
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) { 
@@ -420,17 +419,72 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
         return output;
     }
 
+    /**
+     * Genera el mapa conocido en Knowledge
+     */
+    public String drawMapToString(){
+        return Knowledge.drawMapToString(getKnowledgeMatrix());
+    }
     
+    /**
+     * Dibuja del mapa guardado en la BD 
+     */
+    public void drawDBMap() {
+        try{
+            Statement st = getStatement();
+            ResultSet rs;
+            int matrix_size = 0;
+
+            // Calculamos el tamaño de la matriz
+            String query = "SELECT MAX(pos_x) as max_x, MAX(pos_y) AS max_y FROM Mapa_" + this.map_id + ";";
+
+            rs = st.executeQuery(query);
+            while (rs.next()) {
+                matrix_size = Math.max(rs.getInt("max_x"), rs.getInt("max_y")) + 1;
+            }
+
+            // Creamos una matriz vacia con STATE_UNKNOWN por defecto
+            int[][] drawMatrix = new int[matrix_size][matrix_size];
+            for(int i = 0; i < matrix_size; i++){ 
+                for(int j = 0; j < matrix_size; j++){ 
+                    drawMatrix[i][j] = Knowledge.STATE_UNKNOWN; 
+                }
+            } 
+
+            // Insertamos los valores guardados en la BD en la matriz
+            rs = st.executeQuery("SELECT * FROM Mapa_" + this.map_id + ";");
+            while (rs.next()) {
+                int contain = rs.getInt("contains");
+                int pos_x = rs.getInt("pos_x");
+                int pos_y = rs.getInt("pos_y");
+
+                drawMatrix[pos_x][pos_y] = contain;
+            }
+            this.drawMap(drawMatrix);
+        }catch(SQLException e){
+            
+        }
+    }    
     
     /**
      * Dibuja el mapa en consola
+     * 
+     * @param matrix Matriz que se quiere dibujar
      */
-    public void drawMap() {
+    public void drawMap(int[][] matrix) {
         System.out.println("-----------------------------------------------------------------------------------------------------");
         System.out.println("| Mapa " + this.map_id + " | Filas: " + this.mapMatrix.length + " | Columnas: " + this.mapMatrix[0].length + " |");
         System.out.println("-----------------------------------------------------------------------------------------------------");
-        System.out.println(drawMapToString());
         System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");
+        System.out.println(drawMapToString(matrix));
+        System.out.println("/////////////////////////////////////////////////////////////////////////////////////////////////////");    
+    }
+
+    /**
+     * Dibuja el mapa de Knowledge en consola
+     */
+    public void drawMap(){
+        this.drawMap(getKnowledgeMatrix());
     }
 
     /**
