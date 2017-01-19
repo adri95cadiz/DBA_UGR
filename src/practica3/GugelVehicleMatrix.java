@@ -201,6 +201,7 @@ class GugelVehicleMatrix {
          */
         public void updateAgent(int[][] radar, Cell gps) {
             db.updateStatus(agentName, radar, gps, vision);
+            //db.updateStatusLocal(agentName, radar,gps, vision);
             this.turn++;
             this.position = gps;
             this.updateLocalMatrix(radar);

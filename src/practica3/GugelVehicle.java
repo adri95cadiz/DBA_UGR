@@ -54,6 +54,7 @@ public class GugelVehicle extends SingleAgent {
                         //reply.put(getName(), msjEntrada.getReplyWith());   
                     }
                     if (msjEntrada.getPerformativeInt() == ACLMessage.CANCEL) {
+                        System.out.println("el vehiculo se mete en performative = cancel");
                         fin = true;
                     } else {
                         if (msjEntrada.getSender().name.equals(NOMBRE_SERVIDOR)) {

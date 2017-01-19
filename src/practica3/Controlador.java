@@ -37,7 +37,7 @@ public class Controlador extends SingleAgent {
     //private double[][] scanner = new double[TAM_MAPA][TAM_MAPA];   
     private boolean objetivoEncontrado;
     //private Cell puntoObjetivo = new Cell();
-    ArrayList<Cell> objetivos = new ArrayList<>();
+    ArrayList<int[]> objetivos = new ArrayList<>();
     ArrayList<String> vehiculosExploradores = new ArrayList<>();
     ArrayList<String> vehiculosEsperando = new ArrayList<>();
     ArrayList<String> vehiculosFinalizados = new ArrayList<>();
@@ -100,7 +100,10 @@ public class Controlador extends SingleAgent {
                     faseInicial();
                     monitorizarVehiculos();
                     if (Knowledge.getDB(this.MAPA).contains(Knowledge.STATE_GOAL)) {
-                        objetivos = Knowledge.getDB(this.MAPA).getObjetives();
+                        ArrayList<Cell> obj = Knowledge.getDB(this.MAPA).getObjetives();
+                        for(int i = 0; i < obj.size() ; i++){
+                            objetivos.add(new int[]{obj.get(i).getPosX(),obj.get(i).getPosY()});
+                        }
                         estadoActual = Estado.OBJETIVO_ENCONTRADO;
                     }
                     break;
@@ -152,7 +155,7 @@ public class Controlador extends SingleAgent {
                     }
                     break;
                 case FINALIZAR:
-                    faseFinalizar();
+                    //faseFinalizar();
                     break;
             }
         }
@@ -365,7 +368,7 @@ public class Controlador extends SingleAgent {
      */
     private void faseEleccionVehiculo() {
         System.out.println("\n\tFASE ELECCION VEHICULO.");
-        if (estadoActual == Estado.BUSCAR) {
+        
 
             /*
             Caso en el cual aún no sabemos donde esta el punto objetivo,
@@ -387,7 +390,7 @@ public class Controlador extends SingleAgent {
                 if (radar[posCentral][posCentral] == 3) {
                     System.out.println("Ha llegado al objetivo. Size de exploradores total: " + vehiculosExploradores.size());
                     if (vehiculosExploradores.size() > 1) {
-                        flota.get(vehiculoElegido).updateMatrix();
+                        //flota.get(vehiculoElegido).updateMatrix();
                         int[] pos = new int[2];
                         pos[0] = flota.get(vehiculoElegido).getGps()[0];
                         pos[1] = flota.get(vehiculoElegido).getGps()[1];
@@ -396,6 +399,7 @@ public class Controlador extends SingleAgent {
                         vehiculoElegido = vehiculosExploradores.get(0);
                         exist_path = false;
                     } else if (vehiculosExploradores.size() == 1) {
+                        System.out.println("se ha llamado a finalizar");
                         faseFinalizar();
                     }
                 }
@@ -461,16 +465,7 @@ public class Controlador extends SingleAgent {
              * ***************************************************************
              */
 
-        } else {
-            /*
-            Ya no estamos buscando por lo que conocemos el punto.  
-            Movemos el resto de vehiculos que estaban parados sin explorar.
-             */
-            if(vehiculosEsperando.size() > 0)
-                vehiculoElegido = vehiculosEsperando.get(0); // Si es que hay alguno porque pueden ser todos coche
-            else
-                vehiculoElegido = vehiculosExploradores.get(0);
-        }
+        
         System.out.println("termina eleccion vehiculo");
 
     }
@@ -718,13 +713,13 @@ public class Controlador extends SingleAgent {
             }
             System.out.println("");
         }*/
-        /*System.out.println("\nimprimir matriz local");
-        p.getMatrix().ImprimirLocal();*/
-        //System.out.println("\nImprimir matriz combined");
+        System.out.println("\nimprimir matriz local");
+        p.getMatrix().ImprimirLocal();
+        /*//System.out.println("\nImprimir matriz combined");
         //p.getMatrix().ImprimirGetCombined();
-        /*System.out.println("\nimprimir matriz knowledge");
-        System.out.println(p.getMatrix().ImprimirKnow());*/
-        //System.out.println("\t\tPaso numero: " + p.getPasos());
+        /*System.out.println("\nimprimir matriz knowledge");*/
+        System.out.println(p.getMatrix().ImprimirKnow());
+        System.out.println("\t\tPaso numero: " + p.getPasos());
 
         /*
         CONTROL PARA DEJAR DE EJECUTAR
@@ -820,35 +815,46 @@ public class Controlador extends SingleAgent {
         int[] posicion_objetivo = new int[2];
         int[][] global = matriz.getKnowledgeMatrix();
 
-        if (estadoActual == Estado.OBJETIVO_ENCONTRADO) {
+        if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size()>0) {
 
             int[] gps = flota.get(vehiculoElegido).getGps();
-            Cell minimo_objetivo = new Cell(10000,10000, 0);
+            int[] minimo_objetivo = {100000,100000};
             // Si se han encontrado 2 objetivos:
             for(int i = 0 ; i < objetivos.size() ; i++){ 
+                System.out.println("\nObjetivo: " +objetivos.get(i)[0] +","+objetivos.get(i)[1]);
                 // Calcula el gradiente en la posición del agente para cada objetivo               
-                int dist1 = Math.abs(objetivos.get(i).getPosX() - gps[0]) + Math.abs(objetivos.get(i).getPosY() - gps[1]);
-                int dist2 = Math.abs(minimo_objetivo.getPosX() - gps[0]) + Math.abs(minimo_objetivo.getPosX() - gps[1]);                
+                int dist1 = Math.abs(objetivos.get(i)[0] - gps[0]) + Math.abs(objetivos.get(i)[1] - gps[1]);
+                int dist2 = Math.abs(minimo_objetivo[0]- gps[0]) + Math.abs(minimo_objetivo[1] - gps[1]);                
                 // Si el objetivo nuevo es menor que el mínimo actual lo cogemos como destino
                 if (dist1 < dist2) 
-                    minimo_objetivo.set(objetivos.get(i).getPosX(), objetivos.get(i).getPosY(), 0);                
-            }            
+                    minimo_objetivo[0] = objetivos.get(i)[0];
+                    minimo_objetivo[1] = objetivos.get(i)[1];                
+            }           
+            posicion_objetivo[0] = minimo_objetivo[0];
+            posicion_objetivo[1] = minimo_objetivo[1];
 
         } else {
             //System.out.println("\nSe mete en objetivo fantasma");
             posicion_objetivo[0] = max_Pos / 2;
             posicion_objetivo[1] = max_Pos / 2;
         }
+        
+        System.out.println("Objetivo elegido");
+        System.out.println(posicion_objetivo[0]+","+posicion_objetivo[1]);
+        
         /*
             Con el objetivo encontrado o un objetivo imaginario:
                 - Se construye una matriz que es el campo de visión del agente
             con los gradientes hacia el objetivo.
          */
         //System.out.println("\nSe le da valor a la matriz de gradientes");
+        System.out.println("matriz de gradiente");
         for (int i = 0; i < alcance; i++) {
             for (int j = 0; j < alcance; j++) {
                 matrixGrad[i][j] = Math.abs(posicion_objetivo[0] - (datosGPS[0] - ((alcance - 1) / 2) + i)) + Math.abs(posicion_objetivo[1] - (datosGPS[1] - ((alcance - 1) / 2) + j));
+                System.out.print(matrixGrad[i][j] + ",");
             }
+            System.out.println("");
         }
         //System.out.println("termina de dar valora los gradientes");
         int[] objetive = {-1, -1};
@@ -995,12 +1001,11 @@ public class Controlador extends SingleAgent {
                         if(radar[i][j] == 3){
                             int a = gps[0] - ((alcance - 1) / 2) + i;
                             int b = gps[1] - ((alcance - 1) / 2) + j;
-                            objetivos.add(new Cell(a,b,3));
-                            estadoActual = Estado.OBJETIVO_ENCONTRADO;
+                            objetivos.add(new int[]{a,b});
                         }
                     }
                 }
-
+                        
                 /* Entiendo que el "goal" del "result" te indica si está en 
                 el objetivo o nó, si es asi, en ese caso el x e y se corresponde
                 con el punto objetivo. Supongo que será así.
@@ -1074,7 +1079,7 @@ public class Controlador extends SingleAgent {
         if (cont == 4) {
             //System.out.println("Entra cont == 5.");
             //  estadoActual = Estado.FINALIZAR;
-            faseFinalizar();
+            //faseFinalizar();
         }
     }
 

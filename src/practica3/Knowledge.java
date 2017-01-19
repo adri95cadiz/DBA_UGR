@@ -173,7 +173,7 @@ public class Knowledge {
             position_x = gps.getPosX();
             position_y = gps.getPosY();
 
-            this.setAgentPosition(agentName, position_x, position_y);
+            //this.setAgentPosition(agentName, position_x, position_y);
 
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
@@ -216,7 +216,19 @@ public class Knowledge {
             }
         }
     }
-
+public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vision){
+    int posx = gps.getPosX();
+    int posy = gps.getPosY();
+    
+    for(int i=0; i<vision; i++){
+        for(int j=0; j<vision; j++){
+            int pos_x = (posx - (vision / 2) + j);
+            int pos_y = (posy - (vision / 2) + i);
+            this.mapMatrix[pos_x][pos_y] = radar[j][i];
+            
+        }
+    }
+}
     /**
      * Este método es el encargado de recibir los datos obtenidos por el agente
      * y añadirlos a su conocimiento. Método de retrocompatibilidad con la
@@ -249,7 +261,7 @@ public class Knowledge {
         /*System.out.println("Máximo actual anterior: " + this.mapSize());
         System.out.println("Valor X: " + posx + " | Valor Y: " + posy);*/
 
-        if (maxWidth > this.mapSize()) {
+        /*if (maxWidth > this.mapSize()) {
             int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[maxWidth][maxWidth];
 
@@ -264,9 +276,24 @@ public class Knowledge {
                     this.mapMatrix[i][j] = tmp[i][j];
                 }
             }
+        }*/
+        if(maxWidth > this.mapSize()) {
+            int[][] tmp = new int[maxWidth+1][maxWidth+1];
+            
+            for(int i = 0; i < maxWidth+1; i++){
+                for(int j = 0; j < maxWidth+1; j++){
+                    tmp[i][j] = Knowledge.STATE_UNKNOWN;
+                }
+            }
+            for (int i = 0; i < tmp.length; i++) {
+                for (int j = 0; j < tmp[i].length; j++) {
+                    tmp[i][j] = this.mapMatrix[i][j];
+                }
+            }
+            this.mapMatrix = tmp;
         }
-        /*System.out.println("Máximo actual posterior: " + this.mapSize());
-        this.mapMatrix[posx][posy] = value;*/
+        //System.out.println("Máximo actual posterior: " + this.mapSize());
+        this.mapMatrix[posx][posy] = value;
     }
 
     /**
@@ -366,7 +393,7 @@ public class Knowledge {
         for (int i = 0; i < this.mapMatrix.length; i++) {
               for (int j = 0; j < this.mapMatrix[i].length; j++) {
                   int value = this.mapMatrix[i][j];  
-                  if(j == 0) output += "▉▉▉";
+                  //if(j == 0) output += "▉▉▉";
                   switch (value) {
                       case Knowledge.STATE_FREE:
                           output += "0";
@@ -393,6 +420,8 @@ public class Knowledge {
         return output;
     }
 
+    
+    
     /**
      * Dibuja el mapa en consola
      */
