@@ -527,7 +527,7 @@ public class Controlador extends SingleAgent {
         /*
         Control sobre la batería del vehículo elegido para moverse
          */
-        if (flota.get(vehiculoElegido).getBateria() < 10) {
+        if (p.getBateria() < 10 || path_local.size() ==  ((100/p.getRol().getConsumo())-p.getRol().getConsumo())) {
             faseRepostar();
         }
         /*
