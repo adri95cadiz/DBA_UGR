@@ -391,24 +391,31 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
     public String drawMapToString() {
         String output = "";        
         for (int i = 0; i < this.mapMatrix.length; i++) {
-            for (int j = 0; j < this.mapMatrix[i].length; j++) {
-                int value = this.mapMatrix[i][j];
-                if( value == 5 ){
-                    System.out.print("?");
-                }else if( value == 4 ){
-                    System.out.print("A");
-                }else if( value == 3 ){
-                    System.out.print("X");
-                }else if( value == 2 ){
-                    System.out.print("#");
-                }else if( value == 1 ){
-                    System.out.print("#");
-                }else if( value == 0 ){
-                    System.out.print(".");
-                }
-                //System.out.print(value+" ");
-            }
-            System.out.println("");
+            for (int j = 0; j < this.mapMatrix[i].length; j++) { 
+                  int value = this.mapMatrix[i][j];   
+                  //if(j == 0) output += "▉▉▉"; 
+                  switch (value) { 
+                      case Knowledge.STATE_FREE: 
+                          output += "0"; 
+                          break; 
+                      case Knowledge.STATE_WALL: 
+                          output += "#"; 
+                          break; 
+                      case Knowledge.STATE_GOAL: 
+                          output += "X"; 
+                          break; 
+                      case Knowledge.STATE_WORLD_END: 
+                          output += "#"; 
+                          break; 
+                      case Knowledge.STATE_UNKNOWN: 
+                          output += "?"; 
+                          break;  
+                      case Knowledge.STATE_VEHICLE: 
+                          output += "A"; 
+                          break;                      
+                  } 
+              } 
+              output += "\n"; 
         }
         return output;
     }
