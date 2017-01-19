@@ -742,6 +742,13 @@ public class Controlador extends SingleAgent {
         monitorizarVehiculos();
         miVentana.setMapaConocimiento(Knowledge.getDB(this.MAPA).drawMapToString());
         miVentana.setMapaVehiculo(p.getNombre(), p.getMatrix().drawMapToString());
+        int[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
+        for(int i=0; i < pathMatrix.length; i++){
+            for(int j=0; j< pathMatrix[i].length; j++){
+                System.out.print(pathMatrix[i][j] + " ");
+            }
+            System.out.println("");
+        }
     }
 
     /**
@@ -849,8 +856,8 @@ public class Controlador extends SingleAgent {
         int[][] matrixGrad = new int[alcance][alcance];
         int[] posicion_objetivo = new int[2];
         int[][] global = matriz.getKnowledgeMatrix();
-
-        if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size()>0) {
+        System.out.println("Objetivos: "+ objetivos.toString());
+        if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size() > 0) {
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps);  
         } else {
@@ -868,14 +875,14 @@ public class Controlador extends SingleAgent {
             con los gradientes hacia el objetivo.
          */
         //System.out.println("\nSe le da valor a la matriz de gradientes");
-        System.out.println("matriz de gradiente");
+        /*System.out.println("matriz de gradiente");
         for (int i = 0; i < alcance; i++) {
             for (int j = 0; j < alcance; j++) {
                 matrixGrad[i][j] = Math.abs(posicion_objetivo[0] - (datosGPS[0] - ((alcance - 1) / 2) + i)) + Math.abs(posicion_objetivo[1] - (datosGPS[1] - ((alcance - 1) / 2) + j));
                 System.out.print(matrixGrad[i][j] + ",");
             }
             System.out.println("");
-        }
+        }*/
         //System.out.println("termina de dar valora los gradientes");
         int[] objetive = {-1, -1};
         float low_dist = (float) Math.pow(10, 10);
