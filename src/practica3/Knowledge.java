@@ -200,7 +200,7 @@ public class Knowledge {
                         statement.executeUpdate(querySQL);
 
                         //Actualizamos la fila y de la matriz
-                        //updateMatrix(pos_x, pos_y, radarValue);
+                        updateMatrix(pos_x, pos_y, radarValue);
                     }
                 }
             }
@@ -257,7 +257,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * @param posy int Posición y de la coordenada
      * @param value int Valor a actualizar
      */
-    /*private void updateMatrix(int posx, int posy, int value) {
+    private void updateMatrix(int posx, int posy, int value) {
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
         
         /*System.out.println("Máximo actual anterior: " + this.mapSize());
@@ -279,7 +279,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
                 }
             }
         }*/
-        /*if(maxWidth > this.mapSize()) {
+        if(maxWidth > this.mapSize()) {
             int[][] tmp = new int[maxWidth+1][maxWidth+1];
             
             for(int i = 0; i < maxWidth+1; i++){
@@ -296,7 +296,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
         }
         //System.out.println("Máximo actual posterior: " + this.mapSize());
         this.mapMatrix[posx][posy] = value;
-    }*/
+    }
 
     /**
      * Este método se encarga de crear la matriz, si tiene datos carga los
@@ -452,7 +452,12 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * @return Matriz copia de la matriz almacenada en Knowledge
      */
     public int[][] getKnowledgeMatrix() {
-        int[][] cloneMatrix = mapMatrix.clone();
+        int[][] cloneMatrix = new int[mapMatrix.length][mapMatrix[0].length];
+        for (int i = 0; i < mapMatrix.length; i++){
+            for (int j = 0; j < mapMatrix[i].length; j++){
+                cloneMatrix[i][j] = mapMatrix[i][j];
+            }
+        }
         for (AgentPosition ap : this.agentsPosition) {
             if(ap.getPosition().getPosX() < this.mapMatrix.length && ap.getPosition().getPosY() < this.mapMatrix[0].length)
                 cloneMatrix[ap.getPosition().getPosX()][ap.getPosition().getPosY()] = STATE_VEHICLE;
@@ -466,7 +471,12 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * @return Matriz copia de la matriz almacenada en Knowledge
      */
     public int[][] getPathMatrix() {
-        int[][] cloneMatrix = mapMatrix.clone();
+        int[][] cloneMatrix = new int[mapMatrix.length][mapMatrix[0].length];
+        for (int i = 0; i < mapMatrix.length; i++){
+            for (int j = 0; j < mapMatrix[i].length; j++){
+                cloneMatrix[i][j] = mapMatrix[i][j];
+            }
+        }
         for (int i = 0; i < cloneMatrix.length; i++){
             for (int j = 0; j < cloneMatrix[i].length; j++){
                 if(cloneMatrix[i][j] == STATE_FREE || cloneMatrix[i][j] == STATE_GOAL)

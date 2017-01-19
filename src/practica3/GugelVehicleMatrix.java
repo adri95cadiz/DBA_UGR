@@ -99,15 +99,20 @@ class GugelVehicleMatrix {
                             if(value > 0 )
                                 output += " ? ";
                             else
-                                if(-value < 10)
+                                if(value > -10)
                                     output += " "+(-value)+" ";
-                                else if(-value < 100)
+                                else if(value > -100)
                                     output += -value+" ";
                                 else
                                     output += -value;
                             break; 
                         default:
-                            output += -value+" ";
+                            if(value > -10)
+                                output += " "+(-value)+" ";
+                            else if(value > -100)
+                                output += -value+" ";
+                            else
+                                output += -value;
                             break; 
                     }
                 }
