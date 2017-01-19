@@ -385,15 +385,7 @@ public class Controlador extends SingleAgent {
 
             // Si ya existe un vehiculo seleccionado:
             if (vehiculoSeleccionado) {
-                if(estadoActual == Estado.BUSCAR){
-                    int index = vehiculosExploradores.indexOf(vehiculoElegido);
-                    index++;
-                    if (index == vehiculosExploradores.size())
-                        index = 0;
-                    vehiculoElegido = vehiculosExploradores.get(index);
-                    exist_path = false;
-                    triedPath = false;
-                }
+                
                 int[][] radar = flota.get(vehiculoElegido).getRadar();
                 System.out.println("Es un: " + flota.get(vehiculoElegido).getRol());
                 /*System.out.println("raiz: " + (int) Math.sqrt(radar.length));
@@ -416,7 +408,16 @@ public class Controlador extends SingleAgent {
                         System.out.println("se ha llamado a finalizar");
                         faseFinalizar();
                     }
-                }
+                }/*else{
+                    int index = vehiculosExploradores.indexOf(vehiculoElegido);
+                    index++;
+                    if (index == vehiculosExploradores.size())
+                        index = 0;
+                    vehiculoElegido = vehiculosExploradores.get(index);
+                    exist_path = false;
+                    triedPath = false;
+                    
+                }*/
                 /*if (radar[posCentral][posCentral] == 3) {
                     System.out.println("\nHa llegado a una parte del objetivo");
                     // Si el vehiculo actual se encuentra en el objetivo:
