@@ -718,7 +718,8 @@ public class Controlador extends SingleAgent {
         /*//System.out.println("\nImprimir matriz combined");
         //p.getMatrix().ImprimirGetCombined();
         /*System.out.println("\nimprimir matriz knowledge");*/
-        System.out.println(p.getMatrix().ImprimirKnow());
+        //System.out.println("mundo");
+        //p.getMatrix().ImprimirKnow();
         System.out.println("\t\tPaso numero: " + p.getPasos());
         
         // devuelve la matriz de la base de datos. 

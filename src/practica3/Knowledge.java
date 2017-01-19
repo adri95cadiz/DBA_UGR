@@ -64,8 +64,9 @@ public class Knowledge {
         } catch (SQLException error) {
             System.err.println("Error en la creación de la conexión");
             System.err.println(error);
-        } 
-        return statement;
+        } finally {
+            return statement;
+        }
     }
 
     /**
@@ -173,7 +174,7 @@ public class Knowledge {
             position_x = gps.getPosX();
             position_y = gps.getPosY();
 
-            //this.setAgentPosition(agentName, position_x, position_y);
+            this.setAgentPosition(agentName, position_x, position_y);
 
             // Nos conectamos a la DB
             Statement statement = this.getStatement();
@@ -198,7 +199,7 @@ public class Knowledge {
                         statement.executeUpdate(querySQL);
 
                         //Actualizamos la fila y de la matriz
-                       // updateMatrix(pos_x, pos_y, radarValue);
+                        //updateMatrix(pos_x, pos_y, radarValue);
                     }
                 }
             }
@@ -216,19 +217,7 @@ public class Knowledge {
             }
         }
     }
-public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vision){
-    int posx = gps.getPosX();
-    int posy = gps.getPosY();
-    
-    for(int i=0; i<vision; i++){
-        for(int j=0; j<vision; j++){
-            int pos_x = (posx - (vision / 2) + j);
-            int pos_y = (posy - (vision / 2) + i);
-            this.mapMatrix[pos_x][pos_y] = radar[j][i];
-            
-        }
-    }
-}
+
     /**
      * Este método es el encargado de recibir los datos obtenidos por el agente
      * y añadirlos a su conocimiento. Método de retrocompatibilidad con la
@@ -257,42 +246,17 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      */
     private void updateMatrix(int posx, int posy, int value) {
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
-        
-        /*System.out.println("Máximo actual anterior: " + this.mapSize());
-        System.out.println("Valor X: " + posx + " | Valor Y: " + posy);*/
 
-        /*if (maxWidth > this.mapSize()) {
+        if (maxWidth > this.mapSize()) {
             int[][] tmp = this.mapMatrix;
             this.mapMatrix = new int[maxWidth][maxWidth];
-
-            for(int i = 0; i < maxWidth; i++){
-                for(int j = 0; j < this.mapSize(); j++){
-                    this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN;
-                }
-            }
-
             for (int i = 0; i < tmp.length; i++) {
                 for (int j = 0; j < tmp[i].length; j++) {
                     this.mapMatrix[i][j] = tmp[i][j];
                 }
             }
-        }*/
-        if(maxWidth > this.mapSize()) {
-            int[][] tmp = new int[maxWidth+1][maxWidth+1];
-            
-            for(int i = 0; i < maxWidth+1; i++){
-                for(int j = 0; j < maxWidth+1; j++){
-                    tmp[i][j] = Knowledge.STATE_UNKNOWN;
-                }
-            }
-            for (int i = 0; i < tmp.length; i++) {
-                for (int j = 0; j < tmp[i].length; j++) {
-                    tmp[i][j] = this.mapMatrix[i][j];
-                }
-            }
-            this.mapMatrix = tmp;
         }
-        //System.out.println("Máximo actual posterior: " + this.mapSize());
+
         this.mapMatrix[posx][posy] = value;
     }
 
@@ -319,7 +283,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
                 matrix_size = rs.getInt("count");
             }
 
-            System.out.println("\nCantidad de celdas conocidas: " + matrix_size);
+            output.concat("\nCantidad de celdas conocidas: " + matrix_size);
 
             if (matrix_size > 0) {
                 matrix_size = 0;
@@ -340,14 +304,15 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
                     matrix_size = Math.max(matrix_size, (rs.getInt("count") + 1));
                 }
 
-                System.out.println("El máximo de la matriz es: " + matrix_size);
+                output.concat("El máximo de la matriz es: " + matrix_size);
 
                 // Creamos la matriz con el tamaño conocido
                 this.mapMatrix = new int[matrix_size][matrix_size];
-                for(int i = 0; i < this.mapSize(); i++){ 
-                    for(int j = 0; j < this.mapSize(); j++){ 
+                    for(int i = 0; i < this.mapSize(); i++){ 
+                    /*for(int j = 0; j < this.mapSize(); j++){ 
                         this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN; 
-                    }
+                    }*/ 
+                    Arrays.fill(this.mapMatrix[i], Knowledge.STATE_UNKNOWN); 
                 } 
                 // Obtenemos la información almacenada y la volcamos en la matriz
                 rs = statement.executeQuery("SELECT * FROM Mapa_" + this.map_id + ";");
@@ -389,39 +354,30 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      * Genera el mapa conocido por el agente
      */
     public String drawMapToString() {
-        String output = "";        
+        String output = "";
         for (int i = 0; i < this.mapMatrix.length; i++) {
-              for (int j = 0; j < this.mapMatrix[i].length; j++) {
-                  int value = this.mapMatrix[i][j];  
-                  //if(j == 0) output += "▉▉▉";
-                  switch (value) {
-                      case Knowledge.STATE_FREE:
-                          output += "0";
-                          break;
-                      case Knowledge.STATE_WALL:
-                          output += "#";
-                          break;
-                      case Knowledge.STATE_GOAL:
-                          output += "X";
-                          break;
-                      case Knowledge.STATE_WORLD_END:
-                          output += "#";
-                          break;
-                      case Knowledge.STATE_UNKNOWN:
-                          output += "?";
-                          break; 
-                      case Knowledge.STATE_VEHICLE:
-                          output += "A";
-                          break;                     
-                  }
-              }
-              output += "\n";
+            for (int j = 0; j < this.mapMatrix[i].length; j++) {
+                int value = this.mapMatrix[i][j];
+                if( value == 5 ){
+                    System.out.print("?");
+                }else if( value == 4 ){
+                    System.out.print("A");
+                }else if( value == 3 ){
+                    System.out.print("X");
+                }else if( value == 2 ){
+                    System.out.print("#");
+                }else if( value == 1 ){
+                    System.out.print("#");
+                }else if( value == 0 ){
+                    System.out.print(".");
+                }
+                //System.out.print(value+" ");
+            }
+            System.out.println("");
         }
         return output;
     }
 
-    
-    
     /**
      * Dibuja el mapa en consola
      */
