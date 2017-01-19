@@ -547,7 +547,8 @@ public class Controlador extends SingleAgent {
         /*
         Aquí se decide el movimiento
          */
-        if(!triedPath && objetivos.size()> 0 && !p.getRol().getVolar()){            
+        if(!triedPath && objetivos.size()> 0 && !p.getRol().getVolar()){   
+            System.out.println("Calculando A*");
             int[] posicion_objetivo = new int[2];
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps); 
