@@ -46,7 +46,7 @@ public class Controlador extends SingleAgent {
     boolean exist_path = false;
     Path camino;
     int cont;
-    int x=0,y=3;
+    int x=45,y=42;
     private int max_Pos = 0;
     private ArrayList<Integer> path_local = new ArrayList<>();
     // Valores modificables según que comportamiento del agene deseamos    
@@ -395,6 +395,7 @@ public class Controlador extends SingleAgent {
                     pos[0] = flota.get(vehiculoElegido).getGps()[0];
                     pos[1] = flota.get(vehiculoElegido).getGps()[1];
                     posAgentsEnd.add(pos);
+                    flota.get(vehiculoElegido).updateMatrix();
                     vehiculosExploradores.remove(vehiculoElegido);
                     vehiculoElegido = vehiculosExploradores.get(0);                    
                     exist_path = false;
@@ -421,7 +422,7 @@ public class Controlador extends SingleAgent {
             for(int i = 1 ; i < vehiculosExploradores.size() ; i++){
                 PropiedadesVehicle p1 = flota.get(vehiculosExploradores.get(i));                    
                 PropiedadesVehicle p2 = flota.get(vehiculoElegido);
-                if(p1.getRol().getConsumo() < p2.getRol().getConsumo())
+                if(/*p1.getRol().getConsumo() < p2.getRol().getConsumo()*/Knowledge.getDB(this.MAPA).getKnowledgeMatrix()[p1.getGps()[0]][p1.getGps()[1]] == Knowledge.STATE_UNKNOWN)
                     vehiculoElegido = vehiculosExploradores.get(i);
             }    
             exist_path = false;
@@ -532,12 +533,12 @@ public class Controlador extends SingleAgent {
                 cloneMatrix[ap[0]][ap[1]] = -1;
             }
             pathMatrix = cloneMatrix;
-            /*for (int i = 0; i < pathMatrix.length; i++) {
+            for (int i = 0; i < pathMatrix.length; i++) {
                 for (int j = 0; j < pathMatrix[i].length; j++) {
                     System.out.print(pathMatrix[i][j] + " ");
                 }
                 System.out.println("");
-            }*/
+            }
             int id_vehiculo = p.getGps()[0] * pathMatrix.length + p.getGps()[1];
             int id_objetivo = posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1];
             camino = new Path(pathMatrix, id_vehiculo, id_objetivo);
@@ -554,12 +555,12 @@ public class Controlador extends SingleAgent {
             System.out.println("Alcance: " + alcance);
             posiblesObjetivos = new int[alcance][alcance];
             eliminarObjetivosInaccesibles(radar.clone(), alcance);
-            /*//System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
-            for (int i = 0; i < 5; i++) {
+            //System.out.println("Posibles Objetivos: " + Arrays.deepToString(posiblesObjetivos));
+            /*for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
                         System.out.print(posiblesObjetivos[i][j] + "-");
                     }
-                    //System.out.println("\n");
+                    System.out.println("\n");
                 }   */
             // Se decide la casilla óptima a moverse en la matriz 5x5
             int[] objetivo_alcanzar = chooseLocalObj(pasos, coord, p.getNombre(), p.getMatrix());
@@ -778,21 +779,10 @@ public class Controlador extends SingleAgent {
         int[][] global = matriz.getKnowledgeMatrix();
         int[] gps = flota.get(vehiculoElegido).getGps();
         //System.out.println("Objetivos: "+ objetivos.toString());
-        /*if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size() > 0) {
+        if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size() > 0) {
             posicion_objetivo = calcularObjetivoCercano(gps);
-        } else {*/
+        } else {
             //System.out.println("\nSe mete en objetivo fantasma");
-            if(gps[0] == 0 && gps[1] == 3){
-                x = 24;
-                y = 3;
-            }
-            if(gps[0] == 42 && gps[1] == 3){
-                x = 38;
-                y = 40;
-            } if(gps[0] == 38 && gps[1] == 40){
-                x = 54;
-                y = 60;
-            }
             posicion_objetivo[0] = 
                     //122;
                     //global.length-1;
@@ -803,7 +793,7 @@ public class Controlador extends SingleAgent {
                     //global.length-1;
                     //max_Pos / 2;
                     y;
-        //}
+        }
 
         System.out.println("Objetivo elegido");
         System.out.println(posicion_objetivo[0] + "," + posicion_objetivo[1]);
