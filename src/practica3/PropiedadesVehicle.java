@@ -20,10 +20,15 @@ public class PropiedadesVehicle {
     public PropiedadesVehicle() {
 	super();
     }
-    
+    /**
+     * @author Raúl López Arévalo
+     */
     public int[][] getRadar(){
         return this.radar;
     }
+    /**
+     * @author Raúl López Arévalo
+     */
     public void printRadar(){
         for(int i=0; i<radar.length; i++){
             for(int j=0; j<radar.length; j++){
@@ -32,7 +37,9 @@ public class PropiedadesVehicle {
             System.out.println("");
         }
     }
-    
+    /**
+     * @author Raúl López Arévalo
+     */
     public void printGps(){
         System.out.println("X: "+gps.getPosX()+" Y: "+gps.getPosY());
     }
@@ -116,7 +123,9 @@ public class PropiedadesVehicle {
         llegado = percepcion.getLlegado();
         radar = percepcion.getRadar();
     }    
-
+    /**
+     * @author Raúl López Arévalo
+     */
     public void setPosInicial(Cell posInicial) {
         this.posInicial[0] = posInicial.getPosX();
         this.posInicial[1] = posInicial.getPosY();

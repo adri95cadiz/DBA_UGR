@@ -365,7 +365,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
     }
 
     /**
-     * Genera el mapa contenido en la matriz
+     * @author Raúl López Arévalo
      */
     public static String drawMapToString(int[][] matrix) {
         String output = "";        
