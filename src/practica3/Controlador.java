@@ -522,6 +522,16 @@ public class Controlador extends SingleAgent {
             int[] gps = flota.get(vehiculoElegido).getGps();
             posicion_objetivo = calcularObjetivoCercano(gps);
             int[][] pathMatrix = Knowledge.getDB(this.MAPA).getPathMatrix();
+            int[][] cloneMatrix = new int[pathMatrix.length][pathMatrix[0].length];
+            for (int i = 0; i < pathMatrix.length; i++){
+                for (int j = 0; j < pathMatrix[i].length; j++){
+                    cloneMatrix[i][j] = pathMatrix[i][j];
+                }
+            }
+            for (int[] ap : this.posAgentsEnd) {
+                cloneMatrix[ap[0]][ap[1]] = -1;
+            }
+            pathMatrix = cloneMatrix;
             for (int i = 0; i < pathMatrix.length; i++) {
                 for (int j = 0; j < pathMatrix[i].length; j++) {
                     System.out.print(pathMatrix[i][j] + " ");
@@ -590,10 +600,10 @@ public class Controlador extends SingleAgent {
             System.out.println("No se donde moverme.");
         } else {
             System.out.println("Updateando matrix");
-            p.updateMatrix();
-            /*if(p.getRol().getVolar()){
+            //p.updateMatrix();
+            if(p.getRol().getVolar()){
                 p.updateMatrix();
-            }*/
+            }
             System.out.println("Fin update");
             System.out.println("enviando mensaje a vehiculoElegido");
             enviarMensaje(vehiculoElegido, ACLMessage.REQUEST, JSON.mover(decision));
