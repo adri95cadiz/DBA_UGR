@@ -600,10 +600,10 @@ public class Controlador extends SingleAgent {
             System.out.println("No se donde moverme.");
         } else {
             System.out.println("Updateando matrix");
-            //p.updateMatrix();
-            if(p.getRol().getVolar()){
+            p.updateMatrix();
+            /*if(p.getRol().getVolar()){
                 p.updateMatrix();
-            }
+            }*/
             System.out.println("Fin update");
             System.out.println("enviando mensaje a vehiculoElegido");
             enviarMensaje(vehiculoElegido, ACLMessage.REQUEST, JSON.mover(decision));
