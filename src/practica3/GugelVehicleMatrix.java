@@ -74,7 +74,7 @@ class GugelVehicleMatrix {
         for(int i = 0; i < m.length; i++){
             for (int j = 0; j < m.length; j++) {
                 int value = m[i][j];
-                if(j == 0) output += j+"▉▉▉";
+                if(j == 0) output += i+"▉▉▉";
                 else{
                     switch (value) {
                         case Knowledge.STATE_FREE:
