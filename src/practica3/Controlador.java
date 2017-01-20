@@ -759,11 +759,11 @@ public class Controlador extends SingleAgent {
         } else {
             //System.out.println("\nSe mete en objetivo fantasma");
             posicion_objetivo[0] = 
-                    115;
+                    25;
                     //global.length-1;
                     //max_Pos / 2;
             posicion_objetivo[1] =
-                    20;
+                    70;
                     //global.length-1;
                     //max_Pos / 2;
         }
@@ -788,7 +788,6 @@ public class Controlador extends SingleAgent {
         int[] objetive = {-1, -1};
         float low_dist = (float) Math.pow(10, 10);
         int low_moving_count = -flota.get(vehiculoElegido).getPasos();
-        System.out.println("objetiv: "+posicion_objetivo[0]+posicion_objetivo[1] );
         if (pasos <= 1) {
             for (int i = 0; i < alcance; i++) {
                 for (int j = 0; j < alcance; j++) {

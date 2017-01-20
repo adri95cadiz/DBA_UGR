@@ -372,7 +372,7 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) { 
                   int value = matrix[i][j];   
-                  if(j == 0) output += j+"▉▉▉"; 
+                  if(j == 0) output += i+"▉▉▉"; 
                   switch (value) { 
                       case Knowledge.STATE_FREE: 
                           output += "0"; 
