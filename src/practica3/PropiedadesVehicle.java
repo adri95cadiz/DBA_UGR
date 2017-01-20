@@ -1,8 +1,5 @@
 package practica3;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import java.util.ArrayList;
-
 /**
  * Clase que contiene la información que tiene el controlador sobre un vehiculo.
  * @author Luis Gallego Quero

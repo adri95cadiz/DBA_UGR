@@ -30,13 +30,6 @@ public class GugelVehicle extends SingleAgent {
         msjSalida = null;
         fin = false;
         conversationID = null;
-        /*
-        primero = true;        
-        reply = new HashMap<>();   // Creo que esto no hace falta
-        reply.put("Vehiculo0", null);
-        reply.put("Vehiculo1", null);
-        reply.put("Vehiculo2", null);
-        reply.put("Vehiculo3", null); */
     }
 
     public void execute() {

@@ -259,26 +259,6 @@ public void updateStatusLocal(String agentName, int[][] radar, Cell gps, int vis
      */
     private void updateMatrix(int posx, int posy, int value) {
         int maxWidth = Math.max(this.mapSize(), Math.max(posx, posy));
-        
-        /*System.out.println("Máximo actual anterior: " + this.mapSize());
-        System.out.println("Valor X: " + posx + " | Valor Y: " + posy);*/
-
-        /*if (maxWidth > this.mapSize()) {
-            int[][] tmp = this.mapMatrix;
-            this.mapMatrix = new int[maxWidth][maxWidth];
-
-            for(int i = 0; i < maxWidth; i++){
-                for(int j = 0; j < this.mapSize(); j++){
-                    this.mapMatrix[i][j] = Knowledge.STATE_UNKNOWN;
-                }
-            }
-
-            for (int i = 0; i < tmp.length; i++) {
-                for (int j = 0; j < tmp[i].length; j++) {
-                    this.mapMatrix[i][j] = tmp[i][j];
-                }
-            }
-        }*/
         if(maxWidth > this.mapSize()) {
             int[][] tmp = new int[maxWidth+1][maxWidth+1];
             
