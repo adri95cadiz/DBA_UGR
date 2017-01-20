@@ -403,7 +403,7 @@ public class Controlador extends SingleAgent {
                     faseFinalizar();
                 }
             }
-            else{ 
+            /*else if(estadoActual = Estado.BUSCAR){     //Rotación entre exploradores. 
                     int index = vehiculosExploradores.indexOf(vehiculoElegido); 
                     index++; 
                     if (index == vehiculosExploradores.size()) 
@@ -412,7 +412,7 @@ public class Controlador extends SingleAgent {
                     exist_path = false; 
                     triedPath = false; 
                      
-                }
+                }*/
         } else {
             //Aquí elegiríamos el vehículo siguiente.                 
             vehiculoElegido = vehiculosExploradores.get(0);
