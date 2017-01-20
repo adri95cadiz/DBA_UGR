@@ -877,8 +877,18 @@ public class Controlador extends SingleAgent {
             posicion_objetivo = calcularObjetivoCercano(gps);  
         } else {
             //System.out.println("\nSe mete en objetivo fantasma");
-            posicion_objetivo[0] = max_Pos / 2;
-            posicion_objetivo[1] = max_Pos / 2;
+            int max_x = global.length, x = max_Pos / 2;
+            int max_y = global[0].length, y = max_Pos / 2;
+            boolean elegido = false;
+            while(!elegido){
+                x = (int) Math.random()*max_x+1;
+                y = (int) Math.random()*max_y+1;
+                if(global[x][y] == Knowledge.STATE_UNKNOWN){
+                    elegido = true;
+                }
+            }
+            posicion_objetivo[0] = x;
+            posicion_objetivo[1] = y;
         }
         
         System.out.println("Objetivo elegido");
