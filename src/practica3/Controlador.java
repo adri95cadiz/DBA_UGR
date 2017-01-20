@@ -403,6 +403,16 @@ public class Controlador extends SingleAgent {
                     faseFinalizar();
                 }
             }
+            else{ 
+                    int index = vehiculosExploradores.indexOf(vehiculoElegido); 
+                    index++; 
+                    if (index == vehiculosExploradores.size()) 
+                        index = 0; 
+                    vehiculoElegido = vehiculosExploradores.get(index); 
+                    exist_path = false; 
+                    triedPath = false; 
+                     
+                }
         } else {
             //Aquí elegiríamos el vehículo siguiente.                 
             vehiculoElegido = vehiculosExploradores.get(0);
@@ -759,11 +769,11 @@ public class Controlador extends SingleAgent {
         } else {
             //System.out.println("\nSe mete en objetivo fantasma");
             posicion_objetivo[0] = 
-                    25;
+                    95;
                     //global.length-1;
                     //max_Pos / 2;
             posicion_objetivo[1] =
-                    70;
+                    20;
                     //global.length-1;
                     //max_Pos / 2;
         }

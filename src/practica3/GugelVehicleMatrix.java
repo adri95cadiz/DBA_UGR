@@ -247,10 +247,10 @@ class GugelVehicleMatrix {
                     //if( (i == 0 && j == 0) || (i==max && j==max) || (j == 0 && i == max) || (j==max && i==0) ){
                         
                     //}
-                    //else if(radarValue != Knowledge.STATE_WALL && radarValue != Knowledge.STATE_WORLD_END)
-                    //{
+                    if(radarValue != Knowledge.STATE_WALL && radarValue != Knowledge.STATE_WORLD_END)
+                    {
                         this.localMatrix[pos_x][pos_y] = -turn;
-                    //}
+                    }
                 }
             }
         }
