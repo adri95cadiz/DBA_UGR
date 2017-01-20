@@ -374,9 +374,9 @@ public class Controlador extends SingleAgent {
             es decir, estarían todos en modo "explorador".
             ¿Utilizar solo los de menor consumo y mayor campo de vision?
          */
-        System.out.println("size: " + vehiculosExploradores.size());
-        System.out.println("seleccionado: " + vehiculoSeleccionado);
-        System.out.println("index + 1: " + vehiculosExploradores.indexOf(vehiculoElegido) + 1);
+        //System.out.println("size: " + vehiculosExploradores.size());
+        //System.out.println("seleccionado: " + vehiculoSeleccionado);
+        //System.out.println("index + 1: " + vehiculosExploradores.indexOf(vehiculoElegido) + 1);
 
         // Si ya existe un vehiculo seleccionado:
         if (vehiculoSeleccionado) {
@@ -386,7 +386,7 @@ public class Controlador extends SingleAgent {
             /*System.out.println("raiz: " + (int) Math.sqrt(radar.length));
             System.out.println("-1/2 es: " + ((int) Math.sqrt(radar.length) - 1) / 2);*/
             int posCentral = (radar.length - 1) / 2;
-            System.out.println("posicion central es " + posCentral);
+            //System.out.println("posicion central es " + posCentral);
             if (radar[posCentral][posCentral] == 3) {
                 System.out.println("Ha llegado al objetivo. Size de exploradores total: " + vehiculosExploradores.size());
                 if (vehiculosExploradores.size() > 1) {
@@ -591,6 +591,9 @@ public class Controlador extends SingleAgent {
         } else {
             System.out.println("Updateando matrix");
             p.updateMatrix();
+            /*if(p.getRol().getVolar()){
+                p.updateMatrix();
+            }*/
             System.out.println("Fin update");
             System.out.println("enviando mensaje a vehiculoElegido");
             enviarMensaje(vehiculoElegido, ACLMessage.REQUEST, JSON.mover(decision));
