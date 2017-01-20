@@ -25,8 +25,8 @@ class GugelVehicleMatrix {
         this.vehicle = new Vehicle(name, alcance);
     }
 
-    /*
-    imprime knowledge
+   /**
+     * @author Raúl López Arévalo
      */
     public String ImprimirKnow() {
         return this.db.drawMapToString();
@@ -52,9 +52,8 @@ class GugelVehicleMatrix {
         return getVehicle().getLocalMatrix();
     }
 
-    /*
-    Imprimir matriz local del agente
-    
+    /**
+     * @author Raúl López Arévalo
      */
     public void ImprimirLocal() {
         int[][] m = getVehicle().getLocalMatrix();
@@ -121,7 +120,9 @@ class GugelVehicleMatrix {
         }
         return output;
     }
-    
+    /**
+     * @author Raúl López Arévalo
+     */
     /**
      * Devuelve una matriz resultante de combinar la matriz de {@link Knowledge}
      * y la matriz local del agente almacenada en {@link Vehicle}
@@ -134,8 +135,10 @@ class GugelVehicleMatrix {
         return getVehicle().getCombinedKnowledge();
     }
 
-    /*
-        imprimir getcombineknowledge
+    /**
+     * 
+     * @author Raúl López Arévalo
+     *   imprimir getcombineknowledge
      */
     public void ImprimirGetCombined() {
         int[][] m = getVehicle().getCombinedKnowledge();
@@ -273,19 +276,19 @@ class GugelVehicleMatrix {
             }*/
             int lim = ((int)Math.sqrt(radar.length)-1)/2;
             int max = radar.length-1;
-            for (int i = 0; i < radar.length; i++) {
-                for (int j = 0; j < radar.length; j++) {
+            for (int i = 1; i < radar.length-1; i++) {
+                for (int j = 1; j < radar.length-1; j++) {
                     int pos_x = (position.getPosX() - ((vision - 1) / 2) + i);
                     int pos_y = (position.getPosY() - ((vision - 1) / 2) + j);
                     int radarValue = radar[i][j];
                     
-                    if( (i == 0 && j == 0) || (i==max && j==max) || (j == 0 && i == max) || (j==max && i==0) ){
+                    //if( (i == 0 && j == 0) || (i==max && j==max) || (j == 0 && i == max) || (j==max && i==0) ){
                         
-                    }
-                    else if(radarValue != Knowledge.STATE_WALL && radarValue != Knowledge.STATE_WORLD_END)
-                    {
+                    //}
+                    //else if(radarValue != Knowledge.STATE_WALL && radarValue != Knowledge.STATE_WORLD_END)
+                    //{
                         this.localMatrix[pos_x][pos_y] = -turn;
-                    }
+                    //}
                 }
             }
         }
