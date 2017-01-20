@@ -78,39 +78,32 @@ class GugelVehicleMatrix {
                 else{
                     switch (value) {
                         case Knowledge.STATE_FREE:
-                            output += " 0 ";
+                            output += "0";
                             break;
                         case Knowledge.STATE_VEHICLE:
-                            output += " A ";
+                            output += "A";
                             break;
                         case Knowledge.STATE_WALL:
-                            output += " # ";
+                            output += "#";
                             break;
                         case Knowledge.STATE_GOAL:
-                            output += " > ";
+                            output += ">";
                             break;
                         case Knowledge.STATE_WORLD_END:
-                            output += " $ ";
+                            output += "$";
                             break;
                         case Knowledge.STATE_UNKNOWN:
                             if(value > 0 )
-                                output += " ? ";
-                            else
-                                if(-value < 10)
-                                    output += " "+(-value)+" ";
-                                else if(-value < 100)
-                                    output += -value+" ";
-                                else
-                                    output += -value;
+                                output += "?";
+                            else                                
+                                output += "+";
                             break; 
                         default:
-                            if(-value < 10)
-                                output += " "+(-value)+" ";
-                            else if(-value < 100)
-                                output += -value+" ";
-                            else
-                                output += -value;
-                            break; 
+                            if(value > 0 )
+                                output += "?";
+                            else                                
+                                output += "+";
+                            break;  
                     }
                 }
             }
