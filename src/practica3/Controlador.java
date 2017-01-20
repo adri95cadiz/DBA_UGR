@@ -46,7 +46,7 @@ public class Controlador extends SingleAgent {
     boolean exist_path = false;
     Path camino;
     int cont;
-    int x=45,y=42;
+    int x=1,y=3;
     private int max_Pos = 0;
     private ArrayList<Integer> path_local = new ArrayList<>();
     // Valores modificables según que comportamiento del agene deseamos    
@@ -422,7 +422,7 @@ public class Controlador extends SingleAgent {
             for(int i = 1 ; i < vehiculosExploradores.size() ; i++){
                 PropiedadesVehicle p1 = flota.get(vehiculosExploradores.get(i));                    
                 PropiedadesVehicle p2 = flota.get(vehiculoElegido);
-                if(/*p1.getRol().getConsumo() < p2.getRol().getConsumo()*/Knowledge.getDB(this.MAPA).getKnowledgeMatrix()[p1.getGps()[0]][p1.getGps()[1]] == Knowledge.STATE_UNKNOWN)
+                if(p1.getRol().getConsumo() < p2.getRol().getConsumo()/*Knowledge.getDB(this.MAPA).getKnowledgeMatrix()[p1.getGps()[0]][p1.getGps()[1]] == Knowledge.STATE_UNKNOWN*/)
                     vehiculoElegido = vehiculosExploradores.get(i);
             }    
             exist_path = false;
@@ -601,10 +601,10 @@ public class Controlador extends SingleAgent {
             System.out.println("No se donde moverme.");
         } else {
             System.out.println("Updateando matrix");
-            p.updateMatrix();                                       //Para ejecuciones normales
-            /*if(path_local.size() == 1 || p.getRol().getVolar()){  //Para el A* (lo acelera)
+            //p.updateMatrix();                                       //Para ejecuciones normales
+            if(path_local.size() == 1 || p.getRol().getVolar()){  //Para el A* (lo acelera)
                 p.updateMatrix();
-            }*/
+            }
             System.out.println("Fin update");
             System.out.println("enviando mensaje a vehiculoElegido");
             enviarMensaje(vehiculoElegido, ACLMessage.REQUEST, JSON.mover(decision));
