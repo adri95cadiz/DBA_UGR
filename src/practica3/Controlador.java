@@ -46,6 +46,7 @@ public class Controlador extends SingleAgent {
     boolean exist_path = false;
     Path camino;
     int cont;
+    int x=26,y=60;
     private int max_Pos = 0;
     private ArrayList<Integer> path_local = new ArrayList<>();
     // Valores modificables según que comportamiento del agene deseamos    
@@ -422,7 +423,7 @@ public class Controlador extends SingleAgent {
                 PropiedadesVehicle p2 = flota.get(vehiculoElegido);
                 if(p1.getRol().getConsumo() < p2.getRol().getConsumo())
                     vehiculoElegido = vehiculosExploradores.get(i);
-            }     
+            }    
             exist_path = false;
             vehiculoSeleccionado = true;
             triedPath = false;
@@ -693,7 +694,7 @@ public class Controlador extends SingleAgent {
 
         } else {
             int pos_inicial = (int) floor(alcance / 2.0);
-            if ((row != pos_inicial || col != pos_inicial) && ((radar[row][col] == 1 && alcance != 3) || radar[row][col] == 2 || radar[row][col] == 4 || (radar[row][col] == 3 && Knowledge.getDB(MAPA).isAnyAgentInPosition(row, col)))) {
+            if ((row != pos_inicial || col != pos_inicial) && ((radar[row][col] == 1 && alcance != 3) || radar[row][col] == 2 || radar[row][col] == 4 || (radar[row][col] == 3 && (Knowledge.getDB(MAPA).isAnyAgentInPosition(row, col)||posAgentsEnd.contains(new int[]{row,col}))))) {
                 posiblesObjetivos[row][col] = -1;                                                   //Aunque alcanzable posee un obstáculo en este momento
                 //System.out.println("inaccesible "+row+col);
             } else {
@@ -769,13 +770,15 @@ public class Controlador extends SingleAgent {
         } else {
             //System.out.println("\nSe mete en objetivo fantasma");
             posicion_objetivo[0] = 
-                    95;
+                    //122;
                     //global.length-1;
                     //max_Pos / 2;
+                    x;
             posicion_objetivo[1] =
-                    20;
+                    //2;
                     //global.length-1;
                     //max_Pos / 2;
+                    y;
         }
 
         System.out.println("Objetivo elegido");
