@@ -46,7 +46,7 @@ public class Controlador extends SingleAgent {
     boolean exist_path = false;
     Path camino;
     int cont;
-    int x=26,y=60;
+    int x=74,y=15;
     private int max_Pos = 0;
     private ArrayList<Integer> path_local = new ArrayList<>();
     // Valores modificables según que comportamiento del agene deseamos    
@@ -601,7 +601,7 @@ public class Controlador extends SingleAgent {
         } else {
             System.out.println("Updateando matrix");
             p.updateMatrix();
-            /*if(p.getRol().getVolar()){
+            /*if(path_local.size() == 1 || p.getRol().getVolar()){  //Para el A/*
                 p.updateMatrix();
             }*/
             System.out.println("Fin update");
@@ -897,25 +897,6 @@ public class Controlador extends SingleAgent {
                                     objetive[0] = i;
                                     objetive[1] = j;
                                 }
-                            }
-                        }
-                    }
-                }
-            } else if (objetive[0] == -1) {
-                System.out.println("con objetivo");
-                low_dist = (float) Math.pow(10, 10);
-                low_moving_count = -flota.get(vehiculoElegido).getPasos();
-                for (int i = 0; i < alcance; i++) {
-                    for (int j = 0; j < alcance; j++) {
-                        int a = datosGPS[0] - ((alcance - 1) / 2) + i;
-                        int b = datosGPS[1] - ((alcance - 1) / 2) + j;
-                        if (posiblesObjetivos[i][j] == 0) {
-                            int casilla = matriz.getLocalMatrix()[a][b];
-                            if (false && casilla > low_moving_count && global[a][b] != 4 && matrixGrad[i][j] < low_dist) {
-                                low_moving_count = casilla;
-                                low_dist = matrixGrad[i][j];
-                                objetive[0] = i;
-                                objetive[1] = j;
                             }
                         }
                     }
