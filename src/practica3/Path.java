@@ -184,7 +184,6 @@ public class Path {
             // es alcanzable
             boolean is_reachable = false;
             if (is_in_matrix) {
-                //is_reachable =( map[id_next_node / this.size_map][id_next_node % this.size_map] == 0 )|| (map[id_next_node / this.size_map][id_next_node % this.size_map] == 3);
                 is_reachable = map[id_next_node / this.size_map][id_next_node % this.size_map] != -1;
             }
             // Si el nodo está en la matriz, no es el raiz, no se encuentra en open_list y es accesible
@@ -304,19 +303,7 @@ public class Path {
         this.pathObjetive();
         return path_objetive;
     }
-
-    /*public ArrayList<int[]> getPath(){
-        ArrayList<int[]> path = new ArrayList<>();
-        int[] coord = new int[2];
-        for (int i = 0; i < path_objetive.size(); i++) {
-            
-            coord[0] = path_objetive.get(i)/5;
-            coord[1] = path_objetive.get(i)%5;
-            path.add(coord);
-            //System.out.println("GUARDANDO ---------------------------------------------> id: "+path_objetive.get(i)+ "coordenadas: " + coord[0] + ","+ coord[1]);
-        }
-        return path;
-    }*/
+    
     /**
      * Imprime por pantalla los ID´s de las casillas que forman el camino
      * óptimo.
