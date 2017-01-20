@@ -46,7 +46,7 @@ public class Controlador extends SingleAgent {
     boolean exist_path = false;
     Path camino;
     int cont;
-    int x=74,y=15;
+    int x=0,y=3;
     private int max_Pos = 0;
     private ArrayList<Integer> path_local = new ArrayList<>();
     // Valores modificables según que comportamiento del agene deseamos    
@@ -532,12 +532,12 @@ public class Controlador extends SingleAgent {
                 cloneMatrix[ap[0]][ap[1]] = -1;
             }
             pathMatrix = cloneMatrix;
-            for (int i = 0; i < pathMatrix.length; i++) {
+            /*for (int i = 0; i < pathMatrix.length; i++) {
                 for (int j = 0; j < pathMatrix[i].length; j++) {
                     System.out.print(pathMatrix[i][j] + " ");
                 }
                 System.out.println("");
-            }
+            }*/
             int id_vehiculo = p.getGps()[0] * pathMatrix.length + p.getGps()[1];
             int id_objetivo = posicion_objetivo[0] * pathMatrix.length + posicion_objetivo[1];
             camino = new Path(pathMatrix, id_vehiculo, id_objetivo);
@@ -600,8 +600,8 @@ public class Controlador extends SingleAgent {
             System.out.println("No se donde moverme.");
         } else {
             System.out.println("Updateando matrix");
-            p.updateMatrix();
-            /*if(path_local.size() == 1 || p.getRol().getVolar()){  //Para el A/*
+            p.updateMatrix();                                       //Para ejecuciones normales
+            /*if(path_local.size() == 1 || p.getRol().getVolar()){  //Para el A* (lo acelera)
                 p.updateMatrix();
             }*/
             System.out.println("Fin update");
@@ -776,12 +776,23 @@ public class Controlador extends SingleAgent {
         int[][] matrixGrad = new int[alcance][alcance];
         int[] posicion_objetivo = new int[2];
         int[][] global = matriz.getKnowledgeMatrix();
+        int[] gps = flota.get(vehiculoElegido).getGps();
         //System.out.println("Objetivos: "+ objetivos.toString());
-        if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size() > 0) {
-            int[] gps = flota.get(vehiculoElegido).getGps();
+        /*if (estadoActual == Estado.OBJETIVO_ENCONTRADO || objetivos.size() > 0) {
             posicion_objetivo = calcularObjetivoCercano(gps);
-        } else {
+        } else {*/
             //System.out.println("\nSe mete en objetivo fantasma");
+            if(gps[0] == 0 && gps[1] == 3){
+                x = 24;
+                y = 3;
+            }
+            if(gps[0] == 42 && gps[1] == 3){
+                x = 38;
+                y = 40;
+            } if(gps[0] == 38 && gps[1] == 40){
+                x = 54;
+                y = 60;
+            }
             posicion_objetivo[0] = 
                     //122;
                     //global.length-1;
@@ -792,7 +803,7 @@ public class Controlador extends SingleAgent {
                     //global.length-1;
                     //max_Pos / 2;
                     y;
-        }
+        //}
 
         System.out.println("Objetivo elegido");
         System.out.println(posicion_objetivo[0] + "," + posicion_objetivo[1]);
